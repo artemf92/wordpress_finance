@@ -1,0 +1,155 @@
+
+:root {
+  --fancybox-opacity: 0 !important;
+}
+
+.fancybox__backdrop {
+  background: none !important;
+}
+
+header.content-header {
+  min-height: auto;
+}
+.table>thead>tr>th {
+  text-transform: none;
+  font-size: 15px;
+  line-height: 1.2;
+}
+.page .entry-content {
+  padding-top: 2rem;
+}
+#page, .navbar, .after-footer {
+  max-width: initial;
+}
+.site-content {
+  min-height: 500px;
+}
+.bi {
+  width: 1em;
+  height: 1em;
+  vertical-align: -.125em;
+  fill: currentcolor;
+}
+.stage p {
+  margin-bottom: 0;
+}
+pre {
+  white-space: break-spaces;
+}
+#loginform {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 250px;
+  margin: auto;
+}
+#loginform .login-username,
+#loginform .login-password {
+  width: 100%;
+  text-align: center;
+}
+#loginform .login-username label,
+#loginform .login-password label {
+  display: block;
+}
+#loginform .login-username input,
+#loginform .login-password input {
+  width: 100%;
+}
+.navigation .page-numbers {
+  padding: 10px;
+}
+input.form-control.input-date {
+  display: inline-block;
+  max-width: 140px !important;
+  margin-right: 20px;
+}
+.page-id-65 #wppb-form-style-3-wrapper form > ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.page-id-65 .wppb-form-field {
+  width: 30% !important;
+}
+.page-id-65 #wppb-form-style-3-wrapper {
+  max-width: initial;
+}
+.page-id-65 .wppb-user-forms ul {
+  max-width: initial;
+}
+.page-id-65 .wppb-default-name-heading, .page-id-65 .wppb-default-contact-info-heading, .page-id-65 .wppb-heading {
+  width: 100% !important;
+  flex-grow: 1;
+}
+.page-id-35175 #wppb-form-style-3-wrapper {
+  margin: auto;
+  max-width: 400px;
+}
+.full-height.content-area-wide {
+  min-height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.page-id-35190 #wppb-form-style-3-wrapper .label-inside button.wppb-toggle-pw {
+  top: 0px !important;
+}
+.fancybox__content h3 {
+  margin: 0 0 20px;
+  /* max-width: calc(100% - 40px); */
+  text-align: center;
+}
+.input-group-text {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.input-group-text input {
+  margin-right: 10px;
+  margin-top: 0;
+}
+.pmagic .pm-group-container .pm-group .pm-group-logo, .pmagic .pm-group-container .pm-group .pm-group-info {
+  display: none;
+}
+.pmagic .pm-group-container .pm-group.pm50 {
+  min-height: auto !important;
+}
+.pagination-controls button:not(.active) {
+  background-color: transparent;
+  color: #000;
+}
+.input-group-text input {
+  margin-right: 10px;
+}
+.tablesaw-stack td .tablesaw-cell-label {
+  font-weight: 400;
+  font-size: 17px;
+}
+.table>thead>tr>th:nth-child(n + 2) {
+  min-width: 150px;
+}
+@media (min-width: 1600px) {
+  .container {
+    width: 1470px;
+  }
+}
+@media (max-width: 768px) {
+  .navbar {
+    position: static;
+  }
+  header#masthead {
+    position: relative;
+  }
+  .navbar-default .navbar-toggle {
+    position: absolute;
+    top: 25px;
+    right: 0;
+  }
+  .navbar {
+    min-height: initial;
+  }
+}

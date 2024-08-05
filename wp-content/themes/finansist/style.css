@@ -1,0 +1,14 @@
+/**
+ * Theme Name: Тема "Финансист"
+ * Template: flat-bootstrap
+ *
+ * Не обязательные параметры:
+ * Theme URI: http://example.com/
+ * Description: Дочерняя тема для темы flat-bootstrap
+ * Author: Artem Frolov
+ * Author URI: https://artem-frolov.ru/
+ * Version: 1.0
+ */
+
+/* импортируем стили родительской темы */
+@import url("../flat-bootstrap/style.css");
