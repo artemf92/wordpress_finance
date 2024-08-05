@@ -29,8 +29,17 @@ function show_archive_projects( $atts ){
       [
         'relation' => 'AND',
         [
-          'key' => 'status',
-          'value' => '5'
+          'relation' => 'OR',
+            [
+                'key' => 'status',
+                'value' => 's:1:"5";', 
+                'compare' => 'LIKE',
+            ],
+            [
+                'key' => 'status',
+                'value' => '5', 
+                'compare' => '=', 
+            ]
         ],
         [
           'key' => 'investory_investors_$_investor',

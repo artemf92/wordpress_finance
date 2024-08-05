@@ -49,7 +49,8 @@ function checkout_partial_calc_callback() {
   $userID = $_REQUEST['user_id'];
 
   foreach($_REQUEST['checkout'] as $field => $value) {
-    $field($userID, $value);
+    if ($value)
+      $field($userID, $value);
   }
 
   checkout_result_callback($userID);
@@ -150,4 +151,3 @@ function checkout_result_callback($user) {
   }
 
 }
-

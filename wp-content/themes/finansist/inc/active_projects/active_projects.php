@@ -28,8 +28,17 @@ function show_active_projects( $atts ){
       [
         'relation' => 'AND',
         [
-          'key' => 'status',
-          'value' => '1'
+          'relation' => 'OR',
+            [
+                'key' => 'status',
+                'value' => 's:1:"1";',
+                'compare' => 'LIKE',
+            ],
+            [
+                'key' => 'status',
+                'value' => '1',
+                'compare' => '=', 
+            ]
         ],
         [
           'key' => 'investory_investors_$_investor',

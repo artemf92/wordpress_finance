@@ -64,8 +64,8 @@ jQuery(document).ready(function($) {
     })
   })
 
-  // Полная выплата
-  $(document).on('click', '#checkout_full', function(e) {
+  // Выплата участникам
+  $(document).on('click', '#checkout-actions button', function(e) {
     e.preventDefault()
     const _this = $(e.target)
     Fancybox.show([{
@@ -86,29 +86,9 @@ jQuery(document).ready(function($) {
                 let [key, value] = pair.split('=');
                 data[decodeURIComponent(key.replace('result%5B', '').replace('%5D', ''))] = decodeURIComponent(value);
             });
+            console.log(data)
 
             populateUserFields(data)
-          }, 0);
-        }
-      }
-    })
-  })
-
-  // Частичная выплата
-  $(document).on('click', '#checkout_partial', function(e) {
-    e.preventDefault()
-    const _this = $(e.target)
-    Fancybox.show([{
-      // defaultType: this.dataset.once
-      src: finajax.url+'?action=' + _this.attr('id') + '&user_id=' + _this.data('user'),
-      type: 'ajax'
-    }],
-    {
-      on: {
-        'loaded': function(fancybox) {
-          setTimeout(() => {
-            // const status = $(fancybox.container).find('input').val()
-            // $('#project_status').html(status)
           }, 0);
         }
       }
@@ -142,8 +122,17 @@ function checkoutPartiallyHandler(data) {
     on: {
       'loaded': function(fancybox) {
         setTimeout(() => {
-          // const status = $(fancybox.container).find('input').val()
-          // $('#project_status').html(status)
+          const str = jQuery(fancybox.container).find('input').serialize()
+          let keyValuePairs = str.split('&');
+
+          let data = {};
+
+          keyValuePairs.forEach(pair => {
+              let [key, value] = pair.split('=');
+              data[decodeURIComponent(key.replace('result%5B', '').replace('%5D', ''))] = decodeURIComponent(value);
+          });
+
+          populateUserFields(data)
         }, 0);
       }
     }
@@ -151,7 +140,19 @@ function checkoutPartiallyHandler(data) {
 }
 
 function populateUserFields(data) {
+  let changed = false
   for(let key in data) {
-    jQuery('.item[data-field="'+key+'"] .field__item').html(Number(data[key]).toLocaleString() + ' ₽')
+    const value = Number(data[key]) ? (Number(data[key]).toLocaleString('ru-RU', {style:'currency', currency: 'RUB'})).replace(',', '.'): '0.00'
+    const el = jQuery('.item[data-field="'+key+'"] .field__item')
+
+    if (el.length && el.html() != value) {
+      jQuery('.item[data-field="'+key+'"] .field__item').html(value)
+      changed = true
+    }
   }
+
+  setTimeout(() => {
+    if (typeof Fancybox != 'undefined' && changed)
+      Fancybox.close()
+  }, 1000);
 }

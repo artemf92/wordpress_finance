@@ -49,7 +49,7 @@ function show_all_users( $atts ){
           </select>
         </div>
         <div class="col-md-4 col-lg-3">
-          <input type="text" name="display_name" class="form-control" value="<?=isset($_POST['display_name']) && $_POST['display_name'] ?: ''?>" placeholder="<?=__('Имя')?>">
+          <input type="text" name="display_name" class="form-control" value="<?=isset($_POST['display_name']) && $_POST['display_name'] ? $_POST['display_name']: ''?>" placeholder="<?=__('Имя')?>">
         </div>
         <div class="col">
           <button>Фильтр</button>
