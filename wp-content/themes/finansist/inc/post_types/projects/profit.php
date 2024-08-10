@@ -181,27 +181,13 @@ function project_profit_callback() {
     if ($type == 4) {
       foreach($users as $key => $event_sum) {
         $userId = get_post_meta($project_id, 'investory_investors_'.$key.'_investor', true);
-        $invest = intval($investments[$key]['contributed']);
-        $invest_over = intval($investments[$key]['contributed_over']);
-        $sum0 = $invest + $invest_over;
-        $sum1 = $sum2 = 0;
-        $p1 = ($invest * 100) / $sum0;
-        $p2 = ($invest_over * 100) / $sum0;
-  
-        if ($invest > 0) {
-          $sum1 = round(($p1 * $event_sum) / 100, 2);
-        }
-        if ($invest_over > 0) {
-          $sum2 = round(($p2 * $event_sum) / 100, 2);
-        }
-  
+        $invest = floatval($investments[$key]['contributed']);
+        $invest_over = floatval($investments[$key]['contributed_over']);
+
         $sums += $event_sum;
         $arr[$userId] = [
-          'profit' => $sum1,
-          'profit_over' => $sum2,
+          'profit' => $event_sum,
         ];
-
-
       }
     } else if ($type == 3) {
       foreach($users as $key => $event_sum) {
