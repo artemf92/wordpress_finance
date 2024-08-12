@@ -55,7 +55,7 @@ function validate_save_post_projects() {
   }
 
   if ($project_amount != $total_invested) {
-    acf_add_validation_error('acf[field_65e390383e640][field_65e390623e641]', 'Сумма вложений инвесторов не равна сумме проекта. Пожалуйста, исправьте данные.');
+    acf_add_validation_error('acf[field_65e390383e640][field_65e390623e641]', sprintf("Проверьте сумму, должна быть: %s, получена сумма: %s", get_formatted_number($project_amount), get_formatted_number($total_invested)));
   }
 
   if (empty($stages)) {
