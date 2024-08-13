@@ -29,7 +29,7 @@ function validate_save_post_projects() {
   }
 
   // Новые данные
-  $project_amount = $_POST['acf']['field_65e390383e640']['field_65e390623e641'];
+  $project_amount = round(floatval($_POST['acf']['field_65e390383e640']['field_65e390623e641']), 2);
   $new_investors = $_POST['acf']['field_65e391123e644']['field_65e391333e645'];
   $stages = $_POST['acf']['field_65e391fa3e649'];
 
@@ -37,24 +37,26 @@ function validate_save_post_projects() {
 
   foreach ($new_investors as $key => $row) {
     $investor_id = $row['field_65e391643e646'];
-    $new_invested = $row['field_65e391993e647'];
-    $new_invested_over = $row['field_65e391c33e648'];
+    $new_invested = round(floatval($row['field_65e391993e647']), 2);
+    $new_invested_over = round(floatval($row['field_65e391c33e648']), 2);
 
     // Рассчитываем разницу между новыми и старыми данными
-    $old_invested = isset($old_investor_data[$investor_id]) ? $old_investor_data[$investor_id]['invest'] : 0;
-    // $old_invested_over = isset($old_investor_data[$investor_id]) ? $old_investor_data[$investor_id]['invest_over'] : 0;
+    $old_invested = isset($old_investor_data[$investor_id]) ? round(floatval($old_investor_data[$investor_id]['invest']), 2) : 0;
+    // $old_invested_over = isset($old_investor_data[$investor_id]) ? round(floatval($old_investor_data[$investor_id]['invest_over']), 2) : 0;
 
     // $invested_difference = ($new_invested + $new_invested_over) - ($old_invested + $old_invested_over);
     $invested_difference = $new_invested - $old_invested;
 
-    $total_invested += $new_invested + $new_invested_over;
+    $total_invested += round($new_invested + $new_invested_over, 2);
 
-    if (get_field('money', 'user_' . $investor_id) < $invested_difference) {
+    if (round(get_field('money', 'user_' . $investor_id), 2) < $invested_difference) {
       acf_add_validation_error('acf[field_65e391123e644][field_65e391333e645]['.$key.']', 'У инвестора недостаточно денег для вложения.');
     }
   }
 
-  if ($project_amount != $total_invested) {
+  $total_invested = round($total_invested, 2);
+
+  if ($total_invested != $project_amount) {
     acf_add_validation_error('acf[field_65e390383e640][field_65e390623e641]', sprintf("Проверьте сумму, должна быть: %s, получена сумма: %s", get_formatted_number($project_amount), get_formatted_number($total_invested)));
   }
 
