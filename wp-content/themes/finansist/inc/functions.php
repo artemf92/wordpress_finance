@@ -71,12 +71,15 @@ function create_transaction($projectID = false, $user, $eventID = false, $amount
 function withdraw_money($userID, $amount, $over = false) {
   $money = get_field('money', 'user_' . $userID);
 
-  $result = update_field('money', $money - $amount, 'user_' . $userID);
+  if (!$over)
+    $result = update_field('money', $money - $amount, 'user_' . $userID);
 
   if (is_wp_error($result)) {
     echo $result->get_error_message();
     wp_die();
   }
+
+  unset($result);
 
   $invested = get_field($over ? 'overdep':'contributed', 'user_' . $userID);
   $result = update_field($over ? 'overdep':'contributed', $invested + $amount, 'user_' . $userID);

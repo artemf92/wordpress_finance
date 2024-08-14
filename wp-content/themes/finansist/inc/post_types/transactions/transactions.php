@@ -65,7 +65,7 @@ function deleteTransactionHandler($postID) {
   // 8  : Изменение вложений (сверх) администратором
   // 9  : Доход от инвестиций - доход (profit) изменяем на нужную сумму
   // 10 : Выдача денег (в портфель) - возврат инвестиий (refund) и портфель изменяем на заданную сумму
-  // 11 : Выдача денег (сверх) - возврат инвестиий (сверх) (refund_over) и портфель изменяем на заданную сумму
+  // 11 : Выдача денег (сверх) - возврат инвестиий (сверх) (refund_over)
   // 12 : Изменение портфеля - портфель изменяем на заданную сумму
   // 13 : Убыток по проекту - ???
   // 14 : Доход по проекту (сверх) - доход (profit) изменяем на заданную сумму
@@ -76,7 +76,7 @@ function deleteTransactionHandler($postID) {
       update_field('contributed', $contributed - $sum, 'user_'.$investorID);
       break;
     case '2':
-      update_field('money', $money + $sum, 'user_'.$investorID);
+      // update_field('money', $money + $sum, 'user_'.$investorID);
       update_field('overdep', $overdep - $sum, 'user_'.$investorID);
       break;
     case '3':
@@ -117,7 +117,7 @@ function deleteTransactionHandler($postID) {
 
       break;
     case '7':
-      update_field('money', $money + $sum, 'user_'.$investorID);
+      update_field('money', $money + $sum, 'user_'.$investorID); 
       update_field('contributed', $contributed - $sum, 'user_'.$investorID);
 
       $projectSum = get_field('settings_project_sum', $projectID);
@@ -132,7 +132,7 @@ function deleteTransactionHandler($postID) {
 
       break;
     case '8':
-      update_field('money', $money + $sum, 'user_'.$investorID);
+      // update_field('money', $money + $sum, 'user_'.$investorID);
       update_field('overdep', $overdep - $sum, 'user_'.$investorID);
 
       $projectSum = get_field('settings_project_sum', $projectID);
@@ -151,7 +151,7 @@ function deleteTransactionHandler($postID) {
       update_field('refund', $refund + $sum, 'user_'.$investorID);
       break;
     case '11':
-      update_field('money', $money - $sum, 'user_'.$investorID);
+      // update_field('money', $money - $sum, 'user_'.$investorID);
       update_field('refund_over', $refund_over + $sum, 'user_'.$investorID);
       break;
     case '12':
