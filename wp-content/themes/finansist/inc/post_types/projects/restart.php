@@ -1,6 +1,6 @@
 <? 
 add_action( 'wp_ajax_project_restart', 'project_restart_callback' );
-add_action( 'wp_ajax_nopriv_project_restart', 'project_restart_callback' );
+// add_action( 'wp_ajax_nopriv_project_restart', 'project_restart_callback' );
 function project_restart_callback() {
 	$project_id = $_REQUEST['project_id'];
   $settings = get_field('settings_project', $project_id);
@@ -21,11 +21,12 @@ function project_restart_callback() {
       ],
      ]
   ]);
-  $event_id = $events[0];
+  $event = $events[0];
+  $event_id = $event->ID;
   $sum = get_field('settings_sum', $event_id);
 
   if (!$event_id) {
-    echo '<h3>Завершение проекта</h3>';
+    echo '<h3>Возобновление проекта</h3>';
     echo 'Что-то пошло не так..';
     wp_die();
   }
@@ -66,27 +67,28 @@ function project_restart_callback() {
     ]);
     foreach($transactions as $tr) {
       wp_update_post(wp_slash([
-        'ID' => $tr['ID'],
+        'ID' => $tr->ID,
         'post_status' => 'draft',
-        'post_name' => get_the_title($event_id) . '[возобновлена]'
+        'post_name' => get_the_title($tr->ID) . '[возобновлена]'
       ]));
     }
 
     if ($invest > 0) {
       // create_transaction($project_id, $userID, $event_id, $invest, 3); // Возврат инвестиций по проекту
-      update_field('contributed', $contributed + $invest , 'user_' . $userID);
-      update_field('refund', $refund - $invest , 'user_' . $userID);
+      update_field('contributed', $contributed - $invest , 'user_' . $userID);
+      update_field('refund', $refund + $invest , 'user_' . $userID);
     }
 
     if ($invest_over > 0) {
       // create_transaction($project_id, $userID, $event_id, $invest_over, 6); // Возврат инвестиций по проекту (сверх)
-      update_field('overdep', $overdep + $invest_over , 'user_' . $userID);
-      update_field('refund_over', $refund_over - $invest_over , 'user_' . $userID);
+      update_field('overdep', $overdep - $invest_over , 'user_' . $userID);
+      update_field('refund_over', $refund_over + $invest_over , 'user_' . $userID);
     }
   }
   
   // перевести статус в активный
   update_field('status', 1, $project_id);
+  
   $status = get_field('status', $project_id);
   
   echo '<h3>Возобновление проекта</h3>';

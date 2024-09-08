@@ -87,6 +87,19 @@ function before_delete_event_action( $trash, $post, $previous_status ){
       wp_trash_post($transactionID);
     }
   }
+
+  $transactionType = get_post_meta($postid, 'settings_transaction_type', true);
+
+  switch ($transactionType) {
+    case 1: // Вложение в проект
+      $project = get_post_meta($postid, 'settings_project', true);
+      update_post_meta($project, 'status', 0); // Делаем "На рассмотрении"
+      break;
+    case 5: // Закрытие проекта
+      $project = get_post_meta($postid, 'settings_project', true);
+      update_post_meta($project, 'status', 1);  // Делаем "Активным"
+      break;
+  }
   
 }
 add_action( 'pre_untrash_post', 'before_untrash_event_action', 10, 3 );

@@ -1,28 +1,6 @@
 jQuery(document).ready(function($) {
-  // Запуск проекта
-  $(document).on('click', '#project_start', function(e) {
-    e.preventDefault()
-    const _this = $(e.target)
-    Fancybox.show([{
-      // defaultType: this.dataset.once
-      src: finajax.url+'?action=' + _this.attr('id') + '&project_id=' + _this.data('project'),
-      type: _this.data('once')
-    }],
-    {
-      on: {
-        'loaded': function(fancybox) {
-          setTimeout(() => {
-            const status = $(fancybox.container).find('input').val()
-            $('#project_status').html(status)
-          }, 0);
-          _this.remove()
-        }
-      }
-    })
-  })
-
-  // Завершение проекта
-  $(document).on('click', '#project_stop', function(e) {
+  // Запуск, закрытие, возобновление проекта
+  $(document).on('click', '#project_start, #project_stop, #project_restart', function(e) {
     e.preventDefault()
     const _this = $(e.target)
     Fancybox.show([{

@@ -1,6 +1,6 @@
 <? 
 add_action( 'wp_ajax_project_stop', 'project_stop_callback' );
-add_action( 'wp_ajax_nopriv_project_stop', 'project_stop_callback' );
+// add_action( 'wp_ajax_nopriv_project_stop', 'project_stop_callback' );
 function project_stop_callback() {
 	$project_id = $_REQUEST['project_id'];
   $settings = get_field('settings_project', $project_id);
