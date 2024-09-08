@@ -31,12 +31,16 @@ function project_stop_callback() {
       create_transaction($project_id, $userID, $event_id, $invest, 3); // Возврат инвестиций по проекту
       update_field('contributed', $contributed - $invest , 'user_' . $userID);
       update_field('refund', $refund + $invest , 'user_' . $userID);
+
+      update_post_meta($project_id, 'investory_investors_' . $key . '_invest', '0.00');
     }
 
     if ($invest_over > 0) {
       create_transaction($project_id, $userID, $event_id, $invest_over, 6); // Возврат инвестиций по проекту (сверх)
       update_field('overdep', $overdep - $invest_over , 'user_' . $userID);
       update_field('refund_over', $refund_over + $invest_over , 'user_' . $userID);
+
+      update_post_meta($project_id, 'investory_investors_' . $key . '_invest_over', '0.00');
     }
   }
 

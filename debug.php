@@ -427,4 +427,49 @@ function updateEmptiesInvestorsInTransactions() {
 }
 
 // updateEmptiesInvestorsInTransactions();
+// $args = array(
+//   'post_type' => 'projects',
+//   'post_status' =>  'publish',
+//   'posts_per_page' => -1,
+//   'meta_query' => 
+//     [
+//       'relation' => 'AND',
+//       [
+//         'relation' => 'OR',
+//           [
+//               'key' => 'status',
+//               'value' => 's:1:"5";',
+//               'compare' => 'LIKE',
+//           ],
+//           [
+//               'key' => 'status',
+//               'value' => '5',
+//               'compare' => '=', 
+//           ]
+//       ]
+//     ],
+// );
+
+
+// $query = new WP_Query( $args );
+
+// if ( $query->have_posts() ) {
+//   while ( $query->have_posts() ) {
+//       $query->the_post();
+
+//       update_post_meta($post->ID, 'settings_project_sum', '0.00');
+
+//       $investors = get_field('investory');
+      
+//       foreach($investors['investors'] as $key => $investor) {
+//         if ($investor['invest'] > 0) {
+//           update_post_meta($post->ID, 'investory_investors_'.$key.'_invest', '0.00');
+//         }
+//         if ($investor['invest_over'] > 0) {
+//           update_post_meta($post->ID, 'investory_investors_'.$key.'_invest_over', '0.00');
+//         }
+//       }
+//   }
+// }
+
 ?>

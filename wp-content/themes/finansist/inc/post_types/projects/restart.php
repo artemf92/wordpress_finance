@@ -22,20 +22,17 @@ function project_restart_callback() {
      ]
   ]);
   $event = $events[0];
-  $event_id = $event->ID;
-  $sum = get_field('settings_sum', $event_id);
-
-  if (!$event_id) {
-    echo '<h3>Возобновление проекта</h3>';
-    echo 'Что-то пошло не так..';
+  if (!$event) {
+    echo '<h3>Возобновление проекта</h3>
+    <p>Что-то пошло не так..</p>';
     wp_die();
   }
 
-  wp_update_post(wp_slash([
-    'ID' => $event_id,
-    'post_status' => 'draft',
-    'post_name' => get_the_title($event_id) . '[возобновлен]'
-  ]));
+  $event_id = $event->ID;
+  $sum = get_field('settings_sum', $event_id);
+
+
+  wp_trash_post($event_id);
 
   // Установливаем сумму проекта
   update_field('settings_project', ['sum' => $sum], $project_id); // 
@@ -66,11 +63,7 @@ function project_restart_callback() {
       ]
     ]);
     foreach($transactions as $tr) {
-      wp_update_post(wp_slash([
-        'ID' => $tr->ID,
-        'post_status' => 'draft',
-        'post_name' => get_the_title($tr->ID) . '[возобновлена]'
-      ]));
+      wp_trash_post($tr->ID);
     }
 
     if ($invest > 0) {
