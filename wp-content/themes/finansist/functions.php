@@ -170,3 +170,206 @@ function show_deleted_modal() {
 		}
 	}
 }
+
+function getMonth($num) {
+	$month = array(
+		1  => 'Январь',
+		2  => 'Февраль',
+		3  => 'Март',
+		4  => 'Апрель',
+		5  => 'Май', 
+		6  => 'Июнь',
+		7  => 'Июль',
+		8  => 'Август',
+		9  => 'Сентябрь',
+		10 => 'Октябрь',
+		11 => 'Ноябрь',
+		12 => 'Декабрь'
+	);
+
+	return $month[$num];
+}
+
+function getProfitvalue($year) {
+	global $wpdb;
+
+	$capitalOnHand = $portfolio = $capitalInvested = $monthly_totals_percent = $medianPerYear = $rows = [];
+	$profit_per_year = 0;
+
+	$userID = get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+
+	$transactionsRefund = transactionsForCurrentUser($year, 3); // Получаем все транзакции по возврату
+
+	foreach ($transactionsRefund as $month => $transaction_data) {
+		$monthly_refund_transactions[$month] = array_sum(array_column($transaction_data, 'value'));
+	}
+
+	$profitData = getProfitUserInfo($userID);
+
+	foreach ($profitData as $pd) {
+		$field_date = $pd['date'];
+		$field_money = $pd['user_money'];
+		$field_contributed = $pd['user_contributed'];
+		$field_overdep = $pd['user_overdep'];
+
+		$dateObject = \DateTime::createFromFormat('Y-m-d', $field_date);
+
+		$month = $dateObject->format('n');
+
+		if (!isset($portfolio[$month])) {
+			$portfolio[$month] = $field_money + $field_contributed + $field_overdep + $monthly_refund_transactions[$month];
+			$capitalInvested[$month] = $field_contributed + $field_overdep;
+			$capitalOnHand[$month] = $field_money + $monthly_refund_transactions[$month];
+		}
+
+	}
+
+	$profitTransactions = transactionsForCurrentUser($year, $month, 4, true); // Получаем все транзакции по доходу
+
+	// Перебор транзакций и суммирование значений по месяцам.
+	foreach ($profitTransactions as $month => $transaction_data) {
+		$monthly_totals_profit[$month] = array_sum(array_column($transaction_data, 'value'));
+		$profit_per_year += $monthly_totals_profit[$month];
+	}
+
+	for ($i = 1; $i <= 12; $i++) {
+		if (isset($monthly_totals_profit[$i]) && isset($capitalInvested[$i]) && isset($capitalOnHand[$i])) {
+			$monthly_totals_percent[$i] = $monthly_totals_profit[$i] / ($capitalInvested[$i] + $capitalOnHand[$i]) * 100;
+		}
+	}
+
+	// Построение таблицы с месяцами и суммами значений.
+	$lastMonth = $year == date('Y') ? date('n') - 1 : 12;
+
+	for($m = 1; $m <= $lastMonth; $m++) {
+		if (isset($monthly_totals_percent[$m])) {
+			$medianPerYear[] = round($monthly_totals_percent[$m], 2);
+			$russian_month = getMonth($m);
+			$rows['rows'][] = [
+				'year' => $year,
+				'month' => $russian_month,
+				'portfolio' => number_format($portfolio[$m], 2, '.', ' ') . ' руб.',
+				'capital_in' => number_format($capitalInvested[$m], 2, '.', ' ') . ' руб.',
+				'capital_has' => number_format($capitalOnHand[$m], 2, '.', ' ') . ' руб.',
+				'total' => number_format($monthly_totals_profit[$m], 2, '.', ' ') . ' руб.',
+				'percent' => isset($monthly_totals_percent[$m]) && $monthly_totals_percent[$m] != 50 ? round($monthly_totals_percent[$m], 2) : ''
+			];
+		}
+	}
+	$rows ['medianPerYear'] = round(array_sum($medianPerYear) / count($medianPerYear), 2) . ' %';
+
+	return $rows;
+}
+
+function transactionsForCurrentUser($year, $type, $prevPeriod = false) {
+
+	$monthly_transactions = $periods = [];
+	$periods = [];
+	
+
+	for ($month = 1; $month <= ($prevPeriod ? 13 : 12); $month++) {
+		$y = $year;
+		$m = $month;
+		if ($prevPeriod) {
+			if ($month == 1) {
+				$y = $year - 1;
+				$m = 12;
+			}
+			else {
+				$m = $month - 1;
+			}
+		}
+
+		$start_date = $y . '-' . $m . '-01';
+		$strStart_date = strtotime($y . '-' . $m . '-01');
+		$end_date = date('Y-m-t', $strStart_date) . ' 23:59:59';
+
+		$transactions = getTransactionsByType($type, $start_date, $end_date);
+
+		$transaction_data = [];
+		foreach ($transactions as $transaction) {
+			$field_value = $transaction['value'];
+
+			$transaction_data[] = [
+				'id' => $transaction['id'],
+				'value' => $field_value, 
+				// 'date' => $transaction['date'],
+			];
+		}
+		if ($prevPeriod) {
+			if ($month == 1) {
+				$period = 0;
+			} else {
+				$period = $month - 1;
+			}
+		} else {
+			$period = $month;
+		}
+		$monthly_transactions[$period] = $transaction_data;
+	}
+
+
+	return $monthly_transactions;
+}
+
+function getTransactionsByType($type, $start, $end) {
+	global $wpdb;
+
+	$user = get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+
+	$query = "
+			SELECT p.ID, pm_sum.meta_value AS value, p.post_date AS date
+			FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->postmeta} pm_user ON p.ID = pm_user.post_id
+			INNER JOIN {$wpdb->postmeta} pm_type ON p.ID = pm_type.post_id
+			INNER JOIN {$wpdb->postmeta} pm_sum ON p.ID = pm_sum.post_id
+			WHERE p.post_type = 'transactions'
+			AND p.post_status = 'publish'
+			AND pm_user.meta_key = 'settings_investor'
+			AND pm_user.meta_value = %d
+			AND pm_type.meta_key = 'settings_transaction_type'
+			AND pm_type.meta_value = %s
+			AND pm_sum.meta_key = 'settings_sum'
+			AND p.post_date >= %s
+			AND p.post_date <= %s
+			ORDER BY p.post_date ASC
+	";
+
+	$results = $wpdb->get_results($wpdb->prepare($query, $user, $type, $start, $end));
+
+	$data = [];
+	foreach ($results as $row) {
+			$data[] = [
+					'id' => $row->ID,
+					'value' => $row->value,
+					// 'date' => date('Y-m-t', strtotime($row->date)),
+			];
+	}
+
+	return $data;
+}
+
+function getProfitUserInfo($userID) {
+	global $wpdb;
+
+	$data = [];
+	$result = $wpdb->get_results ( 
+		"
+			SELECT * 
+			FROM  af_profit_data
+			WHERE user_id = $userID
+			ORDER BY ID ASC
+		" );
+
+	foreach ( $result as $res )
+	{
+		$data[] = [
+			'date' => $res->date,
+			'user_money' => $res->user_money,
+			'user_contributed' => $res->user_contributed,
+			'user_overdep' => $res->user_overdep,
+		];
+	}
+
+	return $data;
+}

@@ -268,29 +268,40 @@ function import_dohodnost_for_users() {
 
     // delete_field('profit_data', 'user_' . $userID);
 
-    $monthly_data = get_field('profit_data', 'user_' . $userID) ?? [];
+    // $monthly_data = get_field('profit_data', 'user_' . $userID) ?? [];
 
-    $dates = [];
-    $target_date = date('Y-n', strtotime($value->field_date[0]->value));
-    if (!empty($monthly_data)) {
-      foreach($monthly_data as $month) {
-        $dates[] = date('Y-n', strtotime($month['data_month']));
-      }
-      $has = in_array($target_date, $dates);
-    } else {
-      $has = false;
-    }
+    // $dates = [];
+    // $target_date = date('Y-n', strtotime($value->field_date[0]->value));
+    // if (!empty($monthly_data)) {
+    //   foreach($monthly_data as $month) {
+    //     $dates[] = date('Y-n', strtotime($month['data_month']));
+    //   }
+    //   $has = in_array($target_date, $dates);
+    // } else {
+    //   $has = false;
+    // }
 
-    if ($has) continue;
+    // if ($has) continue;
 
-    $monthly_data[] = [
-      'data_month' => date('Y-m-d', strtotime($value->field_date[0]->value)),
-      'data_invested' => $value->field_user_overdep[0]->value,
-      'data_user_contributed' => $value->field_user_contributed[0]->value,
-      'data_user_money' => $value->field_user_money[0]->value,
-    ];
+    $date = date('Y-m-d', strtotime($value->field_date[0]->value));
+    $user_money = $value->field_user_money[0]->value;
+    $user_contributed = $value->field_user_contributed[0]->value;
+    $user_overdep = $value->field_user_overdep[0]->value;
 
-    update_field('profit_data', $monthly_data, 'user_' . $userID);
+    global $wpdb;
+
+    $wpdb->insert(
+      'af_profit_data',
+      [
+        'date' => $date,
+        'user_money' => $user_money,
+        'user_contributed' => $user_contributed,
+        'user_overdep' => $user_overdep,
+        'user_id' => $userID,
+      ]
+    );
+
+    // update_field('profit_data', $monthly_data, 'user_' . $userID);
   }
 }
 
