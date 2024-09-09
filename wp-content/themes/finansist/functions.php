@@ -248,10 +248,10 @@ function getProfitvalue($year) {
 			$rows['rows'][] = [
 				'year' => $year,
 				'month' => $russian_month,
-				'portfolio' => number_format($portfolio[$m], 2, '.', ' ') . ' руб.',
-				'capital_in' => number_format($capitalInvested[$m], 2, '.', ' ') . ' руб.',
-				'capital_has' => number_format($capitalOnHand[$m], 2, '.', ' ') . ' руб.',
-				'total' => number_format($monthly_totals_profit[$m], 2, '.', ' ') . ' руб.',
+				'portfolio' => get_formatted_number($portfolio[$m]),
+				'capital_in' => get_formatted_number($capitalInvested[$m]),
+				'capital_has' => get_formatted_number($capitalOnHand[$m]),
+				'total' => get_formatted_number($monthly_totals_profit[$m]),
 				'percent' => isset($monthly_totals_percent[$m]) && $monthly_totals_percent[$m] != 50 ? round($monthly_totals_percent[$m], 2) : ''
 			];
 		}
