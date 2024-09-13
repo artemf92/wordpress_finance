@@ -37,7 +37,11 @@ global $USER_ID;
   <?php get_template_part( 'content', 'page-nav' ); ?>
 
   <div class="edit-link">
-    <a class="post-edit-link" href="/wp-admin/user-edit.php?user_id=<?=$USER_ID?>"><span class="glyphicon glyphicon-edit"></span> <?=_('Правка')?></a>
+    <? if (user_can(get_current_user_id(), 'accountant') || user_can(get_current_user_id(), 'administrator') || user_can(get_current_user_id(), 'manager')  ) { ?>
+      <a class="post-edit-link d-block m-b-2" href="/wp-admin/user-edit.php?user_id=<?=$USER_ID?>"><span class="glyphicon glyphicon-edit"></span> <?=_('Изменить портфель')?></a>
+      <? } else { ?>
+      <a class="post-edit-link d-block m-b-2" id="user_edit_profile" data-user="<?=$USER_ID?>" data-once="ajax" href="javascript:void(0)"><span class="glyphicon glyphicon-edit"></span> <?=_('Изменить портфель')?></a>
+    <? } ?>
   </div>
 
   <?//php edit_post_link( __( '<span class="glyphicon glyphicon-edit"></span> Edit', 'flat-bootstrap' ), '<footer class="entry-meta"><div class="edit-link">', '</div></footer>' ); ?>

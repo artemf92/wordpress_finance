@@ -5,9 +5,9 @@ $userData = get_userdata($user);
 $num = $args['num']+1;
 
 global $all_profit, $all_refund, $all_refund_over;
-$profit = intval(get_field('profit', 'user_' . $user));
-$refund = intval(get_field('refund', 'user_' . $user));
-$refund_over = intval(get_field('refund_over', 'user_' . $user));
+$profit = floatval(get_field('profit', 'user_' . $user));
+$refund = floatval(get_field('refund', 'user_' . $user));
+$refund_over = floatval(get_field('refund_over', 'user_' . $user));
 
 $all_profit += $profit;
 $all_refund += $refund;

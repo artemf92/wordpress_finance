@@ -133,7 +133,8 @@ jQuery(document).ready(function($) {
   
     const _this = $(this)
     const url = _this.attr('href')
-    const backurl = _this.data('backurl')
+    const backurl = new URL(_this.data('backurl'))
+    const search = new URLSearchParams(backurl.search)
     const type = _this.data('post-type')
   
     $.ajax({
@@ -144,7 +145,9 @@ jQuery(document).ready(function($) {
         _this.text('Удаление..')
       },
       complete: function() {
-        location.href = backurl + '&delete=success&deleted_type=' + type
+        search.set('delete', 'success')
+        search.set('deleted_type', type)
+        location.href = backurl.pathname + '?' + search.toString()
       },
     })
   })

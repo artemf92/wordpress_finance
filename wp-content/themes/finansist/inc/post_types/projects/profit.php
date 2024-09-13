@@ -38,7 +38,7 @@ function project_profit_prepare() {
     $html .= '<fieldset class="m-b-2">';
     $html .= '  <legend>'.__('Инвестор'). ' - '. $user->user_firstname . ' ' . $user->user_lastname.'</legend>';
     $html .= '    <div class="">';
-    $html .= '      <input type="number" step="any" name="profit[user]['.$key.']" class="form-control" id="profit_user_'.$key.'" value="0">';
+    $html .= '      <input type="number" onwheel="return false;" step="any" name="profit[user]['.$key.']" class="form-control" id="profit_user_'.$key.'" value="0">';
     $html .= '    </div>';
     $html .= '</fieldset>';
   }
@@ -57,13 +57,13 @@ function project_profit_prepare() {
     if ($invest > 0) {
       $html .= '    <div class="'.$class.'">';
       $html .= '      <label for="profit_user_'.$key.'_over" class="form-label">Портфель</label>';
-      $html .= '      <input type="number" step="any" name="refund[user]['.$key.'][portfel]" class="form-control" id="user_'.$key.'_portfel" value="0">';
+      $html .= '      <input type="number" onwheel="return false;" step="any" name="refund[user]['.$key.'][portfel]" class="form-control" id="user_'.$key.'_portfel" value="0">';
       $html .= '    </div>';
     }
     if  ($invest_over > 0) {
       $html .= '    <div class="'.$class.'">';
       $html .= '      <label for="profit_user_'.$key.'_over" class="form-label">Сверх</label>';
-      $html .= '      <input type="number" step="any" name="refund[user]['.$key.'][over]" class="form-control" id="user_'.$key.'_over" value="0">';
+      $html .= '      <input type="number" onwheel="return false;" step="any" name="refund[user]['.$key.'][over]" class="form-control" id="user_'.$key.'_over" value="0">';
       $html .= '    </div>';
     }
     $html .= '  </div>';
@@ -72,7 +72,7 @@ function project_profit_prepare() {
   $html .= '  </div>';
   $html .= '  <div class="form__amount m-b-2" style="display:none;">';
   $html .= '    <label for="summa" class="form-label">'.__('Сумма').'</label>';
-  $html .= '    <input type="number" step="any" class="form-control" name="summa" id="summa" value="0">';
+  $html .= '    <input type="number" onwheel="return false;" step="any" class="form-control" name="summa" id="summa" value="0">';
   $html .= '  </div>';
   $html .= '  <div class="project_profit_prepare__actions">';
   $html .= '    <button class="btn btn-primary m-r-2" type="submit">'.__('Доход').'</button>';

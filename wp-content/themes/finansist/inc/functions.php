@@ -6,8 +6,8 @@ function debug($obj) {
 }
 
 function get_formatted_number($num, $after = ' ₽') {
-  if (!is_numeric($num)) return;
-  return number_format($num, 2, '.', ' ') . ($num > 0 ? ' '.$after:'');
+  if (!is_numeric(abs($num))) return;
+  return number_format($num, 2, '.', ' ') . (abs($num) > 0 ? ' '.$after:'');
 }
 
 function get_post_full_time() {
@@ -62,7 +62,9 @@ function create_transaction($projectID = false, $user, $eventID = false, $amount
   if ($eventID) 
     $arUpdate['event'] = $eventID;
 
-  update_field('settings', $arUpdate, $post_id);
+  foreach($arUpdate as $key => $upd) {
+    update_post_meta($post_id, 'settings_'.$key, $upd);
+  }
 
   return $post_id;
 }

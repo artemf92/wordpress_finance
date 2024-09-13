@@ -18,19 +18,19 @@ function checkout_partial_callback() {
     if ($userData['profit'] > 0) {
       $html .= '  <div class="m-b-1">';
       $html .= '    <label for="checkout-profit-1" class="form-label">'.__('Доход').'</label>';
-      $html .= '    <input type="number" step="any" min="0" max="'.$userData['profit'].'" name="checkout[checkout_profit]" class="form-control" id="checkout-profit-'.$userID.'" value="'.$userData['profit'].'">';
+      $html .= '    <input type="number" onwheel="return false;" step="any" min="0" max="'.$userData['profit'].'" name="checkout[checkout_profit]" class="form-control" id="checkout-profit-'.$userID.'" value="'.$userData['profit'].'">';
       $html .= '  </div>';
     }
     if ($userData['refund'] > 0) {
       $html .= '  <div class="m-b-1">';
       $html .= '    <label for="checkout-refund-1" class="form-label">'.__('Возврат инвестиций').'</label>';
-      $html .= '    <input type="number" step="any" min="0" max="'.$userData['refund'].'" name="checkout[checkout_contrib]" class="form-control" id="checkout-refund-'.$userID.'" value="'.$userData['refund'].'">';
+      $html .= '    <input type="number" onwheel="return false;" step="any" min="0" max="'.$userData['refund'].'" name="checkout[checkout_contrib]" class="form-control" id="checkout-refund-'.$userID.'" value="'.$userData['refund'].'">';
       $html .= '  </div>';
     }
     if ($userData['refund_over'] > 0) {
       $html .= '  <div class="m-b-3">';
       $html .= '    <label for="checkout-refund_over-1" class="form-label">'.__('Возврат инвестиций (сверх)').'</label>';
-      $html .= '    <input type="number" step="any" min="0" max="'.$userData['refund_over'].'" name="checkout[checkout_contrib_over]" class="form-control" id="checkout-refund_over-'.$userID.'" value="'.$userData['refund_over'].'">';
+      $html .= '    <input type="number" onwheel="return false;" step="any" min="0" max="'.$userData['refund_over'].'" name="checkout[checkout_contrib_over]" class="form-control" id="checkout-refund_over-'.$userID.'" value="'.$userData['refund_over'].'">';
       $html .= '  </div>';
     }
     $html .= '  <div class="checkout_prepare__actions">';

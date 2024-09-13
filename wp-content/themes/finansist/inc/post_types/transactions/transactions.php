@@ -155,7 +155,7 @@ function deleteTransactionHandler($postID) {
       update_field('refund_over', $refund_over + $sum, 'user_'.$investorID);
       break;
     case '12':
-      update_field('money', $money + $sum, 'user_'.$investorID);
+      update_field('money', $money - $sum, 'user_'.$investorID);
       break;
   }
 }
@@ -165,7 +165,7 @@ function restoreTransactionHandler($postID) {
   // $settingsProject = get_field('settings_project', $projectID);
   // error_log(var_export($settings, true));
   $investorID = get_post_meta($postID, 'settings_investor', true);
-  $sum = intval(get_post_meta($postID, 'settings_sum', true));
+  $sum = floatval(get_post_meta($postID, 'settings_sum', true));
   $absSum = abs($sum);
   $transactionType = get_post_meta($postID, 'settings_transaction_type', true);
 
@@ -248,7 +248,7 @@ function restoreTransactionHandler($postID) {
       update_field('refund_over', $refund_over - $sum, 'user_'.$investorID);
       break;
     case '12':
-      update_field('money', $money - $sum, 'user_'.$investorID);
+      update_field('money', $money + $sum, 'user_'.$investorID);
       break;
   }
 }

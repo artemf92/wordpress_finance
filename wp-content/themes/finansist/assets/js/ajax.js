@@ -20,6 +20,27 @@ jQuery(document).ready(function($) {
       }
     })
   })
+
+  $(document).on('click', '#user_edit_profile', function(e) {
+    e.preventDefault()
+    const _this = $(e.target)
+    const userID = _this.data('user')
+    Fancybox.show([{
+      // defaultType: this.dataset.once
+      src: finajax.url+'?action=' + _this.attr('id') + '&user_id=' + userID,
+      type: _this.data('once')
+    }],
+    {
+      on: {
+        'loaded': function(fancybox) {
+          setTimeout(() => {
+            // const status = $(fancybox.container).find('input').val()
+            // $('#project_status').html(status)
+          }, 0);
+        }
+      }
+    })
+  })
   
   // Доход проекта
   $(document).on('click', '#project_profit', function(e) {

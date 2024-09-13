@@ -368,7 +368,7 @@ function updateEmptiesInvestorsInProjects() {
             $investor = get_post_meta(get_the_ID(), 'investory_investors_'.$i.'_investor', true);
             if (!$investor) {
               // debug(get_the_ID());
-              $p = intval($iinvestors[$i]);
+              $p = floatval($iinvestors[$i]);
               $old_user_id = $paragraph_investors[$p];
               $users = get_users(array(
                 'meta_key' => 'old_uid',
