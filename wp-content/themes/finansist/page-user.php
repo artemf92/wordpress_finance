@@ -8,11 +8,13 @@ if (!is_user_logged_in()) {
 	wp_redirect('/auth/');
 }
 
-$USER_ID = get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+$USER_ID = getUserID();
 
 get_header(); ?>
 
-<?php get_template_part( 'template-parts/user', 'header' ); ?>
+<?php if (hasAccess()) { 
+	get_template_part( 'template-parts/user', 'header' ); 
+} ?>
 
 <?php get_sidebar( 'home' ); ?>
 
@@ -24,7 +26,7 @@ get_header(); ?>
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<? if (!current_user_can('administrator') && !current_user_can('accountant') && get_query_var('user_id') != '') {
+				<? if (!hasAccess() && get_query_var('user_id') != '') {
 					get_template_part( 'template-parts/user', 'block' );
 				} else {
 					get_template_part( 'template-parts/user', 'profile' );

@@ -50,7 +50,7 @@ $rowFields = [
     </div>
   </div>
   <? 
-  if (current_user_can('accountant') || current_user_can('manager') || current_user_can('administrator')) {
+  if (current_user_can('manager') || current_user_can('administrator')) {
     get_template_part('template-parts/user/actions');
   }
   ?>

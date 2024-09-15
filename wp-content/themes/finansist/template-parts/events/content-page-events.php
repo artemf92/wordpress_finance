@@ -18,7 +18,9 @@
 		</div>
 		<hr>
 		<? get_template_part('template-parts/events/content', 'info') ?>
-		<? get_template_part('template-parts/events/content', 'history') ?>
+		<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant')) {
+			get_template_part('template-parts/events/content', 'history');
+		} ?>
 
 		<?//php get_template_part( 'content', 'page-nav' ); ?>
 

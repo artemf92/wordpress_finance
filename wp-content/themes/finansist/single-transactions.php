@@ -15,7 +15,9 @@ if (!is_user_logged_in()) {
 
 get_header(); ?>
 
-<?php get_template_part( 'content', 'header' ); ?>
+<?php if (hasAccess()) { 
+	get_template_part( 'content', 'header' ); 
+} ?>
 
 <div class="container">
 <div id="main-grid" class="row">
@@ -25,7 +27,11 @@ get_header(); ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>
 
-			<?php get_template_part( 'template-parts/transactions/content', 'page-transactions' ); ?>
+			<? if (!hasAccess()) {
+				get_template_part( 'template-parts/page', 'block' );
+			} else {
+				get_template_part( 'template-parts/transactions/content', 'page-transactions' );
+			} ?>
 
 			<?php
 				// If comments are open or we have at least one comment, load up the comment template

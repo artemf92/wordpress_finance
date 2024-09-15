@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_URI'] === '/') {
 }
 
 function check_private($postID) {
-	$private_pages = [113, 115, 117, 120];
+	$private_pages = [113, 115, 117, 120]; //113 - активные проекты, 115 - архив проектов, 117 - все транзакции, 120 - доходность портфеля
 	if ($postID) {
 		if (!is_user_logged_in() && in_array($postID, $private_pages)) {
 			wp_redirect('/auth/');
@@ -67,13 +67,13 @@ function check_private($postID) {
 }
 
 function wph_noadmin() {
-	if ( is_admin() && !current_user_can('administrator') && !current_user_can('accountant') && !wp_doing_ajax() ) {
+	if ( is_admin() && !current_user_can('administrator') && !current_user_can('manager') && !wp_doing_ajax() ) {
 		wp_redirect(home_url());
 		exit;
 	} }
 add_action('init', 'wph_noadmin');
 
-if ( !current_user_can('administrator') && !current_user_can('accountant')) {
+if ( !current_user_can('administrator') && !current_user_can('manager')) {
 	add_filter( 'show_admin_bar', '__return_false' ); 
 }
 
@@ -145,8 +145,6 @@ function show_deleted_modal() {
 								{
 									src: `
 									<div class="align-center d-flex flex-column">
-										<i class="bg-white border-1 border-primary color-lightgreen fa-4x fa-check fa-solid m-x-3 m-y-3"></i>
-										<p><?=$message?></p>
 									</div>`,
 									type: "html",
 								},
@@ -196,7 +194,7 @@ function getProfitvalue($year) {
 	$capitalOnHand = $portfolio = $capitalInvested = $monthly_totals_percent = $medianPerYear = $rows = [];
 	$profit_per_year = 0;
 
-	$userID = get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+	$userID = getUserID();
 
 	$transactionsRefund = transactionsForCurrentUser($year, 3); // Получаем все транзакции по возврату
 
@@ -315,7 +313,7 @@ function transactionsForCurrentUser($year, $type, $prevPeriod = false) {
 function getTransactionsByType($type, $start, $end) {
 	global $wpdb;
 
-	$user = get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+	$user = getUserID();
 
 	$query = "
 			SELECT p.ID, pm_sum.meta_value AS value, p.post_date AS date
@@ -372,4 +370,112 @@ function getProfitUserInfo($userID) {
 	}
 
 	return $data;
+}
+
+function getUserID() {
+	return get_query_var('user_id') !== '' ? get_query_var('user_id') : get_current_user_id();
+}
+
+function hasAccess() {
+	if (current_user_can('administrator') || current_user_can('manager')) return true;
+	
+	global $wpdb;
+	$obj_id = get_queried_object_id();
+	$post_type = get_post_type($obj_id);
+	if (current_user_can('accountant')) {
+		$accountantID = wp_get_current_user()->ID;
+		$userID = getUserID();
+		$group_id = get_user_meta($accountantID, 'pm_group', true);
+
+		$usersInGroup = [];
+
+		foreach ($group_id as $key => $g_id) {
+			$tmpArr = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value LIKE %s",'pm_group',serialize([$g_id])));
+			$usersInGroup = array_merge($usersInGroup, $tmpArr);
+		}
+		$usersInGroup = array_unique($usersInGroup);
+		switch ($post_type) {
+			case 'page':
+				return in_array($userID, $usersInGroup);
+			case 'projects':
+				$projects = array_unique(getUsersProjects($usersInGroup));
+				return in_array($obj_id, $projects);
+			case 'events':
+			case 'transactions':
+				$projects = array_unique(getUsersProjects($usersInGroup));
+				$project_meta = get_post_meta($obj_id, 'settings_project', true);
+				return in_array($project_meta, $projects);
+			default:
+				return false;
+		} 
+	} else {
+		$userID = wp_get_current_user()->ID;
+
+		switch ($post_type) {
+			case 'projects':
+				$projects = getUsersProjects($userID);
+				return in_array($obj_id, $projects);
+			case 'events':
+			case 'transactions':
+				$projects = array_unique(getUsersProjects($userID));
+				$project_meta = get_post_meta($obj_id, 'settings_project', true);
+				if ($project_meta != '') {
+					return in_array($project_meta, $projects);
+				} else if ($project_meta == '' && $post_type == 'transactions') {
+					$transaction_meta = get_post_meta($obj_id, 'settings_investor', true);
+					return $transaction_meta == $userID;
+				} else {
+					return false;
+				}
+		}
+	}
+}
+
+function getUsersProjects($user_ids, $status = '') {
+	if (!is_array($user_ids)) {
+		$user_ids = [$user_ids];
+	}
+
+	$status_query = '';
+	if ($status != '') {
+		switch ($status) {
+			case 'active':
+				$s = 1;
+				break;
+			case 'inactive':
+				$s = 5;
+				break;
+			case 'not_started':
+				$s = 0;
+				break;
+		}
+		$status_query = " AND meta_key = 'status' AND meta_value = " . $s;
+	}
+
+	global $wpdb;
+	$meta_key_like = 'meta_key LIKE %s';
+	$user_ids_placeholder = implode(',', array_fill(0, count($user_ids), '%d'));
+
+	$query = $wpdb->prepare("
+			SELECT post_id 
+			FROM $wpdb->postmeta 
+			WHERE $meta_key_like
+			AND meta_value IN ($user_ids_placeholder)
+	", array_merge(['investory_investors_%_investor'], $user_ids));
+
+	return $wpdb->get_col($query);
+}
+
+function getUserInvestedInProjects($user_id, $project_id) {
+	$i = 0;
+	while($investor = get_post_meta($project_id, 'investory_investors_'.$i.'_investor', true)) {
+		if ($user_id == $investor) {
+			return [
+				'invest' => get_post_meta($project_id, 'investory_investors_'.$i.'_invest', true),
+				'invest_over' => get_post_meta($project_id, 'investory_investors_'.$i.'_invest_over', true),
+			];
+		}
+		$i++;
+	}
+	return false;
 }

@@ -15,7 +15,9 @@
 get_header(); 
 ?>
 
-<?php get_template_part( 'content', 'header' ); ?>
+<?php if (!current_user_can('contributor')) { 
+	get_template_part( 'content', 'header' ); 
+} ?>
 
 <?php get_sidebar( 'home' ); ?>
 
@@ -24,13 +26,15 @@ get_header();
 
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
-			<? 
-			$group_id = get_user_meta(get_current_user_id(), 'pm_group', true);
+			<? if (current_user_can('contributor')  ) {
+				get_template_part( 'template-parts/page', 'block' );
+			} else {
+				$group_id = get_user_meta(get_current_user_id(), 'pm_group', true);
 			
-			foreach($group_id as $gid) {
-				echo do_shortcode('[admin-group gid="'.$gid.'"]') ;
-			}
-			?>
+				foreach($group_id as $gid) {
+					echo do_shortcode('[admin-group gid="'.$gid.'"]') ;
+				}
+			} ?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->

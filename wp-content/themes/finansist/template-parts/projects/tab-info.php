@@ -60,6 +60,29 @@ if (empty($settings) && get_post_meta($post->ID,'settings_project_sum', true)) {
           <? echo get_formatted_number($settings['profit'], '%') ?>
         </div>
       </div>
+      <? if (current_user_can('contributor')) { ?>
+      <? 
+      $userID = getUserID();
+      $investors = get_field('investory');
+      $inv = getUserInvestedInProjects($userID, $post->ID);
+      ?>
+      <div class="item m-b-1">
+        <div class="field__label m-b-1">
+          <? echo esc_html('Инвестировано') ?>
+        </div>
+        <div class="bg-gray field__item p-a-1">
+          <? echo get_formatted_number($inv['invest']) ?>
+        </div>
+      </div>
+      <div class="item m-b-1">
+        <div class="field__label m-b-1">
+          <? echo esc_html('Инвестировано сверх') ?>
+        </div>
+        <div class="bg-gray field__item p-a-1">
+          <? echo get_formatted_number($inv['invest_over']) ?>
+        </div>
+      </div>
+      <? } ?>
 
       <? get_template_part('template-parts/projects/content', 'actions', ['status' => $status['value']]) ?>
 
@@ -77,6 +100,9 @@ if (empty($settings) && get_post_meta($post->ID,'settings_project_sum', true)) {
       <? } ?>
     </div>
   </div>
+  <? if (current_user_can('contributor')) {
+    get_template_part('template-parts/projects/content', 'transactions-current-user');
+  } ?>
 </div>
 
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">

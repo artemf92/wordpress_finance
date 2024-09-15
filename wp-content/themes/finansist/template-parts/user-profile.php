@@ -25,7 +25,7 @@ global $USER_ID;
       } else {
 			  get_template_part('template-parts/user/tab', 'active-projects');
 			  get_template_part('template-parts/user/tab', 'archive-projects');
-        if (user_can(get_current_user_id(), 'accountant') || user_can(get_current_user_id(), 'administrator') || user_can(get_current_user_id(), 'manager')  )
+        if (hasAccess())
 			    get_template_part('template-parts/user/tab', 'transactions');
       } ?>
 
@@ -37,9 +37,9 @@ global $USER_ID;
   <?php get_template_part( 'content', 'page-nav' ); ?>
 
   <div class="edit-link">
-    <? if (user_can(get_current_user_id(), 'accountant') || user_can(get_current_user_id(), 'administrator') || user_can(get_current_user_id(), 'manager')  ) { ?>
+    <? if (user_can(get_current_user_id(), 'administrator') || user_can(get_current_user_id(), 'manager')  ) { ?>
       <a class="post-edit-link d-block m-b-2" href="/wp-admin/user-edit.php?user_id=<?=$USER_ID?>"><span class="glyphicon glyphicon-edit"></span> <?=_('Изменить портфель')?></a>
-      <? } else { ?>
+    <? } else if (wp_get_current_user()->ID === $USER_ID) { ?>
       <a class="post-edit-link d-block m-b-2" id="user_edit_profile" data-user="<?=$USER_ID?>" data-once="ajax" href="javascript:void(0)"><span class="glyphicon glyphicon-edit"></span> <?=_('Изменить портфель')?></a>
     <? } ?>
   </div>

@@ -15,7 +15,9 @@
 get_header(); 
 ?>
 
-<?php get_template_part( 'content', 'header' ); ?>
+<?php if (current_user_can('administrator') || current_user_can('manager')) { 
+	get_template_part( 'content', 'header' ); 
+} ?>
 
 <?php get_sidebar( 'home' ); ?>
 
@@ -27,7 +29,11 @@ get_header();
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<?php get_template_part( 'template-parts/all-debt/content', 'page' ); ?>
+				<? if (!current_user_can('administrator') || !current_user_can('manager')) {
+					get_template_part( 'template-parts/page', 'block' );
+				} else {
+					get_template_part( 'template-parts/all-debt/content', 'page' );
+				} ?>
 
 			<?php endwhile; // end of the loop. ?>
 

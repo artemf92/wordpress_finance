@@ -15,7 +15,9 @@ if (!is_user_logged_in()) {
 
 get_header(); ?>
 
-<?php get_template_part( 'content', 'header' ); ?>
+<?php if (hasAccess()) { 
+	get_template_part( 'content', 'header' ); 
+} ?>
 
 <div class="container">
 <div id="main-grid" class="row">
@@ -23,7 +25,11 @@ get_header(); ?>
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
 
-			<?php get_template_part( 'template-parts/events/content', 'page-events' ); ?>
+			<? if (!hasAccess()) {
+				get_template_part( 'template-parts/page', 'block' );
+			} else {
+				get_template_part( 'template-parts/events/content', 'page-events' );
+			} ?>
 
 			<?php
 				// If comments are open or we have at least one comment, load up the comment template

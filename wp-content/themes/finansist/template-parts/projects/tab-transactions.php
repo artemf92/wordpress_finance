@@ -11,5 +11,5 @@ $status = get_field('status');
 $settings = get_field('settings_project');
 ?>
 <div class="tab-pane" id="transactions" role="tabpanel" aria-labelledby="transactions-tab" tabindex="0">
-  <? echo do_shortcode('[transactions project_id='.$post->ID.']') ?>
+  <? echo do_shortcode('[transactions_tab project_id='.$post->ID.']') ?>
 </div>

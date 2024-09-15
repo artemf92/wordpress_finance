@@ -48,7 +48,7 @@ function show_active_projects( $atts ){
       ],
     'paged' => $paged,
     ] );
-    $i = 1;
+    $i = 30 * $paged - 29;
   ?>
   <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
     <? get_template_part('template-parts/content', 'header-projects', 'active'); ?>
