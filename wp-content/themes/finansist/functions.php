@@ -419,11 +419,11 @@ function hasAccess() {
 			case 'transactions':
 				$projects = array_unique(getUsersProjects($userID));
 				$project_meta = get_post_meta($obj_id, 'settings_project', true);
-				if ($project_meta != '') {
-					return in_array($project_meta, $projects);
-				} else if ($project_meta == '' && $post_type == 'transactions') {
+				if ($post_type == 'transactions') {
 					$transaction_meta = get_post_meta($obj_id, 'settings_investor', true);
 					return $transaction_meta == $userID;
+				} else if ($project_meta != '') {
+					return in_array($project_meta, $projects);
 				} else {
 					return false;
 				}

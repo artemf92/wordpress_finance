@@ -51,7 +51,7 @@ foreach ($fields[0]['sub_fields'] as $field) {
   echo paginate_links([
     'base' => add_query_arg([
         'tip' => '%#%',
-        'tab' => 'transactions',
+        'tab' => 'info',
     ]),
     'format' => '?tip=%#%',
     'current' => max(1, $paged),

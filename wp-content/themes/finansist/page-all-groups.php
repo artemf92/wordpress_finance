@@ -27,7 +27,7 @@ get_header();
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
 
-			<? if (!current_user_can('administrator') || !current_user_can('manager')) {
+			<? if (!current_user_can('administrator') && !current_user_can('manager')) {
 				get_template_part( 'template-parts/page', 'block' );
 			} else {
 					echo do_shortcode('[profilegrid_groups]');

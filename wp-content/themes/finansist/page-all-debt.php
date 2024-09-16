@@ -29,7 +29,7 @@ get_header();
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<? if (!current_user_can('administrator') || !current_user_can('manager')) {
+				<? if (!current_user_can('administrator') && !current_user_can('manager')) {
 					get_template_part( 'template-parts/page', 'block' );
 				} else {
 					get_template_part( 'template-parts/all-debt/content', 'page' );

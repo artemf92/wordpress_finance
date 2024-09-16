@@ -20,9 +20,11 @@
 
 			<? get_template_part('template-parts/projects/tab', 'info') ?>
 			<? get_template_part('template-parts/projects/tab', 'history') ?>
-			<? get_template_part('template-parts/projects/tab', 'investors') ?>
-			<? get_template_part('template-parts/projects/tab', 'transactions') ?>
-			<?// get_template_part('template-parts/projects/tab', 'stages') ?>
+			<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant')) {
+				get_template_part('template-parts/projects/tab', 'investors');
+				get_template_part('template-parts/projects/tab', 'transactions');
+			} ?>
+			<?// get_template_part('template-parts/projects/tab', 'stages') ?>	
 
 		</div>
 
