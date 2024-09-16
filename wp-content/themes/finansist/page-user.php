@@ -12,7 +12,7 @@ $USER_ID = getUserID();
 
 get_header(); ?>
 
-<?php if (hasAccess()) { 
+<?php if (hasAccess() || get_query_var('user_id') == '') { 
 	get_template_part( 'template-parts/user', 'header' ); 
 } ?>
 

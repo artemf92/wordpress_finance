@@ -35,7 +35,7 @@ foreach ($fields[0]['sub_fields'] as $field) {
 }
 ?>
 <hr>
-<table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
+<table id="user-transactions" class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
     <?php get_template_part('template-parts/content', 'header-transactions') ?>
     <tbody>
         <?php while ($transactions_query->have_posts()) : $transactions_query->the_post(); ?>
@@ -52,7 +52,7 @@ foreach ($fields[0]['sub_fields'] as $field) {
     'base' => add_query_arg([
         'tip' => '%#%',
         'tab' => 'info',
-    ]),
+    ]) . '#user-transactions',
     'format' => '?tip=%#%',
     'current' => max(1, $paged),
     'total' => $transactions_query->max_num_pages,
