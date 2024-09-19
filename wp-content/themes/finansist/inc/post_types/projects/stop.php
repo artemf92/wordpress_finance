@@ -2,6 +2,8 @@
 add_action( 'wp_ajax_project_stop', 'project_stop_callback' );
 // add_action( 'wp_ajax_nopriv_project_stop', 'project_stop_callback' );
 function project_stop_callback() {
+  if (!current_user_can('administrator') && !current_user_can('manager') ) return;
+  
 	$project_id = $_REQUEST['project_id'];
   $settings = get_field('settings_project', $project_id);
   $investors = get_field('investory_investors', $project_id);

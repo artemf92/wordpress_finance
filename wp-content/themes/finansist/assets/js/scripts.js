@@ -167,3 +167,32 @@ jQuery(document).ready(function($) {
 // const tooltip = new bootstrap.Tooltip('#example', {
 //   boundary: document.body // or document.querySelector('#boundary')
 // })
+function clearDate(_this) {
+  const url = new URLSearchParams(location.search)
+  const form = jQuery(_this).parents('form')
+  const inputs = form.find('input[type=date]')
+  inputs.each((i, el) => {
+    el.value = ''
+    el.removeAttribute('value')
+  })
+  url.delete('from')
+  url.delete('to')
+
+  history.pushState(null, '', '?' + url.toString())
+}
+
+function clearAllTimeInput(_this) {
+  if (!_this.checked) {
+    const url = new URLSearchParams(location.search)
+
+    url.delete('all_time')
+    history.pushState(null, '', '?' + url.toString())
+  }
+}
+
+function toggleFilter(btn) {
+  const form = jQuery(btn).parents('form')
+  const filter = form.find('.hidden-filter')
+
+  filter.toggle(400)
+}

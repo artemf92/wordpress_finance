@@ -3,6 +3,8 @@ add_action( 'wp_ajax_project_profit', 'project_profit_prepare' );
 // add_action( 'wp_ajax_nopriv_project_profit', 'project_profit_prepare' );
 
 function project_profit_prepare() {
+  if (!current_user_can('administrator') && !current_user_can('manager') ) return;
+
   $project_id = $_REQUEST['project_id'];
 
   $html = '';
@@ -87,6 +89,8 @@ add_action( 'wp_ajax_project_profit_final', 'project_profit_callback' );
 // add_action( 'wp_ajax_nopriv_project_profit_final', 'project_profit_callback' );
 
 function project_profit_callback() {
+  if (!current_user_can('administrator') && !current_user_can('manager') ) return;
+
   $project_id = $_REQUEST['project_id'];
   $type = $_REQUEST['transaction_type'];
   $tmpUsers = $type == 4 ? $_REQUEST['profit']['user']:$_REQUEST['refund']['user'];

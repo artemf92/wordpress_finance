@@ -10,8 +10,8 @@ function get_formatted_number($num, $after = ' ₽') {
   return number_format($num, 2, '.', ' ') . (abs($num) > 0 ? ' '.$after:'');
 }
 
-function get_post_full_time() {
-  return get_post_time('j F Y - G:i', false, null, true);
+function get_post_full_time($post = null) {
+  return get_post_time('j F Y - G:i', false, $post, true);
 }
 
 // Создание транзакции

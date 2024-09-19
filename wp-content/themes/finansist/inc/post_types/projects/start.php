@@ -2,6 +2,8 @@
 add_action( 'wp_ajax_project_start', 'project_start_callback' );
 // add_action( 'wp_ajax_nopriv_project_start', 'project_start_callback' );
 function project_start_callback() {
+  if (!current_user_can('administrator') && !current_user_can('manager') ) return;
+
 	$project_id = $_REQUEST['project_id'];
   $status = get_field('status', $project_id);
 

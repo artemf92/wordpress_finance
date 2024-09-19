@@ -483,4 +483,5 @@ function updateEmptiesInvestorsInTransactions() {
 //   }
 // }
 
+debug(substr(hash('md5', getUserID()), 0, 5));
 ?>

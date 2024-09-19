@@ -1,6 +1,6 @@
 <? 
 global $post;
-if (current_user_can('accountant') || current_user_can('administrator') || current_user_can('manager')) { ?>
+if (current_user_can('administrator') || current_user_can('manager')) { ?>
 <div class="form-actions js-form-wrapper form-wrapper mb-3">
   <? if ($args['status'] == 0) { ?>
   <button class="use-ajax btn btn-primary m-r-1 m-t-2" data-dialog-type="modal" id="project_start" data-project="<?=$post->ID?>" data-once="ajax"><?= __('Старт проекта')?></a>

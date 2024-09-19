@@ -52,6 +52,9 @@ require __DIR__ . '/inc/admin-group/admin-group.php';
 require __DIR__ . '/inc/admin-group/active_projects.php';
 require __DIR__ . '/inc/admin-group/users.php';
 
+// Export
+require __DIR__ . '/inc/export/transactions.php';
+
 if ($_SERVER['REQUEST_URI'] === '/') {
 	header('Location: http://'.$_SERVER['HTTP_HOST'].'/user/');
 	exit();
@@ -479,3 +482,52 @@ function getUserInvestedInProjects($user_id, $project_id) {
 	}
 	return false;
 }
+
+function getPostsPerPage() {
+	session_start();
+	return isset($_SESSION['posts_per_page']) ? $_SESSION['posts_per_page'] : 30;
+}
+
+function setPostsPerPage($value) {
+	session_start();
+  $_SESSION['posts_per_page'] = $value;
+}
+
+function delete_tmp_export_folder() {
+	$folder = ABSPATH . '/tmp/export/';
+
+	if (is_dir($folder)) {
+			$files = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS),
+					RecursiveIteratorIterator::CHILD_FIRST
+			);
+
+			foreach ($files as $fileinfo) {
+					$todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+					$todo($fileinfo->getRealPath());
+			}
+
+			rmdir($folder);
+	}
+}
+
+if (!wp_next_scheduled('delete_tmp_export_folder_cron')) {
+	wp_schedule_event(time(), 'daily', 'delete_tmp_export_folder_cron');
+}
+
+add_action('delete_tmp_export_folder_cron', 'delete_tmp_export_folder');
+
+function manager_can_assign_groups($user) {
+	// Получаем текущего пользователя
+	$current_user = wp_get_current_user();
+
+	// Проверяем, принадлежит ли текущий пользователь к роли 'manager'
+	if (in_array('manager', $current_user->roles)) {
+			// Разрешаем пользователю-менеджеру назначать группы
+			return true;
+	}
+
+	// Для остальных пользователей - стандартные права
+	return $user;
+}
+add_filter('profilegrid_user_can_assign_groups', 'manager_can_assign_groups');

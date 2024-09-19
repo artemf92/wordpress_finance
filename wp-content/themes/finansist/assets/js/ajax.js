@@ -94,6 +94,94 @@ jQuery(document).ready(function($) {
     })
   })
 
+  $(document).on('submit reset', '.form_export_transactions', function(e) {
+    e.preventDefault()
+    const type = e.type
+    const form = $(this)
+    const btnFilter = form.find('button[type=submit]')
+    const ajax_result = form.parent().find('.ajax-result')
+    const btnExport = form.find('#export_transactions')
+    let data = form.serialize()
+    let url = new URLSearchParams(data)
+
+    if (type == 'reset') {
+      data = url = []
+    }
+
+    btnFilter.attr('disabled', 'true')
+    $.ajax({
+      url: finajax.url+'?action=transactions_ajax_filter',
+      data,
+      method: 'POST',
+      dataType: 'html',
+      beforeSend: function(xhr) {
+        ajax_result.addClass('loading')
+
+        history.pushState('', '', '?'+url.toString())
+      },
+      success: function(res) {
+        if (res) {
+          const result = $(res).find('.ajax-result')
+          const newExpBtn = $(res).find('#export_transactions')
+          
+          ajax_result.html('')
+          result.appendTo(ajax_result)
+
+          console.log(newExpBtn)
+
+          btnExport.data('args', newExpBtn.data('args'))
+        }
+      },
+      error: function(err) {
+        Fancybox.show(['<h4 class="p-5">Упс! Что-то пошло не так</h4>'])
+        setTimeout(() => {
+          Fancybox.close()
+        }, 1500);
+
+        throw new Error(err);
+      },
+      complete: function() {
+        btnFilter.removeAttr('disabled')
+        ajax_result.removeClass('loading')
+      }
+    })
+  })
+
+  $(document).on('click', '#export_transactions', function(e) {
+    e.preventDefault()
+    const _this = $(this)
+    _this.attr('disabled', 'true')
+    $.ajax({
+      url: finajax.url+'?action=' + _this.attr('id') + '&' + _this.data('args'),
+      method: 'POST',
+      dataType: 'json',
+      success: function(data) {
+        if (data.success) {
+          const link = document.createElement('a')
+          link.href = data.msg
+          link.innerHTML = 'Скачать'
+          link.download = 'Экспорт транзакций'
+          link.classList.add('hidden')
+
+          _this.after(link)
+          setTimeout(() => {
+            _this.next().get(0).click()
+
+            _this.removeAttr('disabled')
+          }, 500);
+        }
+      },
+      error: function(err) {
+        Fancybox.show(['<h4 class="p-5">Упс! Что-то пошло не так</h4>'])
+        setTimeout(() => {
+          Fancybox.close()
+        }, 1500);
+
+        throw new Error(err);
+      }
+    })
+  })
+
 })
 
 function projectProfitHandler(data) {

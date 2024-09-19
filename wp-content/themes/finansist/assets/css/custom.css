@@ -132,6 +132,51 @@ input.form-control.input-date {
 .table>thead>tr>th:nth-child(n + 2) {
   min-width: 150px;
 }
+[data-filter-toggle]:not(.active) .text_hide {
+  display: none;
+}
+[data-filter-toggle].active .text_hide {
+  display: block;
+}
+[data-filter-toggle].active .text_show {
+  display: none;
+}
+[data-filter-toggle]:not(.active)+.sidebar-filter {
+  display: none;
+  opacity: 0;
+  transition: all .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+[data-filter-toggle].active+.sidebar-filter {
+  display: block;
+  opacity: 1;
+}
+.hidden-filter {
+  display: none;
+}
+.text-overflow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.text-overflow:hover {
+  background-color: #f2f2f2;
+  overflow: visible;
+}
+.ajax-result {
+	position: relative;
+}
+.ajax-result.loading::after {
+	content: '';
+	background-color: rgba(255,255,255,0.8);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
