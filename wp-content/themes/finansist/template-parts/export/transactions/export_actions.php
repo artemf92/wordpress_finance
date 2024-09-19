@@ -1,5 +1,3 @@
-<?// if ($wp_query->found_posts && (current_user_can('administrator') || current_user_can('manager'))) { ?>
-<? if ($wp_query->found_posts && !current_user_can('contributor')) { ?>
 <div class="col-xs-6 col-md-1">
   <a href="javascript:void(0)" id="export_transactions" style="font-size: 28px;"
     class="border border-2 hover p-2" data-args="<?=http_build_query($query)?>">
@@ -12,4 +10,3 @@
     </span>
   </a>
 </div>
-<? } ?>

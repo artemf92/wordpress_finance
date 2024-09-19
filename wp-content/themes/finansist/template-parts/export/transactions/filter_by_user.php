@@ -18,14 +18,11 @@ if (!empty($users)) { ?>
       <?= esc_html('Участник:') ?>
     </label>
     <div class="">
-      <select name="f_user_id" id="f_user_id" class="form-select form-control">
-        <optgroup label="Я">
-          <option value="<?=$currentUserID?>"><?=get_userdata($currentUserID)->display_name?></option>
-        </optgroup>
-        <optgroup label="<?=esc_html('Участники группы')?>">
+      <select name="f_user_id" id="f_user_id" class="form-select form-control" multiple>
+        <option value="<?=$currentUserID?>"><?=get_userdata($currentUserID)->display_name?></option>
+        <optgroup label="<?=esc_html('Участники'.current_user_can('manager') ? ' группы':'')?>">
           <? foreach($users as $user) { ?>
-          <option value="<?=$user->ID?>" <?=$f_user_id == $user->ID ? 'selected':''?>><?= $user->display_name ?>
-          </option>
+            <option value="<?=$user->ID?>" <?=$f_user_id == $user->ID ? 'selected':''?>><?= $user->display_name ?> </option>
           <? } ?>
         </optgroup>
       </select>

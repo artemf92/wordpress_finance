@@ -33,7 +33,7 @@ if ($sortby == 'old') {
 
 }
 ?>
-<div class="col-md-3 col-md-offset-4">
+<div class="col-md-3 col-md-offset-6">
   <div class="mb-3">
     <div class="">
       <label for="sort" class="d-flex align-items-center">

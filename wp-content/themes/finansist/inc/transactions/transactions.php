@@ -7,6 +7,15 @@ function show_transactions( $atts ){
   $currentPage = parse_url($_SERVER['REQUEST_URI']);
   $currentUserID = getUserID();
   $post_per_page = getPostsPerPage();
+  $pprVariants = [30, 60, 90, 120];
+
+  if (isset($_REQUEST['per_page']) &&
+    $post_per_page != $_REQUEST['per_page'] &&
+    in_array($_REQUEST['per_page'], $pprVariants)
+  ) {
+    setPostsPerPage($_REQUEST['per_page']);
+    $post_per_page = $_REQUEST['per_page'];
+  }
 
   $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
@@ -29,7 +38,6 @@ function show_transactions( $atts ){
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_transaction_types.php' ?>
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_date.php' ?>
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_year_month.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_all_time.php' ?>
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_user.php' ?>
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_project.php' ?>
           <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/form_actions.php' ?>
@@ -42,43 +50,43 @@ function show_transactions( $atts ){
           </button>
         </div>
         <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/sort.php' ?>
-        <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
         <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
       </div>
-    </form>
-    <hr>
-    <? 
-    // debug($query);
-    // return;
-    $wp_query = new WP_Query( $query );
-
-    $i = $post_per_page * $paged - ($post_per_page - 1);
-    ?>
-    <div class="ajax-result">
-      <? if ($wp_query->found_posts) { ?>
-      <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
-        <? get_template_part('template-parts/content', 'header-transactions') ?>
-        <tbody>
-          <? 
-            while ( have_posts() ) {
-              the_post();
-              
-              get_template_part('template-parts/content', 'transactions', ['num' => $i]);
-
-              $i++;
-            }
-          ?>
-        </tbody>
-      </table>
-      <? } else {
-        echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
-      } ?>
+      <hr>
       <? 
-        get_template_part( 'content', 'page-nav' );
-            
-        wp_reset_query();
+      // debug($query);
+      // return;
+      $wp_query = new WP_Query( $query );
+
+      $i = $post_per_page * $paged - ($post_per_page - 1);
       ?>
-    </div>
+      <div class="ajax-result">
+        <? if ($wp_query->found_posts) { ?>
+        <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
+          <? get_template_part('template-parts/content', 'header-transactions') ?>
+          <tbody>
+            <? 
+              while ( have_posts() ) {
+                the_post();
+                
+                get_template_part('template-parts/content', 'transactions', ['num' => $i]);
+
+                $i++;
+              }
+            ?>
+          </tbody>
+        </table>
+        <? } else {
+          echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
+        } ?>
+        <? 
+          get_template_part( 'content', 'page-nav' );
+              
+          wp_reset_query();
+        ?>
+        <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
+      </div>
+    </form>
   </div>
   <?
 }
@@ -293,6 +301,7 @@ function getUsersForExport() {
       $tmp = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value LIKE %s",'pm_group',serialize([$group_id])));
       $tmp2 = [];
       foreach($tmp as $uID) {
+        if ($uID == $userID) continue;
         $tmp2[] = get_user_by('ID', $uID);
       }
       $users = array_merge($users, $tmp2);

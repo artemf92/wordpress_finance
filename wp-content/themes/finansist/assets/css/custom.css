@@ -177,6 +177,25 @@ input.form-control.input-date {
 	top: 0;
 	left: 0;
 }
+.items-view {
+  max-width: 160px;
+  float: right;
+  margin-bottom: 20px;
+}
+.form_export_transactions .pagination {
+  margin: 0 0 20px;
+}
+select[multiple], select[size] {
+  max-height: 78px;
+  overflow-y: scroll;
+}
+select[multiple]::-webkit-scrollbar {
+  width: 5px;
+}
+select[multiple]::-webkit-scrollbar-thumb {
+  background-color: #e2e2e2;
+  border-radius: 5px;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;

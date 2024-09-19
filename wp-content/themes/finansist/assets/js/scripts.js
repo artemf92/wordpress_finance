@@ -170,13 +170,30 @@ jQuery(document).ready(function($) {
 function clearDate(_this) {
   const url = new URLSearchParams(location.search)
   const form = jQuery(_this).parents('form')
-  const inputs = form.find('input[type=date]')
+  const inputs = form.find('input[type=date], select.form-date')
   inputs.each((i, el) => {
+    if (el !== _this) {
+      el.value = ''
+      el.removeAttribute('value')
+      url.delete(el.name)
+    }
+  })
+
+  history.pushState(null, '', '?' + url.toString())
+}
+
+function clearYearMonth(_this) {
+  const url = new URLSearchParams(location.search)
+  const form = jQuery(_this).parents('form')
+
+  const selects = form.find('select.form-date')
+
+  selects.each((i, el) => {
     el.value = ''
     el.removeAttribute('value')
+    url.delete(el.name)
   })
-  url.delete('from')
-  url.delete('to')
+
 
   history.pushState(null, '', '?' + url.toString())
 }
