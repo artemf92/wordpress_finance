@@ -5,14 +5,11 @@ $transactionTypes =
     : '';
 
 if ($transactionTypes) {
-  foreach($transactionTypes as $tt) {
-    $query['meta_query'][] = [
-      'key' => 'settings_transaction_type',
-      'value' => $tt,
-      'compare' => 'IN',
-    ];
-
-  }
+  $query['meta_query'][] = [
+    'key' => 'settings_transaction_type',
+    'value' => $transactionTypes,
+    'compare' => 'IN',
+  ];
 }
 
 $transaction_types = [];
