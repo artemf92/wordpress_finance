@@ -30,41 +30,58 @@ function show_transactions( $atts ){
       'relation' => 'AND',
     ]
   ];
+
+  $projectIDs = isset($_REQUEST['project_id']) && !empty($_REQUEST['project_id']) > 0 ? $_REQUEST['project_id'] : '';
+
+  if ($projectIDs) {
+    $query['meta_query'][] =
+      [
+        'key' => 'settings_project',
+        'value'   => $projectIDs,
+        'compare' => 'IN',
+      ];
+  } 
+
+  $sortby = isset($_REQUEST['sort']) && $_REQUEST['sort'] != '' ? $_REQUEST['sort']:'ID';
+
+  if ($sortby == 'old') {
+    $query['order'] = 'ASC';
+  } else if ($sortby == 'max_amount') {
+    $query['meta_key'] = 'settings_sum';
+    $query['orderby'] = 'meta_value_num';
+    $query['order'] = 'DESC';
+  } else if ($sortby == 'min_amount') {
+    $query['meta_key'] = 'settings_sum';
+    $query['orderby'] = 'meta_value_num';
+    $query['order'] = 'ASC';
+
+  }
+  $projects = getProjectsForExport($currentUserID);
   ?>
   <div class="s-export">
     <form class="form_export_transactions">
-      <div class="hidden-filter">
-        <div class="row">
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_transaction_types.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_date.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_year_month.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_user.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_project.php' ?>
-          <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/form_actions.php' ?>
-        </div>
-      </div>
-      <div class="row m-t-3">
-        <div class="col-md-2">
-          <button type="button" class="btn btn-primary" data-filter-toggle onclick="toggleFilter(this)">
-            <i class="fa-solid fa-filter"></i>
-          </button>
-        </div>
-        <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/sort.php' ?>
-        <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
-      </div>
-      <hr>
-      <? 
-      // debug($query);
-      // return;
-      $wp_query = new WP_Query( $query );
-
-      $i = $post_per_page * $paged - ($post_per_page - 1);
-      ?>
-      <div class="ajax-result">
+      <? $i = $post_per_page * $paged - ($post_per_page - 1); ?>
+      <div>
         <? if ($wp_query->found_posts) { ?>
         <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
           <? get_template_part('template-parts/content', 'header-transactions') ?>
-          <tbody>
+          <tbody class="ajax-result">
+            <tr>
+              <td></td>
+              <td><? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_transaction_types.php' ?></td>
+              <td><? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_project.php' ?></td>
+              <? if (!current_user_can('contributor')) { ?>
+              <td><? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_user.php' ?></td>
+              <? } ?>
+              <td></td>
+              <td>
+                <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_date.php' ?>
+                <?// require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_year_month.php' ?>
+              </td>
+              <td></td>
+            </tr>
+          <?// debug($query) ?>
+          <? $wp_query = new WP_Query( $query ); ?>
             <? 
               while ( have_posts() ) {
                 the_post();
@@ -85,6 +102,7 @@ function show_transactions( $atts ){
           wp_reset_query();
         ?>
         <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
+        <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
       </div>
     </form>
   </div>

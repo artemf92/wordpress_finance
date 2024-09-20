@@ -6,13 +6,7 @@ jQuery(document).ready(function($) {
 
       var $table = $(target).find('table.tablesaw');
 
-      if ($table.data('tablesaw')) {
-        $table.data('tablesaw').destroy();
-      }
-
-      $table.tablesaw({
-        mode: 'swipe'
-      });
+      tablesawRefresh($table)
   });
   const url = new URLSearchParams(location.search)
 
@@ -152,6 +146,16 @@ jQuery(document).ready(function($) {
     })
   })
 
+  $(document).on('click', '.filter-input__btn', function() {
+    const parent = $(this).parent();
+    
+    if (!parent.hasClass('is-active')) {
+        $('.filter-input').removeClass('is-active');
+    }
+    
+    parent.toggleClass('is-active');
+  });
+
   function showTab(tab) {
     $('[data-bs-toggle="tab"]').removeClass('active')
     $('.tab-pane').removeClass('active')
@@ -198,6 +202,42 @@ function clearYearMonth(_this) {
   history.pushState(null, '', '?' + url.toString())
 }
 
+function filterSelect(_this) {
+  jQuery(_this).parents('form').trigger('submit')
+
+  const url = new URL(window.location.href);
+  const pathname = url.pathname.replace(/\/page\/\d+\//, '/');
+  const newUrl = `${pathname}${url.search}`;
+  const label = _this.closest('.filter-input').querySelector('label span.values')
+  let values = []
+
+  window.history.replaceState(null, '', newUrl);
+
+  setTimeout(() => {
+    switch(_this.tagName) {
+      case 'SELECT':
+        const options = _this.querySelectorAll('option')
+        console.log(_this.value);
+        
+        options.forEach(opt => {
+          if (opt.selected)
+            values.push(opt.textContent.trim())
+        });
+        break;
+      case 'INPUT':
+        if (_this.type == 'date') {
+  
+        }
+  
+    }
+  
+    // console.log(_this.value)
+    label.textContent = ''
+    label.append(values.join(', '))
+  }, 100)
+  
+}
+
 function clearAllTimeInput(_this) {
   if (!_this.checked) {
     const url = new URLSearchParams(location.search)
@@ -212,4 +252,22 @@ function toggleFilter(btn) {
   const filter = form.find('.hidden-filter')
 
   filter.toggle(400)
+}
+
+function formSortHandler(_this) {
+  jQuery(_this).closest('form').trigger('submit');
+  
+  jQuery('.sort-label').removeClass('active')
+  
+  jQuery(_this).parent().addClass('active')
+}
+
+function tablesawRefresh(table) {
+  if (table.data('tablesaw')) {
+    table.data('tablesaw').destroy();
+  }
+
+  table.tablesaw({
+    mode: 'swipe'
+  });
 }

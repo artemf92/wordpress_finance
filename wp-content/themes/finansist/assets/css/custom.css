@@ -63,7 +63,6 @@ pre {
 input.form-control.input-date {
   display: inline-block;
   max-width: 140px !important;
-  margin-right: 20px;
 }
 .page-id-65 #wppb-form-style-3-wrapper form > ul {
   display: flex;
@@ -195,6 +194,106 @@ select[multiple]::-webkit-scrollbar {
 select[multiple]::-webkit-scrollbar-thumb {
   background-color: #e2e2e2;
   border-radius: 5px;
+}
+.filter-input {
+  position: relative;
+}
+.filter-input__btn {
+  display: block;
+  border-bottom: 1px solid #d2d2d2;
+  margin: 0 15px 10px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.filter-input__btn .values {
+  font-size: 12px;
+}
+.filter-input .filter-input__control {
+  position: absolute;
+  min-width: 280px;
+  top: calc(100% + 10px);
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+  z-index: -10;
+  pointer-events: none;
+  transition: opacity .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.filter-input.is-active .filter-input__control {
+  visibility: visible;
+  opacity: 1;
+  z-index: 10;
+  pointer-events: initial;
+}
+.filter-input__control {
+  padding: 10px 15px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+.filter-input__control select {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #d2d2d2;
+  border-radius: 0;
+}
+.td-investor {
+  max-width: 200px;
+  width: 15%;
+}
+.td-project {
+  max-width: 320px;
+  width: 20%;
+}
+.td-transaction {
+  max-width: 230px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 20%;
+}
+.td-date {
+  color: #666;
+  width: 15%;
+}
+.td-id {
+  max-width: 50px;
+  width: 10%;
+}
+label.sort-label {
+  position: relative;
+  margin-right: 5px;
+  color: #ccc;
+}
+.sort-label.active {
+  color: inherit;
+}
+.sort-input {
+  position: absolute;
+  top: 1px;
+  left: -2px;
+  opacity: 0;
+  cursor: pointer;
+}
+#export_transactions {
+  position: fixed;
+  bottom: 10%;
+  right: 10%;
+  border-radius: 50%;
+  background-color: #fff;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  transition: opacity .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+#export_transactions:hover {
+  opacity: 0.7;
 }
 @media (min-width: 1600px) {
   .container {

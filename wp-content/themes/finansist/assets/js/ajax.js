@@ -96,11 +96,14 @@ jQuery(document).ready(function($) {
 
   $(document).on('submit reset', '.form_export_transactions', function(e) {
     e.preventDefault()
+    
     const type = e.type
     const form = $(this)
     const btnFilter = form.find('button[type=submit]')
-    const ajax_result = form.parent().find('.ajax-result')
+    const ajaxContainer = form.find('.ajax-result')
     const btnExport = form.find('#export_transactions')
+    const pagination = form.find('.pagination')
+    const table = form.find('.table')
     let data = form.serialize()
     let url = new URLSearchParams(data)
 
@@ -110,12 +113,12 @@ jQuery(document).ready(function($) {
 
     btnFilter.attr('disabled', 'true')
     $.ajax({
-      url: finajax.url+'?action=transactions_ajax_filter',
+      url: finajax.url+'?'+data+'&action=transactions_ajax_filter',
       data,
       method: 'POST',
       dataType: 'html',
       beforeSend: function(xhr) {
-        ajax_result.addClass('loading')
+        ajaxContainer.find('tr:not(:first-child)').addClass('loading')
 
         history.pushState('', '', '?'+url.toString())
       },
@@ -123,13 +126,29 @@ jQuery(document).ready(function($) {
         if (res) {
           const result = $(res).find('.ajax-result')
           const newExpBtn = $(res).find('#export_transactions')
-          
-          ajax_result.html('')
-          result.appendTo(ajax_result)
+          let paginationRes = $(res).find('.pagination')
 
-          console.log(newExpBtn)
+          ajaxContainer.find('tr:not(:first-child)').remove()
+          result.find('tr:first').remove()
+
+          ajaxContainer.append(result.html())
 
           btnExport.data('args', newExpBtn.data('args'))
+
+          if (paginationRes.length) 
+            paginationRes = paginationRes.html().replaceAll('/wp-admin\/admin-ajax.php/', '/transactions/')
+
+          if (pagination.length && paginationRes.length) {
+            (pagination.first()).replaceWith('<nav class="navigation pagination">'+paginationRes+'</nav>')
+          } else if (pagination.length && !paginationRes.length) {
+            pagination.remove()
+          } else if (!pagination.length && !paginationRes.length) {
+            //
+          } else {
+            table.after('<nav class="navigation pagination">'+paginationRes+'</nav>')
+          }
+
+          tablesawRefresh(table)
         }
       },
       error: function(err) {
@@ -142,7 +161,7 @@ jQuery(document).ready(function($) {
       },
       complete: function() {
         btnFilter.removeAttr('disabled')
-        ajax_result.removeClass('loading')
+        ajaxContainer.removeClass('loading')
       }
     })
   })

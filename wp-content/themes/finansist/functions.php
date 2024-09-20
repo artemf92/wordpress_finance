@@ -531,3 +531,13 @@ function manager_can_assign_groups($user) {
 	return $user;
 }
 add_filter('profilegrid_user_can_assign_groups', 'manager_can_assign_groups');
+
+// function enqueue_my_script() {
+// 	wp_enqueue_script('filter-transactions-script', get_template_directory_uri() . '/js/filter-transactions-script.js', array('jquery'), null, true);
+
+// 	// Передаем путь к нужному endpoint через wp_localize_script
+// 	wp_localize_script('filter-transactions-script', 'ajax_object', array(
+// 			'ajax_url' => home_url('/transactions')
+// 	));
+// }
+// add_action('wp_enqueue_scripts', 'enqueue_my_script');
