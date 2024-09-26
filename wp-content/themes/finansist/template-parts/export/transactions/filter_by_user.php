@@ -1,14 +1,4 @@
 <? 
-$f_user_id = isset($_REQUEST['f_user_id']) && !empty($_REQUEST['f_user_id']) ? $_REQUEST['f_user_id'] : $currentUserID;
-
-if ($f_user_id) {
-  $query['meta_query'][] =
-    [
-      'key' => 'settings_investor',
-      'value'   => $f_user_id,
-      'compare' => 'IN',
-    ];
-}
 $users = getUsersForExport();
 
 if (!empty($users)) { ?>

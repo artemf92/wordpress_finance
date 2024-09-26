@@ -8,6 +8,7 @@ function show_transactions( $atts ){
   $currentUserID = getUserID();
   $post_per_page = getPostsPerPage();
   $pprVariants = [30, 60, 90, 120];
+  $f_user_id = isset($_REQUEST['f_user_id']) && !empty($_REQUEST['f_user_id']) ? $_REQUEST['f_user_id'] : $currentUserID;
 
   if (isset($_REQUEST['per_page']) &&
     $post_per_page != $_REQUEST['per_page'] &&
@@ -57,6 +58,15 @@ function show_transactions( $atts ){
 
   }
   $projects = getProjectsForExport($currentUserID);
+
+  if ($f_user_id) {
+    $query['meta_query'][] =
+      [
+        'key' => 'settings_investor',
+        'value'   => $f_user_id,
+        'compare' => 'IN',
+      ];
+  }
   ?>
   <div class="s-export">
     <form class="form_export_transactions">

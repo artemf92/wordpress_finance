@@ -1,8 +1,11 @@
 
 :root {
   --fancybox-opacity: 0 !important;
+  --color-black: #151515;
 }
-
+body {
+  color: var(--color-black);
+}
 .fancybox__backdrop {
   background: none !important;
 }
