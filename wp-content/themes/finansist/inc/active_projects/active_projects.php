@@ -65,9 +65,9 @@ function show_active_projects( $atts ){
     </tbody>
   </table>
   <? 
-  get_template_part( 'content', 'page-nav' );
-        
-  wp_reset_query();
+    get_template_part( 'content', 'page-nav' );
+          
+    wp_reset_query();
   ?>
 <?
 }

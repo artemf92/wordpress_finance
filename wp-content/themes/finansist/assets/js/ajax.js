@@ -105,7 +105,12 @@ jQuery(document).ready(function($) {
     const pagination = form.find('.pagination')
     const table = form.find('.table')
     let data = form.serialize()
+    let search = new URLSearchParams(location.search)
     let url = new URLSearchParams(data)
+
+    if (search.get('tab')) {
+      url.append('tab', search.get('tab'))
+    }
 
     if (type == 'reset') {
       data = url = []

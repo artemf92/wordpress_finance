@@ -4,6 +4,7 @@ add_shortcode( 'transactions', 'show_transactions' );
 add_action('wp_ajax_transactions_ajax_filter', 'show_transactions');
 
 function show_transactions( $atts ){
+  $isPageUser = is_page(65);
   $currentPage = parse_url($_SERVER['REQUEST_URI']);
   $currentUserID = getUserID();
   $post_per_page = getPostsPerPage();
@@ -18,7 +19,11 @@ function show_transactions( $atts ){
     $post_per_page = $_REQUEST['per_page'];
   }
 
-  $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+  if ($isPageUser) {
+    $paged = isset($_GET['transactions_page']) ? $_GET['transactions_page'] : 1;
+  } else {
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+  }
 
   global $wp_query;
 
@@ -72,7 +77,6 @@ function show_transactions( $atts ){
     <form class="form_export_transactions">
       <? $i = $post_per_page * $paged - ($post_per_page - 1); ?>
       <div>
-        <? if ($wp_query->found_posts) { ?>
         <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
           <? get_template_part('template-parts/content', 'header-transactions') ?>
           <tbody class="ajax-result">
@@ -90,9 +94,8 @@ function show_transactions( $atts ){
               </td>
               <td></td>
             </tr>
-          <?// debug($query) ?>
           <? $wp_query = new WP_Query( $query ); ?>
-            <? 
+          <? if ($wp_query->found_posts) {
               while ( have_posts() ) {
                 the_post();
                 
@@ -100,14 +103,28 @@ function show_transactions( $atts ){
 
                 $i++;
               }
-            ?>
+            } else {
+            echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
+            } ?>
           </tbody>
         </table>
-        <? } else {
-          echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
-        } ?>
         <? 
+        if (!$isPageUser) {
           get_template_part( 'content', 'page-nav' );
+        } else {
+          echo '<div class="navigation pagination">';
+          $big = 999999999;
+          echo paginate_links([
+            'base' => add_query_arg([
+                'transactions_page' => '%#%',
+                'tab' => 'transactions',
+            ]),
+            'format' => '?transactions_page=%#%',
+            'current' => max(1, $paged),
+            'total' => $wp_query->max_num_pages,
+          ]);
+          echo '</div>';
+        }
               
           wp_reset_query();
         ?>
@@ -371,6 +388,8 @@ function getProjectsForExport($userID) {
     
     $arProjects[] = $post;
   }
+
+  wp_reset_query();
 
   return $arProjects;
 }

@@ -211,13 +211,13 @@ function filterSelect(_this) {
   const label = _this.closest('.filter-input').querySelector('label span.values')
   let values = []
 
-  window.history.replaceState(null, '', newUrl);
+  window.history.pushState(null, '', newUrl);
 
   setTimeout(() => {
     switch(_this.tagName) {
       case 'SELECT':
         const options = _this.querySelectorAll('option')
-        console.log(_this.value);
+        // console.log(_this.value);
         
         options.forEach(opt => {
           if (opt.selected)
