@@ -6,7 +6,9 @@
  */
 if (!is_user_logged_in()) {
 	wp_redirect('/auth/');
-}
+} else if (get_query_var('user_id') == wp_get_current_user()->ID) {
+	wp_redirect('/user/');
+} 
 
 $USER_ID = getUserID();
 

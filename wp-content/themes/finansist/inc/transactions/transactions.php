@@ -4,12 +4,21 @@ add_shortcode( 'transactions', 'show_transactions' );
 add_action('wp_ajax_transactions_ajax_filter', 'show_transactions');
 
 function show_transactions( $atts ){
+  global $isPageUser, $isPageTransactions, $isPageProject;
   $isPageUser = is_page(65);
+  $isPageTransactions = is_page(117);
   $currentPage = parse_url($_SERVER['REQUEST_URI']);
   $currentUserID = getUserID();
   $post_per_page = getPostsPerPage();
   $pprVariants = [30, 60, 90, 120];
-  $f_user_id = isset($_REQUEST['f_user_id']) && !empty($_REQUEST['f_user_id']) ? $_REQUEST['f_user_id'] : $currentUserID;
+
+  if (isset($_REQUEST['f_user_id']) && !empty($_REQUEST['f_user_id'])) {
+    $f_user_id = $_REQUEST['f_user_id'];
+  } else if (isset($atts['user_id']) && $atts['user_id'] > 0) {
+    $f_user_id = explode(', ', $atts['user_id']);
+  } else {
+    $f_user_id = $currentUserID;
+  }
 
   if (isset($_REQUEST['per_page']) &&
     $post_per_page != $_REQUEST['per_page'] &&
@@ -19,10 +28,10 @@ function show_transactions( $atts ){
     $post_per_page = $_REQUEST['per_page'];
   }
 
-  if ($isPageUser) {
-    $paged = isset($_GET['transactions_page']) ? $_GET['transactions_page'] : 1;
-  } else {
+  if ($isPageTransactions) {
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+  } else {
+    $paged = isset($_GET['transactions_page']) ? $_GET['transactions_page'] : 1;
   }
 
   global $wp_query;
@@ -37,7 +46,13 @@ function show_transactions( $atts ){
     ]
   ];
 
-  $projectIDs = isset($_REQUEST['project_id']) && !empty($_REQUEST['project_id']) > 0 ? $_REQUEST['project_id'] : '';
+  if (isset($_REQUEST['project_id']) && !empty($_REQUEST['project_id'])) {
+    $projectIDs = $_REQUEST['project_id'];
+  } else if (isset($atts['project_id']) && $atts['project_id'] > 0) {
+    $projectIDs = $atts['project_id'];
+  } else {
+    $projectIDs = '';
+  }
 
   if ($projectIDs) {
     $query['meta_query'][] =
@@ -62,7 +77,13 @@ function show_transactions( $atts ){
     $query['order'] = 'ASC';
 
   }
-  $projects = getProjectsForExport($currentUserID);
+
+  if (isset($atts['project_id']) && !empty($atts['project_id'])) {
+    $isPageProject = true;
+    $projects = [get_post($atts['project_id'])];
+  } else {
+    $projects = getProjectsForExport($currentUserID);
+  }
 
   if ($f_user_id) {
     $query['meta_query'][] =
@@ -109,7 +130,7 @@ function show_transactions( $atts ){
           </tbody>
         </table>
         <? 
-        if (!$isPageUser) {
+        if ($isPageTransactions) {
           get_template_part( 'content', 'page-nav' );
         } else {
           echo '<div class="navigation pagination">';
@@ -136,7 +157,7 @@ function show_transactions( $atts ){
   <?
 }
 
-add_shortcode('transactions_tab', 'show_transactions_tab');
+// add_shortcode('transactions_tab', 'show_transactions_tab');
 
 function show_transactions_tab($atts) {
     $userID = isset($atts['user_id']) ? $atts['user_id'] : wp_get_current_user()->ID;

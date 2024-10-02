@@ -160,3 +160,21 @@ function get_portfolio($user) {
     'refund_over' => get_field('refund_over', 'user_' . $user),
   ];
 }
+
+function getAdminGroupUsers($user_id = null) {
+  if (!$user_id) {
+    $user_id = wp_get_current_user()->ID;
+  }
+
+  global $wpdb;
+
+  $group_id = get_user_meta($user_id, 'pm_group', true);
+
+  $usersInGroup = [];
+
+  foreach ($group_id as $key => $g_id) {
+    $tmpArr = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value LIKE %s",'pm_group',serialize([$g_id])));
+    $usersInGroup = array_merge($usersInGroup, $tmpArr);
+  }
+  return array_unique($usersInGroup);
+}

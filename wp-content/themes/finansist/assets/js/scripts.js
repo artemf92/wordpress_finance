@@ -160,6 +160,11 @@ jQuery(document).ready(function($) {
     $('[data-bs-toggle="tab"]').removeClass('active')
     $('.tab-pane').removeClass('active')
     
+    const url = new URLSearchParams()
+    url.set('tab', tab.substr(1))
+
+    history.pushState(null, '', '?' + url.toString())
+
     $('[data-bs-target="'+tab+'"]').addClass('active')
     $(tab).toggleClass('active')
 

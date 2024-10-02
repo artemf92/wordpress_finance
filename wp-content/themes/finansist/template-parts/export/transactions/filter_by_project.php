@@ -1,4 +1,5 @@
 <? 
+global $isPageProject;
 if (!empty($projects)) { 
 $selectedProjects = [];
 

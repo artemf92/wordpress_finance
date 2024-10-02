@@ -2,17 +2,15 @@
 add_shortcode( 'archive_projects', 'show_archive_projects' );
 
 function show_archive_projects( $atts ){
+  $isPageUser = is_page(65);
   $userID = isset($atts['user_id']) ? $atts['user_id'] : wp_get_current_user()->ID;
   
   add_filter('posts_where', 'archive_user_projects_where');
   
   if (!is_page('user')) {
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-  } else if (strpos($_SERVER['REQUEST_URI'], '/page/') !== false) {
-    $paged = 1;
-    $url = explode('page', $_SERVER['REQUEST_URI']);
-    $page = explode('/', $url[1]);
-    $paged = $page[1];
+  } else if (isset($_GET['archive_projects_page'])) {
+    $paged = $_GET['archive_projects_page'];
   } else {
     $paged = 1;
   }
@@ -66,7 +64,22 @@ function show_archive_projects( $atts ){
     </tbody>
   </table>
   <? 
-    get_template_part( 'content', 'page-nav' );
+    if (!$isPageUser) {
+      get_template_part( 'content', 'page-nav' );
+    } else {
+      echo '<div class="navigation pagination">';
+      $big = 999999999;
+      echo paginate_links([
+        'base' => add_query_arg([
+            'archive_projects_page' => '%#%',
+            'tab' => 'archive-projects',
+        ]),
+        'format' => '?archive_projects_page=%#%',
+        'current' => max(1, $paged),
+        'total' => $wp_query->max_num_pages,
+      ]);
+      echo '</div>';
+    }
           
     wp_reset_query();
   ?>

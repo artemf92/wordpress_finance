@@ -8,6 +8,14 @@
  * @package flat-bootstrap
  */
 $investors = get_field('investory')['investors'];
+if (current_user_can('accountant')) {
+  $usersInGroup = getAdminGroupUsers();
+  $investors = array_filter($investors, function($inv) use ($usersInGroup) {
+    return in_array($inv['investor'], $usersInGroup);
+  });
+
+  $investors = array_values($investors);
+}
 $time = get_post_full_time();
 ?>
 <div class="tab-pane" id="investors" role="tabpanel" aria-labelledby="investors-tab" tabindex="0">

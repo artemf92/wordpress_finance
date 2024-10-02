@@ -388,15 +388,8 @@ function hasAccess() {
 	if (current_user_can('accountant')) {
 		$accountantID = wp_get_current_user()->ID;
 		$userID = getUserID();
-		$group_id = get_user_meta($accountantID, 'pm_group', true);
-
-		$usersInGroup = [];
-
-		foreach ($group_id as $key => $g_id) {
-			$tmpArr = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value LIKE %s",'pm_group',serialize([$g_id])));
-			$usersInGroup = array_merge($usersInGroup, $tmpArr);
-		}
-		$usersInGroup = array_unique($usersInGroup);
+		$usersInGroup = getAdminGroupUsers($userID);
+		
 		switch ($post_type) {
 			case 'page':
 				return in_array($userID, $usersInGroup);
