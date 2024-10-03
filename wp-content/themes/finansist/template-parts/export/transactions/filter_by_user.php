@@ -1,9 +1,14 @@
 <? 
-global $isPageTransactions;
+global $isPageTransactions, $isPageProject, $isPageUser;
 $selectedUsers = [];
 $users = getUsersForExport();
 
-if (isset($atts['project_id']) && $atts['project_id']) {
+if ($isPageProject && current_user_can('manager')) {
+  $investors = array_column(get_field('investory', $atts['project_id'])['investors'], 'investor');
+  $users = array_filter($users, function($inv2) use ($investors) {
+    return in_array($inv2->ID, $investors);
+  });
+} else if ($isPageProject && current_user_can('accountant')) {
   $usersInGroup = getAdminGroupUsers();
   $investors = get_field('investory', $atts['project_id'])['investors'];
   $tmpUsers = array_column(array_filter($investors, function($inv) use ($usersInGroup) {
@@ -13,7 +18,7 @@ if (isset($atts['project_id']) && $atts['project_id']) {
     return in_array($inv2->ID, $tmpUsers);
   });
 }
-if (isset($atts['user_id']) && $atts['user_id']) {
+if ($isPageUser) {
   $users = get_users(['include' => explode(', ', $atts['user_id'])]);
 }
 
@@ -24,25 +29,34 @@ if (!empty($users)) {
   if (in_array($currentUserID, (array)$f_user_id) && !in_array(get_userdata($currentUserID)->display_name, $selectedUsers)) {
     $selectedUsers[] = get_userdata($currentUserID)->display_name;
   } 
-?>
-<div class="filter-input">
-  <label for="f_user_id" class="form-label filter-input__btn" style="max-width:200px;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
-      <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
-    </svg>
-    <span class="values"><?= implode(', ', (array)$selectedUsers)  ?></span>
-  </label>
-  <div class="filter-input__control">
-    <select name="f_user_id[]" id="f_user_id" class="form-select form-control" onchange="filterSelect(this)" multiple>
-      <? if ($isPageTransactions) { ?>
-      <option value="<?=$currentUserID?>" <?=in_array($currentUserID, (array)$f_user_id) ? 'selected':''?>><?=get_userdata($currentUserID)->display_name?></option>
-      <? } ?>
-      <optgroup label="<?= esc_html_e('Участники' . (current_user_can('manager') ? ' группы' : '')) ?>">
-        <? foreach($users as $user) { ?>
-          <option value="<?=$user->ID?>" <?=in_array($user->ID, (array)$f_user_id) ? 'selected':''?>><?= $user->display_name ?> </option>
+  ?>
+  <div class="filter-input">
+    <label for="f_user_id" class="form-label filter-input__btn" style="max-width:200px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+        <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+      </svg>
+      <span class="values"><?= implode(', ', (array)$selectedUsers)  ?></span>
+    </label>
+    <div class="filter-input__control">
+      <select name="f_user_id[]" id="f_user_id" class="form-select form-control" onchange="filterSelect(this)" multiple>
+        <? if ($isPageTransactions || ($isPageProject && in_array($currentUserID, (array)$f_user_id))) { ?>
+        <option value="<?=$currentUserID?>" <?=in_array($currentUserID, (array)$f_user_id) ? 'selected':''?>><?=get_userdata($currentUserID)->display_name?></option>
         <? } ?>
-      </optgroup>
-    </select>
+        <? 
+        $label = '';
+        if ($isPageProject && current_user_can('accountant')) {
+          $label = ' проекта';
+        } else if ($isPageTransactions && current_user_can('accountant')) {
+          $label = ' группы';
+        }
+        ?>
+        <optgroup label="<?= esc_html_e('Участники' . $label) ?>">
+          <? foreach($users as $user) { ?>
+            <? $disabled = $isPageUser ? ' disabled':'' ?>
+            <option value="<?=$user->ID?>" class="<?=$disabled?>" <?=in_array($user->ID, (array)$f_user_id) ? 'selected':''?>><?= $user->display_name ?> </option>
+          <? } ?>
+        </optgroup>
+      </select>
+    </div>
   </div>
-</div>
 <? } ?>

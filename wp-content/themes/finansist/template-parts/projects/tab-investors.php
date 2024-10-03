@@ -8,7 +8,7 @@
  * @package flat-bootstrap
  */
 $investors = get_field('investory')['investors'];
-if (current_user_can('accountant')) {
+if (current_user_can('accountant') && !current_user_can('manager')) {
   $usersInGroup = getAdminGroupUsers();
   $investors = array_filter($investors, function($inv) use ($usersInGroup) {
     return in_array($inv['investor'], $usersInGroup);

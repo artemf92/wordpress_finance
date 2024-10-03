@@ -12,10 +12,19 @@ function show_transactions( $atts ){
   $post_per_page = getPostsPerPage();
   $pprVariants = [30, 60, 90, 120];
 
+  if (isset($atts['project_id']) && !empty($atts['project_id'])) {
+    $isPageProject = true;
+    $projects = [get_post($atts['project_id'])];
+  } else {
+    $projects = getProjectsForExport($currentUserID);
+  }
+
   if (isset($_REQUEST['f_user_id']) && !empty($_REQUEST['f_user_id'])) {
     $f_user_id = $_REQUEST['f_user_id'];
   } else if (isset($atts['user_id']) && $atts['user_id'] > 0) {
     $f_user_id = explode(', ', $atts['user_id']);
+  } else if ($isPageProject && (current_user_can('manager') || current_user_can('administrator'))){
+    $f_user_id = '';
   } else {
     $f_user_id = $currentUserID;
   }
@@ -76,13 +85,6 @@ function show_transactions( $atts ){
     $query['orderby'] = 'meta_value_num';
     $query['order'] = 'ASC';
 
-  }
-
-  if (isset($atts['project_id']) && !empty($atts['project_id'])) {
-    $isPageProject = true;
-    $projects = [get_post($atts['project_id'])];
-  } else {
-    $projects = getProjectsForExport($currentUserID);
   }
 
   if ($f_user_id) {
@@ -359,7 +361,9 @@ function show_event_transactions($atts) {
 function getUsersForExport() {
   $users = [];
 
-  if (current_user_can('accountant')) {
+  if (current_user_can('manager') || current_user_can('administrator')) {
+    $users = get_users();
+  } else if (current_user_can('accountant')) {
     global $wpdb;
     $userID = getUserID();
     $groups = get_user_meta($userID, 'pm_group', true);
@@ -372,8 +376,6 @@ function getUsersForExport() {
       }
       $users = array_merge($users, $tmp2);
     }
-  } else if (current_user_can('manager') || current_user_can('administrator')) {
-    $users = get_users();
   }
 
   return $users;

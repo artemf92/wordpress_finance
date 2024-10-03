@@ -301,6 +301,10 @@ label.sort-label {
 .sort-col {
   white-space: nowrap;
 }
+select option.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;

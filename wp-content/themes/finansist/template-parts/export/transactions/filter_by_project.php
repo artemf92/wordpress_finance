@@ -18,7 +18,8 @@ foreach($projects as $prj) {
     <select name="project_id[]" id="project_id" class="form-select form-control" onchange="filterSelect(this)" multiple>
       <?/*<option value="" selected disabled><?=esc_html('Выбрать проект')?></option>*/?>
       <? foreach($projects as $project) { ?>
-      <option value="<?=$project->ID?>" <?=in_array($project->ID, (array)$projectIDs) ? 'selected':''?>><?= $project->post_title ?>
+        <? $disabled = $isPageProject ? ' disabled':'' ?>
+      <option value="<?=$project->ID?>" class="<?=$disabled?>" <?=in_array($project->ID, (array)$projectIDs) ? 'selected':''?>><?= $project->post_title ?>
       </option>
       <? } ?>
     </select>

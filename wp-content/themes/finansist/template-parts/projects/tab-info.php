@@ -100,7 +100,7 @@ if (empty($settings) && get_post_meta($post->ID,'settings_project_sum', true)) {
       <? } ?>
     </div>
   </div>
-  <? if (current_user_can('contributor')) {
+  <? if (current_user_can('contributor') || current_user_can('accountant')) {
     get_template_part('template-parts/projects/content', 'transactions-current-user');
   } ?>
 </div>
