@@ -2,9 +2,10 @@
 add_action( 'wp_ajax_project_restart', 'project_restart_callback' );
 // add_action( 'wp_ajax_nopriv_project_restart', 'project_restart_callback' );
 function project_restart_callback() {
-  if (!current_user_can('administrator') && !current_user_can('manager') ) return;
-  
 	$project_id = $_REQUEST['project_id'];
+  
+  if (!current_user_can('administrator') && !current_user_can('manager')  && !isProjectManager($project_id, wp_get_current_user()->ID)) return;
+  
   $settings = get_field('settings_project', $project_id);
   $investors = get_field('investory_investors', $project_id);
 

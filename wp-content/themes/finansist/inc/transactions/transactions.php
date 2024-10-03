@@ -23,8 +23,6 @@ function show_transactions( $atts ){
     $f_user_id = $_REQUEST['f_user_id'];
   } else if (isset($atts['user_id']) && $atts['user_id'] > 0) {
     $f_user_id = explode(', ', $atts['user_id']);
-  } else if ($isPageProject && (current_user_can('manager') || current_user_can('administrator'))){
-    $f_user_id = '';
   } else {
     $f_user_id = $currentUserID;
   }

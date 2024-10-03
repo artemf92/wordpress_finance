@@ -11,7 +11,6 @@
  *
  * @package flat-bootstrap
  */
-
 if (!current_user_can('accountant')) {
 	wp_redirect('/user/');
 }

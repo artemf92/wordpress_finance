@@ -20,7 +20,7 @@
 
 			<? get_template_part('template-parts/projects/tab', 'info') ?>
 			<? get_template_part('template-parts/projects/tab', 'history') ?>
-			<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant')) {
+			<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant') || isProjectManager(get_the_ID(), getUserID())) {
 				get_template_part('template-parts/projects/tab', 'investors');
 				get_template_part('template-parts/projects/tab', 'transactions');
 			} ?>
@@ -28,9 +28,7 @@
 
 		</div>
 
-		<?//php get_template_part( 'content', 'page-nav' ); ?>
-
-		<?php edit_post_link( __( '<span class="glyphicon glyphicon-edit"></span> Edit', 'flat-bootstrap' ), '<div class="container"><footer class="entry-meta"><div class="edit-link">', '</div></div></footer>' ); ?>
+		<?php edit_post_link( __( '<span class="glyphicon glyphicon-edit"></span> Изменить проект', 'flat-bootstrap' ), '<div class="container"><footer class="entry-meta"><div class="edit-link">', '</div></div></footer>' ); ?>
 	</div><!-- .entry-content -->
 	
 </article><!-- #post-## -->

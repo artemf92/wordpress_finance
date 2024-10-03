@@ -70,7 +70,14 @@ function check_private($postID) {
 }
 
 function wph_noadmin() {
-	if ( is_admin() && !current_user_can('administrator') && !current_user_can('manager') && !wp_doing_ajax() ) {
+	if ( 
+		is_admin() && 
+		!current_user_can('administrator') &&
+		!current_user_can('manager') &&
+		!wp_doing_ajax() &&
+		!current_user_can('edit_post') &&
+		(!isset($_REQUEST['post']) || !isProjectManager($_REQUEST['post'], getUserID())) 
+		) {
 		wp_redirect(home_url());
 		exit;
 	} }
@@ -409,22 +416,33 @@ function hasAccess() {
 
 		switch ($post_type) {
 			case 'projects':
+				$projectManagers = get_post_meta($obj_id, 'managers_group_managers', true);
+				if (in_array($userID, (array)$projectManagers)) return true;
+				
 				$projects = getUsersProjects($userID);
 				return in_array($obj_id, $projects);
 			case 'events':
 			case 'transactions':
 				$projects = array_unique(getUsersProjects($userID));
 				$project_meta = get_post_meta($obj_id, 'settings_project', true);
+				$projectManagers = get_post_meta($project_meta, 'managers_group_managers', true);
+				if (in_array($userID, (array)$projectManagers)) return true;
+
 				if ($post_type == 'transactions') {
 					$transaction_meta = get_post_meta($obj_id, 'settings_investor', true);
 					return $transaction_meta == $userID;
+				} else if ($post_type == 'events') {
+					return false;
 				} else if ($project_meta != '') {
 					return in_array($project_meta, $projects);
 				} else {
 					return false;
 				}
+			default:
+				return false;
 		}
 	}
+	return false;
 }
 
 function getUsersProjects($user_ids, $status = '') {
@@ -534,3 +552,42 @@ add_filter('profilegrid_user_can_assign_groups', 'manager_can_assign_groups');
 // 	));
 // }
 // add_action('wp_enqueue_scripts', 'enqueue_my_script');
+
+function isProjectManager($project_id, $user_id) {
+	$projectManagers = get_post_meta($project_id, 'managers_group_managers', true);
+	return in_array($user_id, (array)$projectManagers);
+}
+
+function allow_manager_edit_project($capabilities, $cap, $user_id, $args) {
+	if (isset($args[0])) {
+		$post_id = $args[0]; 
+		$post_type = get_post_type($post_id);
+
+		if ($post_type === 'projects' && in_array($cap, ['edit_post', 'publish_post', 'edit_others_posts'])) {
+			if (isProjectManager($post_id, $user_id)) {
+				switch ($cap) {
+					case 'edit_post':
+					case 'edit_others_posts':
+						$capabilities = ['edit_posts', 'edit_others_posts'];
+						break;
+					case 'publish_post':
+						$capabilities = ['publish_posts'];
+						break;
+				}
+			}
+		}
+	}
+	return $capabilities;
+}
+
+add_filter('map_meta_cap', 'allow_manager_edit_project', 10, 4);
+
+add_action('template_redirect', 'custom_redirect_uid_to_user');
+
+function custom_redirect_uid_to_user() {
+    if (isset($_GET['uid']) && is_page('default-user-group')) {
+        $uid = intval($_GET['uid']);
+        wp_redirect(home_url('/user/' . $uid . '/'));
+        exit;
+    }
+}

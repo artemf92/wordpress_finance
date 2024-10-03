@@ -19,11 +19,12 @@ $sum = get_formatted_number($settings['sum']);
 // $invested_over = get_formatted_number($data['invest_over']);
 // $profit = get_formatted_number($settings['profit'], '%');
 $time = get_post_full_time();
+$showLink = !current_user_can('contributor');
 
 echo '<tr data-transaction-id="'.$post->ID.'">';
-echo '  <td scope="row">'.$args['num'].'</td>';
+echo '  <td scope="row" class="td-num">'.$args['num'].'</td>';
 // echo '  <td class="td-transaction"><a href="/transactions/'.$post->ID.'/">'.get_the_title().'</a></td>';
-echo '  <td class="td-transaction"><a href="/transactions/'.$post->ID.'/">'.preg_replace('(\(проект .*?\))', '', get_the_title()).'</a></td>';
+echo '  <td class="td-transaction">'.($showLink ? '<a href="/transactions/'.$post->ID.'/">':'').preg_replace('(\(проект .*?\))', '', get_the_title()).($showLink ? '</a>':'').'</td>';
 if ($project) {
   echo '  <td class="td-project"><a href="'.get_the_permalink($project).'">'.get_the_title($project).'</a></td>';
 } else {

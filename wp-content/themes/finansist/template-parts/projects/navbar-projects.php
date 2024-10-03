@@ -6,7 +6,7 @@
   <li class="nav-item" role="presentation">
     <button class="nav-link btn-info m-r-1 m-b-2 btn-lg" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">История проекта</button>
   </li>
-  <? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant')) { ?>
+  <? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant') || isProjectManager(get_the_ID(), getUserID())) { ?>
   <li class="nav-item" role="presentation">
     <button class="nav-link btn-info m-r-1 m-b-2 btn-lg" id="investors-tab" data-bs-toggle="tab" data-bs-target="#investors" type="button" role="tab" aria-controls="investors" aria-selected="false">Инвесторы</button>
   </li>

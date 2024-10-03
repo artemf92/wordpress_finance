@@ -305,6 +305,9 @@ select option.disabled {
   pointer-events: none;
   opacity: 0.5;
 }
+.th-num, .td-num {
+  width: 30px;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
