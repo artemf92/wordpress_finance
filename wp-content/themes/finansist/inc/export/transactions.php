@@ -1,4 +1,6 @@
 <?
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Number;
+
 add_action('wp_ajax_export_transactions', 'export_transactions_callback');
 
 function export_transactions_callback() {
@@ -37,7 +39,7 @@ function setupSheet($xls) {
     $sheet->getColumnDimension("B")->setWidth(280, 'pt');
     $sheet->getColumnDimension("C")->setWidth(200, 'pt');
     $sheet->getColumnDimension("D")->setAutoSize(true);
-    $sheet->getColumnDimension("E")->setWidth(100, 'pt');
+    $sheet->getColumnDimension("E")->setWidth(120, 'pt');
     $sheet->getColumnDimension("F")->setWidth(90, 'pt');
     $sheet->getRowDimension(2)->setRowHeight(40, 'pt');
 
@@ -59,8 +61,8 @@ function prepareData($arTransactions) {
         $name = html_entity_decode(get_the_title($id), ENT_QUOTES, 'UTF-8');
         $project = get_post_meta($id, 'settings_project', true);
         $projectName = $project ? html_entity_decode(get_the_title($project), ENT_QUOTES, 'UTF-8') : '';
-        $sum = get_formatted_number(get_post_meta($id, 'settings_sum', true));
-        $created = get_post_full_time($tr);
+        $sum = floatval(get_post_meta($id, 'settings_sum', true));
+        $created = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel(get_post_timestamp($tr));
         $data[] = [$i++, $name, $projectName, $sum, $created, $id];
     }
     return $data;
@@ -117,7 +119,11 @@ function applyStyles($sheet, $data) {
     }
 
     $sheet->getStyle("A3:A" . $rowCount)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $sheet->getStyle("D3:D" . $rowCount)->getNumberFormat()->setFormatCode((string) new Number(2, Number::WITHOUT_THOUSANDS_SEPARATOR));
     $sheet->getStyle("D3:D" . $rowCount)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+    $sheet->getStyle("E3:E" . $rowCount)->getNumberFormat()->setFormatCode(
+        \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DATETIME
+    );
     $sheet->getStyle("F2")->getAlignment()->setWrapText(true);
 }
 
