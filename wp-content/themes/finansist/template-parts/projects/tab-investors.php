@@ -17,6 +17,7 @@ if (current_user_can('accountant') && !current_user_can('manager')) {
   $investors = array_values($investors);
 }
 $time = get_post_full_time();
+$showLink = !current_user_can('contributor');
 ?>
 <div class="tab-pane" id="investors" role="tabpanel" aria-labelledby="investors-tab" tabindex="0">
   <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
@@ -26,7 +27,7 @@ $time = get_post_full_time();
           <? $invUser = get_user_by('id', $invest['investor']) ?>
           <tr>
             <td><?= $i + 1 ?></td>
-            <td><a href="/user/<?=$invest['investor']?>/"><?= $invUser->display_name?></a></td>
+            <td><?= ($showLink ? '<a href="/user/'.$invest['investor'].'/">': '') . $invUser->display_name . ($showLink ? '</a>':'')?></td>
             <td><?= get_formatted_number($invest['invest']) . ' / ' . get_formatted_number($invest['invest_over']) ?></td>
             <td><?= $time ?></td>
           </tr>
