@@ -595,7 +595,7 @@ function custom_redirect_uid_to_user() {
 add_filter('rest_prepare_user', 'add_acf_fields_to_rest_user', 10, 3);
 
 function add_acf_fields_to_rest_user($response, $user, $request) {
-    $meta_keys = array('money', 'refund', 'profit', 'refund_over', 'contributed', 'overdep');
+    $meta_keys = array('money', 'refund', 'profit', 'refund_over', 'contributed', 'overdep', 'tg_login');
     
     foreach ($meta_keys as $meta_key) {
         $response->data[$meta_key] = get_user_meta($user->ID, $meta_key, true);
