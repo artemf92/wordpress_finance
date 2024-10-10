@@ -24,6 +24,9 @@ function my_scripts_method(){
 require __DIR__ . '/inc/functions.php';
 require __DIR__ . '/inc/rewrite.php';
 
+require __DIR__ . '/inc/ACF/functions.php';
+require __DIR__ . '/inc/REST API/functions.php';
+
 // Post types 
 require __DIR__ . '/inc/post_types/projects/projects.php';
 require __DIR__ . '/inc/post_types/projects/add_new.php';
@@ -590,16 +593,4 @@ function custom_redirect_uid_to_user() {
         wp_redirect(home_url('/user/' . $uid . '/'));
         exit;
     }
-}
-
-add_filter('rest_prepare_user', 'add_acf_fields_to_rest_user', 10, 3);
-
-function add_acf_fields_to_rest_user($response, $user, $request) {
-    $meta_keys = array('money', 'refund', 'profit', 'refund_over', 'contributed', 'overdep', 'tg_login', 'pm_group');
-    
-    foreach ($meta_keys as $meta_key) {
-        $response->data[$meta_key] = get_user_meta($user->ID, $meta_key, true);
-    }
-
-    return $response;
 }
