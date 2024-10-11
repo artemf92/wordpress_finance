@@ -18,13 +18,6 @@ function add_custom_field_to_profilegrid_groups($response, $handler, $request) {
         
       $data = $response->get_data();
 
-      global $wpdb;
-      $groups = $wpdb->get_results("SELECT id, group_name FROM {$wpdb->prefix}promag_groups");
-      $arGroups = [];
-
-      foreach($groups as $group) {
-      }
-      
       foreach ($data as &$group) {
         $group_id = $group['value'];
         $tmp = get_field('group_' . $group_id, 'option');
@@ -32,8 +25,9 @@ function add_custom_field_to_profilegrid_groups($response, $handler, $request) {
           'telegram_id' => $tmp['telegram_channel_' . $group->id],
           'telegram_link' => $tmp['telegram_channel_name_' . $group->id],
         ];
-          $group['telegram_id'] = isset($tmp['telegram_channel_'.$group_id]) ? $tmp['telegram_channel_'.$group_id] : null;
-          $group['telegram_link'] = isset($tmp['telegram_channel_name_'.$group_id]) ? $tmp['telegram_channel_name_'.$group_id] : null;
+        $group['group_id'] = $group_id;
+        $group['telegram_id'] = isset($tmp['telegram_channel_'.$group_id]) ? $tmp['telegram_channel_'.$group_id] : null;
+        $group['telegram_link'] = isset($tmp['telegram_channel_name_'.$group_id]) ? $tmp['telegram_channel_name_'.$group_id] : null;
       }
 
       $response->set_data($data);
