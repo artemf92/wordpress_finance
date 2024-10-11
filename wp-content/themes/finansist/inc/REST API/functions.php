@@ -11,25 +11,33 @@ function add_acf_fields_to_rest_user($response, $user, $request) {
     return $response;
 }
 
-add_action('rest_api_init', function() {
-	register_rest_route('profilegrid/v1', '/groups_links', [
-			'methods'      => 'GET',
-			'callback' => 'add_tg_link_to_group',
-	]);
-});
+add_filter('rest_request_after_callbacks', 'add_custom_field_to_profilegrid_groups', 10, 3);
 
-function add_tg_link_to_group() {
-  global $wpdb;
-  $groups = $wpdb->get_results("SELECT id, group_name FROM {$wpdb->prefix}promag_groups");
-  $arGroups = [];
+function add_custom_field_to_profilegrid_groups($response, $handler, $request) {
+    if ($request->get_route() === '/profilegrid/v1/groups' && $response instanceof WP_REST_Response) {
+        
+      $data = $response->get_data();
 
-	foreach($groups as $group) {
-    $tmp = get_field('group_' . $group->id, 'option');
-    $arGroups[$group->id] = [
-      'telegram_id' => $tmp['telegram_channel_' . $group->id],
-      'telegram_link' => $tmp['telegram_channel_name_' . $group->id],
-    ];
-  }
-  
-  return $arGroups;
+      global $wpdb;
+      $groups = $wpdb->get_results("SELECT id, group_name FROM {$wpdb->prefix}promag_groups");
+      $arGroups = [];
+
+      foreach($groups as $group) {
+      }
+      
+      foreach ($data as &$group) {
+        $group_id = $group['value'];
+        $tmp = get_field('group_' . $group_id, 'option');
+        $arGroups[$group->id] = [
+          'telegram_id' => $tmp['telegram_channel_' . $group->id],
+          'telegram_link' => $tmp['telegram_channel_name_' . $group->id],
+        ];
+          $group['telegram_id'] = isset($tmp['telegram_channel_'.$group_id]) ? $tmp['telegram_channel_'.$group_id] : null;
+          $group['telegram_link'] = isset($tmp['telegram_channel_name_'.$group_id]) ? $tmp['telegram_channel_name_'.$group_id] : null;
+      }
+
+      $response->set_data($data);
+    }
+
+    return $response;
 }
