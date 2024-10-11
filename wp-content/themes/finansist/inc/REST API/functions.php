@@ -24,7 +24,11 @@ function add_tg_link_to_group() {
   $arGroups = [];
 
 	foreach($groups as $group) {
-    $arGroups[] = get_field('group_' . $group->id, 'option');
+    $tmp = get_field('group_' . $group->id, 'option');
+    $arGroups[$group->id] = [
+      'telegram_id' => $tmp['telegram_channel_' . $group->id],
+      'telegram_link' => $tmp['telegram_channel_' . $group->id],
+    ];
   }
   
   return $arGroups;
