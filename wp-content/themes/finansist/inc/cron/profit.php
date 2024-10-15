@@ -13,6 +13,7 @@ function projects_cron()
       $money = get_user_meta($user->ID, 'money', true);
       $contributed = get_user_meta($user->ID, 'contributed', true);
       $overdep = get_user_meta($user->ID, 'overdep', true);
+      $refund = get_user_meta($user->ID, 'refund', true);
 
       $data = [
         'user_id' => $user->ID,
@@ -20,6 +21,7 @@ function projects_cron()
         'user_money' => $money,
         'user_contributed' => $contributed,
         'user_overdep' => $overdep,
+        'user_refund' => $refund,
       ];
 
       $wpdb->insert('af_profit_data', $data);

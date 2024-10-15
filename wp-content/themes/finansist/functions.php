@@ -209,28 +209,23 @@ function getProfitvalue($year) {
 
 	$userID = getUserID();
 
-	$transactionsRefund = transactionsForCurrentUser($year, 3); // Получаем все транзакции по возврату
-
-	foreach ($transactionsRefund as $month => $transaction_data) {
-		$monthly_refund_transactions[$month] = array_sum(array_column($transaction_data, 'value'));
-	}
-
 	$profitData = getProfitUserInfo($userID);
 
 	foreach ($profitData as $pd) {
 		$field_date = $pd['date'];
 		$field_money = $pd['user_money'];
 		$field_contributed = $pd['user_contributed'];
-		$field_overdep = $pd['user_overdep'];
+		$field_refund = $pd['user_refund'];
+		// $field_overdep = $pd['user_overdep'];
 
 		$dateObject = \DateTime::createFromFormat('Y-m-d', $field_date);
 
 		$month = $dateObject->format('n');
 
 		if (!isset($portfolio[$month])) {
-			$portfolio[$month] = $field_money + $field_contributed + $field_overdep + $monthly_refund_transactions[$month];
-			$capitalInvested[$month] = $field_contributed + $field_overdep;
-			$capitalOnHand[$month] = $field_money + $monthly_refund_transactions[$month];
+			$portfolio[$month] = $field_money + $field_contributed + $field_refund;
+			$capitalInvested[$month] = $field_contributed;
+			$capitalOnHand[$month] = $field_money + $field_refund;
 		}
 
 	}
@@ -244,8 +239,8 @@ function getProfitvalue($year) {
 	}
 
 	for ($i = 1; $i <= 12; $i++) {
-		if (isset($monthly_totals_profit[$i]) && isset($capitalInvested[$i]) && isset($capitalOnHand[$i])) {
-			$monthly_totals_percent[$i] = $monthly_totals_profit[$i] / ($capitalInvested[$i] + $capitalOnHand[$i]) * 100;
+		if (isset($portfolio[$i]) && $portfolio[$i]) {
+			$monthly_totals_percent[$i] = $monthly_totals_profit[$i] * 100 / $portfolio[$i];
 		}
 	}
 
@@ -379,6 +374,7 @@ function getProfitUserInfo($userID) {
 			'user_money' => $res->user_money,
 			'user_contributed' => $res->user_contributed,
 			'user_overdep' => $res->user_overdep,
+			'user_refund' => $res->user_refund,
 		];
 	}
 
