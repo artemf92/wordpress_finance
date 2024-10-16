@@ -38,7 +38,7 @@ if ($sortby == 'old') {
     <div class="">
       <label for="sort" class="d-flex align-items-center">
         <span><?= esc_html('Сортировка:') ?>&nbsp;&nbsp;&nbsp;</span>
-        <select name="sort" id="sort" class="form-select form-control" onchange="$(this).closest('form').trigger('submit')">
+        <select name="sort" id="sort" class="form-select form-control" onchange="jQuery(this).closest('form').trigger('submit')">
           <? foreach($sortVariants as $item) { ?>
           <option value="<?=$item['value']?>" <?=$item['value'] == $sortby ? 'selected':''?>><?= $item['title'] ?>
           </option>
