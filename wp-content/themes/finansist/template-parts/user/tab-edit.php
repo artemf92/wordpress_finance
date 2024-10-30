@@ -12,4 +12,10 @@
   <?// echo do_shortcode('[wppb-edit-profile]') ?>
   <? echo do_shortcode('[profilegrid_profile]') ?>
   <a href="/auth?action=logout" class="align-right btn btn-info"><?= __('Выйти') ?></a>
+  <script>
+    jQuery(document).ready(function($) {
+      $('#last_name').parent().removeClass('pm_required')
+      $('label[for="last_name"] sup').remove()
+    })
+  </script>
 </div>
