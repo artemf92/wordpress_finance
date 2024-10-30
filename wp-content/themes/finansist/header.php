@@ -8,6 +8,9 @@
  *
  * @package flat-bootstrap
  */
+if (!is_user_logged_in()) {
+	wp_redirect('/auth/');
+}
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>

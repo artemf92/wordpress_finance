@@ -9,10 +9,6 @@
  * @package flat-bootstrap
  */
 
-if (!is_user_logged_in()) {
-	wp_redirect('/auth/');
-}
-
 get_header(); ?>
 
 <?php if (hasAccess()) { 
