@@ -178,3 +178,40 @@ function getAdminGroupUsers($user_id = null) {
   }
   return array_unique($usersInGroup);
 }
+
+function getUserGroups($user_id = null) {
+  if (!$user_id) {
+    $user_id = wp_get_current_user()->ID;
+  }
+
+  
+  $groups = get_user_meta($user_id, 'pm_group', true);
+  $arGroups = [];
+  
+  foreach($groups as $group) {
+    global $wpdb;
+
+    $tmpArr = $wpdb->get_results($wpdb->prepare("SELECT * FROM `wp_promag_groups` WHERE id = %s", $group));
+
+    $arGroups[] = [
+      'id' => $group,
+      'name' => $tmpArr[0]->group_name
+    ];
+  }
+  
+  return $arGroups;
+}
+
+function userDisplayName($user) {
+  if (!$user) {
+    $user = get_user_by('ID', wp_get_current_user()->ID);
+  }
+
+  $groups = getUserGroups($user->ID);
+
+  if (empty($groups)) {
+    return $user->display_name;
+  }
+
+  return $user->display_name . '/' . $groups[0]['name'];
+}

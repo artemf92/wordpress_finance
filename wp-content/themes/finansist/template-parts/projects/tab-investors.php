@@ -27,7 +27,7 @@ $showLink = !current_user_can('contributor');
           <? $invUser = get_user_by('id', $invest['investor']) ?>
           <tr>
             <td><?= $i + 1 ?></td>
-            <td><?= ($showLink ? '<a href="/user/'.$invest['investor'].'/">': '') . $invUser->display_name . ($showLink ? '</a>':'')?></td>
+            <td><?= ($showLink ? '<a href="/user/'.$invest['investor'].'/">': '') . userDisplayName($invUser) . ($showLink ? '</a>':'')?></td>
             <td><?= get_formatted_number($invest['invest']) . ' / ' . get_formatted_number($invest['invest_over']) ?></td>
             <td><?= $time ?></td>
           </tr>

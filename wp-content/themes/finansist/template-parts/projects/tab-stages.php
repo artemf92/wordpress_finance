@@ -18,7 +18,7 @@ $time = get_post_full_time();
           <? $invUserID = get_user_by('id', $invest['investor']) ?>
           <tr>
             <td><?= $i + 1 ?></td>
-            <td><?= $invUserID->display_name?></td>
+            <td><?= userDisplayName($invUserID)?></td>
             <td><?= get_formatted_number($invest['invest']) . ' / ' . get_formatted_number($invest['invest_over']) ?></td>
             <td><?= $time ?></td>
           </tr>

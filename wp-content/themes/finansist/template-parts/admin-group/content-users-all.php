@@ -16,7 +16,7 @@ if (is_array($user_groups)) {
 ?>
 <tr>
   <td><?=$num?></td>
-  <td><a href="/user/<?=$user?>/"><?= $userData->display_name ?></a></td>
+  <td><a href="/user/<?=$user?>/"><?= userDisplayName($userData) ?></a></td>
   <td><?= implode(', ', $groups_text) ?></td>
   <td><?= in_array('accountant', $userData->roles) ? 'Бухгалтер':'' ?></td>
   <td class="centered"><?= get_formatted_number(get_field('money', 'user_' . $user)) ?></td>

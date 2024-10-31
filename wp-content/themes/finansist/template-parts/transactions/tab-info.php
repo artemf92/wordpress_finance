@@ -51,7 +51,7 @@ $user = get_userdata($settings['investor'] ?? get_post_meta($post->ID, 'settings
             <? echo __('Инвестор') ?>
           </div>
           <div class="bg-gray field__item p-a-1">
-          <? echo '  <td><a href="/user/'.$user->ID.'/" />'.$user->display_name.'</a></td>'; ?>
+          <? echo '  <td><a href="/user/'.$user->ID.'/" />'.userDisplayName($user).'</a></td>'; ?>
           </div>
         </div>
       </div>

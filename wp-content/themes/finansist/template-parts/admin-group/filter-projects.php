@@ -9,7 +9,7 @@
         <select name="investor" class="form-select form-control" aria-label="Default select example">
           <option selected disabled><?= __('Выберите инвестора') ?></option>
           <? foreach($users as $id) { ?>
-          <option value="<?=$id?>" <?=$_REQUEST['investor'] == $id?'selected':''?>><?= get_userdata($id)->display_name ?></option>
+          <option value="<?=$id?>" <?=$_REQUEST['investor'] == $id?'selected':''?>><?= userDisplayName(get_userdata($id)) ?></option>
           <? } ?>
         </select>
       </div>

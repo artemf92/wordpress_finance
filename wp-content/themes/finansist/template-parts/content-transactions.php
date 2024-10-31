@@ -31,7 +31,7 @@ if ($project) {
   echo '  <td class="td-project"></td>';
 }
 if (!current_user_can('contributor')) {
-  echo '  <td class="td-investor"><a href="/user/'.$investorID.'/">'.$investor->display_name.'</a></td>';
+  echo '  <td class="td-investor"><a href="/user/'.$investorID.'/">'.userDisplayName($investor).'</a></td>';
 }
 echo '  <td class="td-amount">'.$sum.'</td>';
 echo '  <td class="td-date">'.$time.'</td>';

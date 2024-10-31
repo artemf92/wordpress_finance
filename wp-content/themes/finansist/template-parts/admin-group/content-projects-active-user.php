@@ -17,7 +17,7 @@ $time = get_post_full_time();
 
 echo '<tr>';
 echo '  <td scope="row">'.$args['num'].'</td>';
-echo '  <td><a href="/user/'.$userID.'/">'.get_userdata($userID)->display_name.'</a></td>';
+echo '  <td><a href="/user/'.$userID.'/">'.userDisplayName(get_user_by('ID', $userID)).'</a></td>';
 echo '  <td><a href="'.get_the_permalink().'" />'.get_the_title().'</a></td>';
 // echo '  <td>'.esc_html('Активен').'</td>';
 echo '  <td>'.$sum.'</td>';

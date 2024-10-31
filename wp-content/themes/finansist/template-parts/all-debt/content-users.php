@@ -15,7 +15,7 @@ $all_refund_over += $refund_over;
 ?>
 <tr>
   <td><?=$num?></td>
-  <td><a href="/user/<?=$user?>/"><?= $userData->display_name ?></a></td>
+  <td><a href="/user/<?=$user?>/"><?= userDisplayName($userData) ?></a></td>
   <td class="text-right"><?= get_formatted_number($profit) ?></td>
   <td class="text-right"><?= get_formatted_number($refund) ?></td>
   <td class="text-right"><?= get_formatted_number($refund_over) ?></td>

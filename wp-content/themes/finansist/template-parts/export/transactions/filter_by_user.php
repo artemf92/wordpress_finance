@@ -24,10 +24,10 @@ if ($isPageUser) {
 
 if (!empty($users)) { 
   foreach($users as $us) {
-      if (in_array($us->ID, (array)$f_user_id)) $selectedUsers[] = $us->display_name;
+      if (in_array($us->ID, (array)$f_user_id)) $selectedUsers[] = userDisplayName($us);
   }
-  if (in_array($currentUserID, (array)$f_user_id) && !in_array(get_userdata($currentUserID)->display_name, $selectedUsers)) {
-    $selectedUsers[] = get_userdata($currentUserID)->display_name;
+  if (in_array($currentUserID, (array)$f_user_id) && !in_array(userDisplayName(get_userdata($currentUserID)), $selectedUsers)) {
+    $selectedUsers[] = userDisplayName(get_userdata($currentUserID));
   } 
   ?>
   <div class="filter-input">
@@ -40,7 +40,7 @@ if (!empty($users)) {
     <div class="filter-input__control">
       <select name="f_user_id[]" id="f_user_id" class="form-select form-control" onchange="filterSelect(this)" multiple>
         <? if ($isPageTransactions || ($isPageProject && in_array($currentUserID, (array)$f_user_id))) { ?>
-        <option value="<?=$currentUserID?>" <?=in_array($currentUserID, (array)$f_user_id) ? 'selected':''?>><?=get_userdata($currentUserID)->display_name?></option>
+        <option value="<?=$currentUserID?>" <?=in_array($currentUserID, (array)$f_user_id) ? 'selected':''?>><?=userDisplayName(get_userdata($currentUserID))?></option>
         <? } ?>
         <? 
         $label = '';
@@ -53,7 +53,7 @@ if (!empty($users)) {
         <optgroup label="<?= esc_html_e('Участники' . $label) ?>">
           <? foreach($users as $user) { ?>
             <? $disabled = $isPageUser ? ' disabled':'' ?>
-            <option value="<?=$user->ID?>" class="<?=$disabled?>" <?=in_array($user->ID, (array)$f_user_id) ? 'selected':''?>><?= $user->display_name ?> </option>
+            <option value="<?=$user->ID?>" class="<?=$disabled?>" <?=in_array($user->ID, (array)$f_user_id) ? 'selected':''?>><?= userDisplayName($user) ?> </option>
           <? } ?>
         </optgroup>
       </select>
