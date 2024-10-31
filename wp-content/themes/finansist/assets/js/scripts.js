@@ -76,11 +76,15 @@ jQuery(document).ready(function($) {
 
     if (type == 3) {
       $('.investors_profit').hide()
+      $('.investors_profit input').attr('tabindex', '-1')
       $('.investors_refund').show()
+      $('.investors_refund input').removeAttr('tabindex')
       
     } else if (type == 4) {
       $('.investors_profit').show()
+      $('.investors_profit input').removeAttr('tabindex')
       $('.investors_refund').hide()
+      $('.investors_refund input').attr('tabindex', '-1')
 
     }
     $('#input_auto').removeAttr('checked')
