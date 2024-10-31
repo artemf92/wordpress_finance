@@ -51,7 +51,7 @@ function project_profit_prepare() {
     $user = get_userdata($investor['investor']);
     $invest = get_post_meta($project_id, 'investory_investors_'.$key.'_invest', true);
     $invest_over = get_post_meta($project_id, 'investory_investors_'.$key.'_invest_over', true);
-    $class = $invest > 0 && $invest_over > 0 ? 'col-md-6':'col-md-12';
+    $class = $invest > 0 && $invest_over > 0 ? 'col-sm-6':'col-sm-12';
 
     $html .= '<fieldset class="m-b-2">';
     $html .= '  <legend>'.__('Инвестор'). ' - '. $user->user_firstname . ' ' . $user->user_lastname.'</legend>';

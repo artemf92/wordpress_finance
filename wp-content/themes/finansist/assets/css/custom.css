@@ -308,6 +308,9 @@ select option.disabled {
 .th-num, .td-num {
   width: 30px;
 }
+.filter-input__btn[for="transaction_type"]+.filter-input__control {
+  width: 420px;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
@@ -342,5 +345,8 @@ select option.disabled {
   }
   .navbar {
     min-height: initial;
+  }
+  .filter-input__btn[for="transaction_type"]+.filter-input__control {
+    width: auto;
   }
 }

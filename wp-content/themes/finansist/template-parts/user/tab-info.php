@@ -40,7 +40,7 @@ $rowFields = [
     <div class="row">
       <? foreach($rowFields as $k => $row) { ?>
       <? $value = get_field($row['key'], 'user_' . $USER_ID); ?>
-      <div class="col-md-6">
+      <div class="col-sm-6">
         <div class="item m-b-1" data-field="<?=$row['key']?>">
           <div class="field__label m-b-1"><?= $row['label'] ?></div>
           <div class="bg-gray field__item p-a-1"><?= get_formatted_number($value)?></div>
