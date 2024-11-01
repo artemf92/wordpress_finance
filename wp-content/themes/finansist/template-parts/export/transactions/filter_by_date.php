@@ -11,7 +11,7 @@ if ($from) {
 
 if ($to) {
   $query['date_query'][] = [
-    'after' => $to,
+    'before' => $to,
     'inclusive' => true
   ];
 }
