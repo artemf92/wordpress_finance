@@ -311,6 +311,63 @@ select option.disabled {
 .filter-input__btn[for="transaction_type"]+.filter-input__control {
   width: 420px;
 }
+.form_export_transactions .btn-clear {
+  background-color: transparent;
+  color: #151515;
+  border-color: transparent;
+  display: block;
+  margin: auto;
+  transition: all .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.form_export_transactions .btn-clear:hover {
+  border-color: currentColor;
+}
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]:before,
+[data-tooltip]:after {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  -webkit-font-smoothing: antialiased;
+  margin: 0 auto;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9;
+  transition: 0.6s ease-in-out 0.4s;
+}
+
+[data-tooltip]:before {
+  content: "";
+  height: 0;
+  width: 0;
+  top: calc(100% - 9px);
+  border-style: solid;
+  border-width: 10px;
+  border-color: transparent transparent #333 transparent;
+}
+
+[data-tooltip]:after {
+  content: attr(data-tooltip);
+  white-space: nowrap;
+  background: #333;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  top: calc(100% + 11px);
+  color: #fff;
+  border-radius: 2px;
+  text-shadow: 0px 1px 1px #000;
+  z-index: 9;
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  opacity: 1;
+  visibility: visible;
+  transition: 0.4s ease-in-out 0.3s;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
