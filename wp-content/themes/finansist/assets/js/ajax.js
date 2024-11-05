@@ -133,8 +133,12 @@ jQuery(document).ready(function($) {
           const newExpBtn = $(res).find('#export_transactions')
           let paginationRes = $(res).find('.pagination')
 
-          ajaxContainer.find('tr:not(:first-child)').remove()
-          result.find('tr:first').remove()
+          if (type !== 'reset') {
+            ajaxContainer.find('tr:not(:first-child)').remove()
+            result.find('tr:first').remove()
+          } else {
+            ajaxContainer.find('tr').remove()
+          }
 
           ajaxContainer.append(result.html())
 

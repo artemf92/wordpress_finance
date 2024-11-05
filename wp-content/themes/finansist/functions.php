@@ -230,7 +230,7 @@ function getProfitvalue($year) {
 
 	}
 
-	$profitTransactions = transactionsForCurrentUser($year, $month, 4, true); // Получаем все транзакции по доходу
+	$profitTransactions = transactionsForCurrentUser($year, 4, true); // Получаем все транзакции по доходу
 
 	// Перебор транзакций и суммирование значений по месяцам.
 	foreach ($profitTransactions as $month => $transaction_data) {
