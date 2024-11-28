@@ -215,3 +215,28 @@ function userDisplayName($user) {
 
   return $user->display_name . '/' . $groups[0]['name'];
 }
+
+function getLastPortfolioUpdate($userID) {
+  $posts = get_posts([
+    'post_type' => 'transactions', 
+    'posts_per_page' => 1, 
+    'post_status' => 'any',
+    'meta_query' => [
+      'relation' => 'AND',
+      [
+        'key' => 'settings_investor',
+        'value' => $userID
+      ],
+      [
+        'key' => 'settings_transaction_type',
+        'value' => 12
+      ]
+    ]
+  ]);
+
+  if (!empty($posts)) {
+    return $posts[0]->post_date;
+  }
+
+  return null;
+}

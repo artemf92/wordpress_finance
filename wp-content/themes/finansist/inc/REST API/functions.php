@@ -8,6 +8,14 @@ function add_acf_fields_to_rest_user($response, $user, $request) {
         $response->data[$meta_key] = get_user_meta($user->ID, $meta_key, true);
     }
 
+    if (isset($response->data['pm_group']) &&  !empty($response->data['pm_group'])) {
+      foreach ($response->data['pm_group'] as $gid) {
+        $response->data['pm_group_name'][$gid] = do_shortcode('[profilegrid_group_name gid='.$gid.']');
+      }
+    }
+
+    $response->data['last_portfolio_update'] = getLastPortfolioUpdate($user->ID);
+
     return $response;
 }
 
@@ -26,6 +34,7 @@ function add_custom_field_to_profilegrid_groups($response, $handler, $request) {
           'telegram_link' => $tmp['telegram_channel_name_' . $group->id],
         ];
         $group['group_id'] = $group_id;
+        $group['group_name'] = do_shortcode('[profilegrid_group_name gid='.$group_id.']');
         $group['telegram_id'] = isset($tmp['telegram_channel_'.$group_id]) ? $tmp['telegram_channel_'.$group_id] : null;
         $group['telegram_link'] = isset($tmp['telegram_channel_name_'.$group_id]) ? $tmp['telegram_channel_name_'.$group_id] : null;
       }

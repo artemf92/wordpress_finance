@@ -501,4 +501,4 @@ function updateEmptiesInvestorsInTransactions() {
 // curl_close($curl);
 // debug(json_decode($resp));
 
-debug(getTransactionsByType(4, '2024-10-01', '2024-10-31' . ' 23:59:59'));
+// debug(getTransactionsByType(4, '2024-10-01', '2024-10-31' . ' 23:59:59'));
