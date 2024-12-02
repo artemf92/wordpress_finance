@@ -23,7 +23,7 @@ $showLink = !current_user_can('contributor');
 echo '<tr>';
 echo '  <td>'.$args['num'].'</td>';
 // echo '  <td>'.$transaction_type.'</td>';
-echo '  <td data-tablesaw-priority="persist">'.($showLink ? '<a href="'.get_the_permalink().'">':'').preg_replace('(\(проект .*?\))', '', get_the_title()).($showLink ? '</a>':'').'</td>';
+echo '  <td data-tablesaw-priority="persist">'.($showLink ? '<a href="'.get_the_permalink().'">':'').preg_replace('/\(по проекту .*?»\)|\(проект .*?»\)/u', '', get_the_title()).($showLink ? '</a>':'').'</td>';
 echo '  <td>'.get_formatted_number($settings['sum']).'</td>';
 echo '  <td>'.$time.'</td>';
 // echo '  <td><a href="'.get_the_permalink().'" />'.get_the_title().'</a></td>';

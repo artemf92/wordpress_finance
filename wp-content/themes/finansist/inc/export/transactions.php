@@ -58,7 +58,7 @@ function prepareData($arTransactions) {
     $i = 1;
     foreach ($arTransactions as $tr) {
         $id = $tr->ID;
-        $name = html_entity_decode(get_the_title($id), ENT_QUOTES, 'UTF-8');
+        $name = html_entity_decode(preg_replace('/\(по проекту .*?»\)|\(проект .*?»\)/u', '', get_the_title($id)), ENT_QUOTES, 'UTF-8');
         $project = get_post_meta($id, 'settings_project', true);
         $projectName = $project ? html_entity_decode(get_the_title($project), ENT_QUOTES, 'UTF-8') : '';
         $sum = floatval(get_post_meta($id, 'settings_sum', true));
