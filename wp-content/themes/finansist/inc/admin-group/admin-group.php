@@ -11,6 +11,9 @@ function show_admin_group( $atts ){
   $group_db =  $wpdb->get_col($wpdb->prepare("SELECT group_name FROM `wp_promag_groups` WHERE id = " . $group_id));
   $group_name = $group_db[0];
   $n = 0;
+
+  global $totalMoney, $totalContributed, $totalOverdep;
+  $totalMoney = $totalContributed = $totalOverdep = 0;
   ?>
   <div class="align-items-center d-flex justify-content-between">
     <h3><?= $group_name ?></h3>
@@ -23,8 +26,12 @@ function show_admin_group( $atts ){
         get_template_part('template-parts/admin-group/content', 'users', ['user' => $user_id, 'num' => $n]);
         $n++;
       }
+      get_template_part('template-parts/admin-group/content', 'total');
     ?>
   </table>
   <hr>
   <?
+  unset($totalMoney);
+  unset($totalContributed);
+  unset($totalOverdep);
 }
