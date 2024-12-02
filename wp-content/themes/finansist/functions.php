@@ -216,14 +216,14 @@ function getProfitvalue($year) {
 		$field_money = $pd['user_money'];
 		$field_contributed = $pd['user_contributed'];
 		$field_refund = $pd['user_refund'];
-		// $field_overdep = $pd['user_overdep'];
+		$field_overdep = $pd['user_overdep'];
 
 		$dateObject = \DateTime::createFromFormat('Y-m-d', $field_date);
 
 		$month = $dateObject->format('n');
 
 		if (!isset($portfolio[$month])) {
-			$portfolio[$month] = $field_money + $field_contributed + $field_refund;
+			$portfolio[$month] = $field_money + $field_contributed + $field_refund + $field_overdep;
 			$capitalInvested[$month] = $field_contributed;
 			$capitalOnHand[$month] = $field_money + $field_refund;
 		}
@@ -231,10 +231,15 @@ function getProfitvalue($year) {
 	}
 
 	$profitTransactions = transactionsForCurrentUser($year, 4, true); // Получаем все транзакции по доходу
+	$profitOverTransactions = transactionsForCurrentUser($year, 14, true); // Получаем все транзакции по доходу
 
 	// Перебор транзакций и суммирование значений по месяцам.
 	foreach ($profitTransactions as $month => $transaction_data) {
 		$monthly_totals_profit[$month] = array_sum(array_column($transaction_data, 'value'));
+		$profit_per_year += $monthly_totals_profit[$month];
+	}
+	foreach ($profitOverTransactions as $month => $transaction_data) {
+		$monthly_totals_profit[$month] += array_sum(array_column($transaction_data, 'value'));
 		$profit_per_year += $monthly_totals_profit[$month];
 	}
 
@@ -258,7 +263,7 @@ function getProfitvalue($year) {
 				'capital_in' => get_formatted_number($capitalInvested[$m]),
 				'capital_has' => get_formatted_number($capitalOnHand[$m]),
 				'total' => get_formatted_number($monthly_totals_profit[$m]),
-				'percent' => isset($monthly_totals_percent[$m]) && $monthly_totals_percent[$m] != 50 ? round($monthly_totals_percent[$m], 2) : ''
+				'percent' => isset($monthly_totals_percent[$m]) ? round($monthly_totals_percent[$m], 2) : ''
 			];
 		}
 	}
