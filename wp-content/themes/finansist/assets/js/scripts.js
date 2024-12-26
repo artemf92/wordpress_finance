@@ -21,6 +21,12 @@ jQuery(document).ready(function($) {
     $(target).collapse('toggle')
   })
 
+  $(document).on('submit', 'form.form', (e) => {
+    const submit = $(e.target).find('button[type="submit"]')
+
+    submit.attr('disabled', true)
+  })
+
   $(document).on('submit', '.form-filter', function(e) {
     e.preventDefault()
 
