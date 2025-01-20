@@ -1,7 +1,8 @@
 <?php
 $data = $args['data'];
+$debug = strpos($args['class'], 'debug') !== false;
 
-echo '<tr>';
+echo '<tr'.($debug ? ' data-debug':'').'>';
 echo '  <td>' . $data['year'] . '</td>';
 echo '  <td>' . $data['month'] .'</td>';
 echo '  <td>' . $data['portfolio'] . '</td>';

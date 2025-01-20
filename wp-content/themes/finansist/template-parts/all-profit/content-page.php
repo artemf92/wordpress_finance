@@ -4,8 +4,11 @@
 			<div class="col-xs-6 col-md-3 col-lg-2">
 				<select name="year_" class="form-control">
 					<option value="" disabled <?=!isset($_GET['year_']) ? 'selected':''?>><?= __('Год')?></option>
-					<option value="2023" <?=isset($_GET['year_']) && $_GET['year_'] == 2023 ? 'selected':''?>>2023</option>
-					<option value="2024" <?=isset($_GET['year_']) && $_GET['year_'] == 2024 ? 'selected':''?>>2024</option>
+					<?
+					for($y = 2023; $y <= date('Y'); $y++) {
+						echo '<option value="'.$y.'"'.(isset($_GET['year_']) && $_GET['year_'] == $y ? ' selected':'').'>'.$y.'</option>';
+					}
+					?>
 				</select>
 			</div>
 			<div class="col-xs-4 col-md-8 col-lg-9">
@@ -23,8 +26,8 @@
 
 			$profitData = getProfitValue($year);
 
-			foreach($profitData['rows'] as $row) {
-				get_template_part('template-parts/content', 'profit', ['data' => $row]);
+			foreach($profitData['rows'] as $key => $row) {
+				get_template_part('template-parts/content', 'profit', ['data' => $row, 'class' => $key]);
 				
 			}
 			get_template_part('template-parts/content', 'profit-total', ['data' => $profitData['medianPerYear']]);

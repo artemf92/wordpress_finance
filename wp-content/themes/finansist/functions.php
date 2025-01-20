@@ -206,23 +206,26 @@ function getProfitvalue($year) {
 
 	$capitalOnHand = $portfolio = $capitalInvested = $monthly_totals_percent = $medianPerYear = $rows = [];
 	$profit_per_year = 0;
+	$debug = isset($_GET['debug']);
 
 	$userID = getUserID();
 
 	$profitData = getProfitUserInfo($userID);
+	$tmpMonths = [];
 
 	foreach ($profitData as $pd) {
-		$field_date = $pd['date'];
-		$field_money = $pd['user_money'];
-		$field_contributed = $pd['user_contributed'];
-		$field_refund = $pd['user_refund'];
-		$field_overdep = $pd['user_overdep'];
-
-		$dateObject = \DateTime::createFromFormat('Y-m-d', $field_date);
-
+		$dateObject = \DateTime::createFromFormat('Y-m-d', $pd['date']);
 		$month = $dateObject->format('n');
-
-		if (!isset($portfolio[$month])) {
+		
+		if ($dateObject->format('Y') === $year && !in_array($month, $tmpMonths)) {
+			$tmpMonths[] = $month;
+			// $field_date = $pd['date'];
+			$data[$month] = $pd;
+			$field_money = $pd['user_money'];
+			$field_contributed = $pd['user_contributed'];
+			$field_refund = $pd['user_refund'];
+			$field_overdep = $pd['user_overdep'];
+			
 			$portfolio[$month] = $field_money + $field_contributed + $field_refund + $field_overdep;
 			$capitalInvested[$month] = $field_contributed;
 			$capitalOnHand[$month] = $field_money + $field_refund;
@@ -230,16 +233,24 @@ function getProfitvalue($year) {
 
 	}
 
+	unset($tmpMonths);
+
 	$profitTransactions = transactionsForCurrentUser($year, 4, true); // Получаем все транзакции по доходу
-	$profitOverTransactions = transactionsForCurrentUser($year, 14, true); // Получаем все транзакции по доходу
+	$profitOverTransactions = transactionsForCurrentUser($year, 14, true); // Получаем все транзакции по доходу (сверх)
 
 	// Перебор транзакций и суммирование значений по месяцам.
 	foreach ($profitTransactions as $month => $transaction_data) {
 		$monthly_totals_profit[$month] = array_sum(array_column($transaction_data, 'value'));
+		if ($debug) {
+			$debug_monthly_totals_profit[$month] = array_sum(array_column($transaction_data, 'value'));
+		}
 		$profit_per_year += $monthly_totals_profit[$month];
 	}
 	foreach ($profitOverTransactions as $month => $transaction_data) {
 		$monthly_totals_profit[$month] += array_sum(array_column($transaction_data, 'value'));
+		if ($debug) {
+			$debug_monthly_totals_profit_over[$month] = array_sum(array_column($transaction_data, 'value'));
+		}
 		$profit_per_year += $monthly_totals_profit[$month];
 	}
 
@@ -251,7 +262,8 @@ function getProfitvalue($year) {
 
 	// Построение таблицы с месяцами и суммами значений.
 	$lastMonth = $year == date('Y') ? date('n') - 1 : 12;
-
+	
+	$dd = 0;
 	for($m = 1; $m <= $lastMonth; $m++) {
 		if (isset($monthly_totals_percent[$m])) {
 			$medianPerYear[] = round($monthly_totals_percent[$m], 2);
@@ -265,9 +277,32 @@ function getProfitvalue($year) {
 				'total' => get_formatted_number($monthly_totals_profit[$m]),
 				'percent' => isset($monthly_totals_percent[$m]) ? round($monthly_totals_percent[$m], 2) : ''
 			];
+
+			if ($debug) {
+				$rows['rows']['debug_'.$dd++] = [
+					'portfolio' => '
+						Сумма на руках - ' . get_formatted_number($data[$m]['user_money']) . '</br>
+						Вложено из портфеля - ' . get_formatted_number($data[$m]['user_contributed']) . '</br>
+						Возврат инвестиций (портфель) - ' . get_formatted_number($data[$m]['user_refund']) . '</br>
+						Вложено сверх - ' . get_formatted_number($data[$m]['user_overdep']),
+					'capital_has' => '
+						Сумма на руках - ' . get_formatted_number($data[$m]['user_money']) . '</br>
+						Возврат инвестиций (портфель) - ' . get_formatted_number($data[$m]['user_refund']) . '</br>
+					',
+					'capital_in' => 'Вложено из портфеля - ' . get_formatted_number($data[$m]['user_contributed']),
+					'total' => '
+						Сумма транзакций "Доход по проекту" - ' . get_formatted_number($debug_monthly_totals_profit[$m]) . '</br>
+						Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number($debug_monthly_totals_profit_over[$m])
+				];
+			}
 		}
 	}
-	$rows ['medianPerYear'] = round(array_sum($medianPerYear) / count($medianPerYear), 2) . ' %';
+
+	if (!empty($medianPerYear)) {
+		$rows['medianPerYear'] = round(array_sum($medianPerYear) / count($medianPerYear), 2) . ' %';
+	} else {
+		$rows['medianPerYear'] = '';
+	}
 
 	return $rows;
 }
@@ -374,7 +409,7 @@ function getProfitUserInfo($userID) {
 
 	foreach ( $result as $res )
 	{
-		$data[] = [
+		$data[str_replace('-', '', $res->date)] = [
 			'date' => $res->date,
 			'user_money' => $res->user_money,
 			'user_contributed' => $res->user_contributed,

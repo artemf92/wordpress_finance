@@ -368,6 +368,10 @@ select option.disabled {
   visibility: visible;
   transition: 0.4s ease-in-out 0.3s;
 }
+tr[data-debug] {
+  font-size: 11px;
+  background-color: #e8e8e8;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
