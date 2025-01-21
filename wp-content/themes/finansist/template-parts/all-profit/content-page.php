@@ -5,7 +5,7 @@
 				<select name="year_" class="form-control">
 					<option value="" disabled <?=!isset($_GET['year_']) ? 'selected':''?>><?= __('Год')?></option>
 					<?
-					for($y = 2023; $y <= date('Y'); $y++) {
+					for($y = 2024; $y <= date('Y'); $y++) {
 						echo '<option value="'.$y.'"'.(isset($_GET['year_']) && $_GET['year_'] == $y ? ' selected':'').'>'.$y.'</option>';
 					}
 					?>

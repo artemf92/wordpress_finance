@@ -217,7 +217,7 @@ function getProfitvalue($year) {
 		$dateObject = \DateTime::createFromFormat('Y-m-d', $pd['date']);
 		$month = $dateObject->format('n');
 		
-		if ($dateObject->format('Y') === $year && !in_array($month, $tmpMonths)) {
+		if ($dateObject->format('Y') === $year && !in_array($month, $tmpMonths) && ($year >= 2024 && $month >= 10)) {
 			$tmpMonths[] = $month;
 			// $field_date = $pd['date'];
 			$data[$month] = $pd;
