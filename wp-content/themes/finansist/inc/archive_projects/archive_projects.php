@@ -40,9 +40,17 @@ function show_archive_projects( $atts ){
             ]
         ],
         [
-          'key' => 'investory_investors_$_investor',
-          'value'   => $userID,
-          'compare' => 'IN',
+          'relation' => 'OR',
+          [
+            'key' => 'investory_investors_$_investor',
+            'value'   => $userID,
+            'compare' => 'IN',
+          ],
+          [
+            'key' => 'managers_group_managers',
+            'value' => '"'.$userID.'";',
+            'compare' => 'LIKE'
+          ]
         ]
       ],
     'paged' => $paged,
