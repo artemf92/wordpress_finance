@@ -44,6 +44,8 @@ require __DIR__ . '/inc/auth/auth.php';
 require __DIR__ . '/inc/profile/profile.php';
 require __DIR__ . '/inc/profile/checkout.php';
 
+require __DIR__ . '/inc/analytics/statistics.php';
+
 
 require __DIR__ . '/inc/active_projects/active_projects.php';
 require __DIR__ . '/inc/archive_projects/archive_projects.php';

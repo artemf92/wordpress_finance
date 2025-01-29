@@ -9,7 +9,7 @@ function show_active_group_projects( $atts ){
   
   global $wpdb, $users;
   $users = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT user_id FROM $wpdb->usermeta WHERE meta_key = %s AND meta_value LIKE %s",'pm_group',serialize([$group_id])));
-  get_template_part('template-parts/admin-group/filter', 'projects');
+  get_template_part('template-parts/admin-group/filter', 'investors');
 
   global $wp_query, $userID;
   $userID = urldecode(intval($_GET['investor']));

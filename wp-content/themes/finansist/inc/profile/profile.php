@@ -13,7 +13,7 @@ function my_custom_function($post_id) {
 
 function my_custom_function2( $value, $post_id, $field  ) {
   
-  if ($_POST['from'] === 'profile' && isset($_POST['_acf_post_id'])) {
+  if (isset($_POST['from']) && $_POST['from'] === 'profile' && isset($_POST['_acf_post_id'])) {
     user_profile_actions_callback($post_id);
   }
 

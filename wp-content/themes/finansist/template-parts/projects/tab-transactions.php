@@ -23,5 +23,5 @@ if (current_user_can('accountant') && !current_user_can('manager')) {
 }
 ?>
 <div class="tab-pane" id="transactions" role="tabpanel" aria-labelledby="transactions-tab" tabindex="0">
-  <? echo do_shortcode(sprintf("[transactions project_id='%d' user_id='%s']", $data['project_id'], $data['user_id'])) ?>
+  <? echo do_shortcode(sprintf("[transactions project_id='%d' user_id='%s']", $data['project_id'], $data['user_id'] ?? '')) ?>
 </div>

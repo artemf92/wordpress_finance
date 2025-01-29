@@ -1,4 +1,3 @@
-
 <? 
 // Проверка изменения кастомного поля при обновлении записи типа 'projects'
 function check_project_field_change($post_id) {
@@ -89,5 +88,73 @@ function check_project_field_change($post_id) {
   }
 }
 
+function update_project_managers() {
+
+}
+
 // Добавляем хук на событие сохранения поста
 add_action('acf/save_post', 'check_project_field_change', 5);
+
+function update_project_manager_roles($value, $post_id) {
+  if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+    return $value;
+  }
+  
+  $post = get_post($post_id);
+  
+  if (str_contains($post_id, 'user_') || ($post && $post->post_type !== 'projects')) {
+    return $value;
+  }
+  
+  $current_status = get_post_meta($post_id, 'status', true);
+  
+  if ($current_status != '1') {
+    return $value;
+  }
+
+  global $wpdb;
+
+  $tmpArray = [];
+  $result = $wpdb->get_results("
+      SELECT p1.* 
+      FROM `wp_postmeta` p1
+      WHERE p1.meta_key = 'managers_group_managers' 
+        AND p1.meta_value != ''
+        AND EXISTS (
+            SELECT 1 
+            FROM `wp_postmeta` p2 
+            WHERE p2.post_id = p1.post_id 
+              AND p2.meta_key = 'status' 
+              AND p2.meta_value = '1'
+        );
+  ");
+
+  foreach ($result as $res) {
+      $tmpArray = array_merge($tmpArray, unserialize($res->meta_value));
+  }
+
+  $tmpArray = array_values(array_unique($tmpArray));
+
+  $users = get_users(['fields' => ['ID']]);
+  foreach ($users as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if (in_array('project_manager', $user->roles)) {
+          $user->remove_role('project_manager');
+      }
+  }
+
+  foreach ($tmpArray as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if ($user->exists()) {
+          $user->add_role('project_manager');
+      } else {
+          error_log("User with ID {$user_id} does not exist.\n");
+      }
+  }
+
+  return $value;
+}
+
+add_action('acf/update_value/name=status', 'update_project_manager_roles', 20, 2);
