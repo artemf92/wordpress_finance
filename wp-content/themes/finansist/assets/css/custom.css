@@ -410,6 +410,15 @@ td.crown {
 .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>th, .table>caption+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>td, .table>thead:first-child>tr:first-child>td {
   vertical-align: top;
 }
+table[data-type=report_refill] .td-investor {
+  width: 30%;
+}
+table[data-type=report_portfolio_investment] .td-investor {
+  width: 30%;
+}
+table[data-type=report_portfolio_investment] .td-transaction {
+  width: 35%;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;

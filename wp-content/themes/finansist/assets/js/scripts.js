@@ -166,6 +166,20 @@ jQuery(document).ready(function($) {
     parent.toggleClass('is-active');
   });
 
+  $(document).on('click', '.form-reports .pagination a', function(e) {
+    e.preventDefault()
+
+    let page = Number($(this).text());
+
+    const ajaxContainer = $(this).closest('.ajax-report');
+    const form = ajaxContainer.prev();
+    const pageEl = form.find('input[name^=page]')
+
+    pageEl.val(page);
+
+    form.trigger('submit')
+  })
+
   function showTab(tab) {
     $('[data-bs-toggle="tab"]').removeClass('active')
     $('.tab-pane').removeClass('active')

@@ -210,6 +210,60 @@ jQuery(document).ready(function($) {
     })
   })
 
+  $('.form-reports').on('submit', function(e) {
+    e.preventDefault()
+    const ajaxContainer = $('.ajax-report')
+    const type = e.type
+    const form = $(this)
+    const btnFilter = form.find('button[type=submit]')
+    const data = form.serialize()
+    let url = new URLSearchParams(data)
+
+    $.ajax({
+      url: finajax.url+'?'+data+'&action=get_report',
+      data,
+      method: 'POST',
+      dataType: 'html',
+      beforeSend: function(xhr) {
+        ajaxContainer.addClass('loading')
+
+        history.pushState('', '', '?'+url.toString())
+      },
+      success: function(res) {
+        if (res) {
+          const result = $(res).find('.ajax-result')
+
+          ajaxContainer.html(result)
+
+          const paginationRes = ajaxContainer.find('.pagination')
+          const paginationLinks = paginationRes.find('a')
+
+          paginationLinks.each((i,el) => {
+            let link = $(el).attr('href').replace('/wp-admin/admin-ajax.php', document.location.pathname)
+            $(el).attr('href', link)
+            console.log($(el).attr('href'))
+          });
+
+          const table = form.find('.table')
+
+          tablesawRefresh(table)
+        }
+      },
+      error: function(err) {
+        Fancybox.show(['<h4 class="p-5">Упс! Что-то пошло не так</h4>'])
+        setTimeout(() => {
+          Fancybox.close()
+        }, 1500);
+
+        throw new Error(err);
+      },
+      complete: function() {
+        btnFilter.removeAttr('disabled')
+        ajaxContainer.removeClass('loading')
+      }
+    })
+  })
+
 })
 
 function projectProfitHandler(data) {

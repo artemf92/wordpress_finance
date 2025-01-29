@@ -45,6 +45,7 @@ require __DIR__ . '/inc/profile/profile.php';
 require __DIR__ . '/inc/profile/checkout.php';
 
 require __DIR__ . '/inc/analytics/statistics.php';
+require __DIR__ . '/inc/analytics/reports.php';
 
 
 require __DIR__ . '/inc/active_projects/active_projects.php';
