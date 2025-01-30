@@ -375,7 +375,7 @@ tr[data-debug] {
 td.crown {
   position: relative;
 }
-.crown span[data-type] {
+.crown span[data-tooltip] {
   display: block;
   width: 12px;
   height: 12px;
@@ -386,7 +386,7 @@ td.crown {
   top: 0;
   left: 0;
 }
-.crown span:hover:after {
+/* .crown span:hover:after {
   visibility: visible;
   opacity: 1;
 }
@@ -406,7 +406,7 @@ td.crown {
   padding: 2px 5px;
   color: #151515;
   transition: all .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
-}
+} */
 .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>th, .table>caption+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>td, .table>thead:first-child>tr:first-child>td {
   vertical-align: top;
 }

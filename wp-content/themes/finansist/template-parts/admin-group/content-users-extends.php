@@ -33,7 +33,13 @@ $totalPortfolio += $portfolio;
 ?>
 <tr>
   <td><?=$num?></td>
-  <td class="<?= in_array('accountant', $userData->roles) ? 'crown':'' ?>"><a href="/user/<?=$user?>/"><?= userDisplayName($userData) ?> <span data-type="<?= in_array('accountant', $userData->roles) ? 'Бухгалтер':'' ?>"></span></a></td>
+  <td class="<?= in_array('accountant', $userData->roles) ? 'crown':'' ?>">
+    <a href="/user/<?=$user?>/"><?= userDisplayName($userData) ?> 
+      <? if (in_array('accountant', $userData->roles)) { ?>
+        <span data-tooltip="<?=__('Бухгалтер') ?>"></span>
+      <? } ?>
+    </a>
+  </td>
   <!-- <td><?= $group_name ?></td> -->
   <td class="centered"><?= get_formatted_number($userMoney) ?></td>
   <td class="centered"><?= get_formatted_number($userRefund) ?></td>
