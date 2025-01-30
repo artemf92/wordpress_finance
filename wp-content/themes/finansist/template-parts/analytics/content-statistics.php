@@ -1,5 +1,4 @@
 <section class="statistics">
-  <h2><?= _e('Статистика') ?></h2>
   <? 
   if (current_user_can('manager')) {
     get_template_part('template-parts/admin-group/filter', 'groups');
@@ -23,6 +22,8 @@
     if (empty($filterGroup)) {
       echo 'Ничего не найдено';
     }
+
+    echo '<h2>' . _e('Статистика') . '</h2>';
     
     foreach($filterGroup as $gid) {
       echo do_shortcode("[statistics gid=\"{$gid}\"{$filterType}{$filterDate}]") ;
