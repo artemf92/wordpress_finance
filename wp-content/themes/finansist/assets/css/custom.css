@@ -419,6 +419,9 @@ table[data-type=report_portfolio_investment] .td-investor {
 table[data-type=report_portfolio_investment] .td-transaction {
   width: 35%;
 }
+.pagination {
+  margin: 0 0 22px;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;

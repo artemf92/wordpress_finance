@@ -241,10 +241,10 @@ jQuery(document).ready(function($) {
           paginationLinks.each((i,el) => {
             let link = $(el).attr('href').replace('/wp-admin/admin-ajax.php', document.location.pathname)
             $(el).attr('href', link)
-            console.log($(el).attr('href'))
           });
 
-          const table = form.find('.table')
+          const table = ajaxContainer.find('.table')
+          
 
           tablesawRefresh(table)
         }
