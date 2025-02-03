@@ -166,7 +166,7 @@ jQuery(document).ready(function($) {
     parent.toggleClass('is-active');
   });
 
-  $(document).on('click', '.form-reports .pagination a', function(e) {
+  $(document).on('click', '.reports .pagination a', function(e) {
     e.preventDefault()
 
     let page = Number($(this).text());
