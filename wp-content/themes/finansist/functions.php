@@ -717,3 +717,47 @@ background: #d5d5d5;
 	return $themes;
 }
 add_filter("megamenu_themes", "megamenu_add_theme_default_1738231293");
+
+function update_projects_manager_role() {
+	global $wpdb;
+
+  $tmpArray = [];
+  $result = $wpdb->get_results("
+      SELECT p1.* 
+      FROM `wp_postmeta` p1
+      WHERE p1.meta_key = 'managers_group_managers' 
+        AND p1.meta_value != ''
+        AND EXISTS (
+            SELECT 1 
+            FROM `wp_postmeta` p2 
+            WHERE p2.post_id = p1.post_id 
+              AND p2.meta_key = 'status' 
+              AND p2.meta_value = '1'
+        );
+  ");
+
+  foreach ($result as $res) {
+      $tmpArray = array_merge($tmpArray, unserialize($res->meta_value));
+  }
+
+  $tmpArray = array_values(array_unique($tmpArray));
+
+  $users = get_users(['fields' => ['ID']]);
+  foreach ($users as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if (in_array('project_manager', $user->roles)) {
+          $user->remove_role('project_manager');
+      }
+  }
+
+  foreach ($tmpArray as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if ($user->exists()) {
+          $user->add_role('project_manager');
+      } else {
+          error_log("User with ID {$user_id} does not exist.\n");
+      }
+  }
+}

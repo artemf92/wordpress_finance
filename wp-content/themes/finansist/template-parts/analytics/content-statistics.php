@@ -23,7 +23,7 @@
       echo 'Ничего не найдено';
     }
 
-    echo '<h2>' . _e('Статистика') . '</h2>';
+    echo '<h2>' . __('Статистика') . '</h2>';
     
     foreach($filterGroup as $gid) {
       echo do_shortcode("[statistics gid=\"{$gid}\"{$filterType}{$filterDate}]") ;

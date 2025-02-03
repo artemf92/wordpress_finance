@@ -32,4 +32,5 @@ function users_daily_data()
 }
 
 users_daily_data();
+update_projects_manager_role();
 ?>

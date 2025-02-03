@@ -18,7 +18,7 @@ function show_statistics( $atts ){
   $totalMoney = $totalContributed = $totalOverdep = 0;
   ?>
   <div class="align-items-center d-flex justify-content-between">
-    <h3><?= $group_name ?></h3>
+    <h4>Группа <?= $group_name ?></h4>
     <?/*<a href="/group-projects-active/?group=<?=$group_id?>" class="btn btn-warning">Активные проекты группы</a>*/?>
   </div>
   <table class="table m-b-3 tablesaw tablesaw-swipe" data-tablesaw-mode="swipe">

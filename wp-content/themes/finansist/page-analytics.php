@@ -26,8 +26,7 @@ get_header();
 
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
-			<? isProjectManager(get_the_ID(), getUserID()) ?>
-			<? if (current_user_can('contributor') && !current_user_can('project_manager') ) {
+			<? if (current_user_can('contributor') && !current_user_can('project_manager') && !current_user_can('administrator') ) {
 				get_template_part( 'template-parts/page', 'block' );
 			} else {
 				get_template_part('template-parts/analytics/content', 'statistics');
