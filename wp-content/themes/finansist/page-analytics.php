@@ -15,9 +15,9 @@
 get_header(); 
 ?>
 
-<?php if (!current_user_can('contributor')) { 
-	get_template_part( 'content', 'header' ); 
-} ?>
+<?
+get_template_part( 'content', 'header' ); 
+?>
 
 <?php get_sidebar( 'home' ); ?>
 
