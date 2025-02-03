@@ -56,6 +56,8 @@ function get_report_callback() {
   if (empty($meta_query)) wp_die();
 
   global $wp_query;
+  
+  $post_per_page = -1;
 
   $query = [
     'post_type' => 'transactions',

@@ -1,6 +1,6 @@
 <div class="s-export">
   <form class="form_export_transactions">
-    <? $i = $post_per_page * $paged - ($post_per_page - 1); ?>
+  <? $i = $post_per_page < 0 ? 1 : $post_per_page * $paged - ($post_per_page - 1); ?>
     <div class="ajax-result">
       <table class="table tablesaw tablesaw-swipe" data-type="report_<?=$_POST['variant']?>" data-tablesaw-mode="swipe"
         data-tablesaw-hide-empty>
@@ -44,7 +44,7 @@
         
           wp_reset_query();
         ?>
-      <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
+      <?// require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
       <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
     </div>
   </form>
