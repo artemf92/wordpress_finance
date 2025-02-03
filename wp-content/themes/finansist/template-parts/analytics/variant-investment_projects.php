@@ -1,5 +1,17 @@
 <? 
-global $wp_query;
+global $wp_query, $type, $groupID;
+$variants = [
+  'refill' => __('Пополнение портфеля'),
+  'portfolio_investment' => __('Вложения портфельными средствами'),
+  'investment_projects' => __('Инвестиции в проекты за период'),
+];
+
+$reportTitle = $variants[$type];
+
+if ($groupID) {
+  $reportTitle .= " - группа " .getGroupName($groupID);
+}
+
 $query['posts_per_page'] =  -1;
 
 $wp_query = new WP_Query( $query );
@@ -33,6 +45,7 @@ $query = [
   <form class="form_export_transactions">
     <? $i = $post_per_page < 0 ? 1 : $post_per_page * $paged - ($post_per_page - 1); ?>
     <div class="ajax-result">
+      <h3><?=$reportTitle?></h3>
       <table class="table tablesaw tablesaw-swipe" data-type="report_<?=$_POST['variant']?>" data-tablesaw-mode="swipe"
         data-tablesaw-hide-empty>
         <? 

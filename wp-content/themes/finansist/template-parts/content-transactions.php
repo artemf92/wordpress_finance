@@ -23,6 +23,7 @@ $sum = get_formatted_number($settings['sum']);
 $time = get_post_full_time();
 $showLink = !current_user_can('contributor');
 $totalSumm += $settings['sum'];
+$groupName = getUserGroups($investor->ID)[0]['name'];
 
 echo '<tr data-transaction-id="'.$post->ID.'">';
 if (in_array('num', $view)) {
@@ -39,8 +40,11 @@ if (in_array('project', $view)) {
     echo '  <td class="td-project"></td>';
   }
 }
-if (in_array('investor', $view) && !current_user_can('contributor')) {
+if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) {
   echo '  <td class="td-investor"><a href="/user/'.$investorID.'/">'.userDisplayName($investor).'</a></td>';
+}
+if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') ) && $groupName !== '') {
+  echo '  <td class="td-group">'.$groupName.'</a></td>';
 }
 if (in_array('amount', $view)) {
   echo '  <td class="td-amount">'.$sum.'</td>';

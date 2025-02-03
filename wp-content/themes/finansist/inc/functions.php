@@ -242,3 +242,30 @@ function getLastPortfolioUpdate($userID) {
 
   return null;
 }
+
+function getUsersByGroup($group_id) {
+	global $wpdb;
+
+  $query = $wpdb->prepare(
+    "SELECT DISTINCT user_id 
+     FROM $wpdb->usermeta 
+     WHERE meta_key = %s 
+     AND meta_value LIKE %s",
+    'pm_group',
+    '%"' . intval($group_id) . '"%'
+  );
+
+  $tmpArr = $wpdb->get_col($query);
+  if ( !empty($tmpArr) ) {
+      $tmpArr = array_map('intval', $tmpArr); // Преобразуем результат в целые числа
+  }
+
+  return $tmpArr;
+
+}
+
+function getGroupName($group_id) {
+  global $wpdb;
+
+  return $wpdb->get_var("SELECT group_name FROM `wp_promag_groups` WHERE id = {$group_id}");
+}

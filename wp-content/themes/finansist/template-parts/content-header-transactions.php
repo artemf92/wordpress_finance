@@ -12,8 +12,11 @@ $view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,pro
       <? if (in_array('project', $view)) { ?>
       <th scope="col" class="th-project"><?= esc_html('Проект')?></th>
       <? } ?>
-      <? if (in_array('investor', $view) && !current_user_can('contributor')) { ?>
+      <? if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) { ?>
         <th scope="col" class="td-investor"><?= esc_html('Инвестор')?></th>
+      <? } ?>
+      <? if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) { ?>
+        <th scope="col" class="td-group"><?= esc_html('Группа')?></th>
       <? } ?>
       <? if (in_array('amount', $view)) { ?>
       <th scope="col" class="th-sum sort-col">

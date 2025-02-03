@@ -1,7 +1,22 @@
+<? 
+global $type, $groupID;
+$variants = [
+  'refill' => __('Пополнение портфеля'),
+  'portfolio_investment' => __('Вложения портфельными средствами'),
+  'investment_projects' => __('Инвестиции в проекты за период'),
+];
+
+$reportTitle = $variants[$type];
+
+if ($groupID !== "all") {
+  $reportTitle .= " - группа " .getGroupName($groupID);
+}
+?>
 <div class="s-export">
   <form class="form_export_transactions">
   <? $i = $post_per_page < 0 ? 1 : $post_per_page * $paged - ($post_per_page - 1); ?>
     <div class="ajax-result">
+      <h3><?=$reportTitle?></h3>
       <table class="table tablesaw tablesaw-swipe" data-type="report_<?=$_POST['variant']?>" data-tablesaw-mode="swipe"
         data-tablesaw-hide-empty>
         <? 
@@ -10,19 +25,19 @@
           $wp_query = new WP_Query( $query );
           ?>
         <? if ($wp_query->found_posts) { ?>
-        <? get_template_part('template-parts/content', 'header-transactions', ['view' => 'num,name,investor,amount,date,id']) ?>
+        <? get_template_part('template-parts/content', 'header-transactions', ['view' => 'num,name,investor,group,amount,date']) ?>
         <tbody>
           <? while ( have_posts() ) {
                 the_post();
                 
-                get_template_part('template-parts/content', 'transactions', ['num' => $i, 'view' => 'num,name,investor,amount,date,id']);
+                get_template_part('template-parts/content', 'transactions', ['num' => $i, 'view' => 'num,name,investor,group,amount,date']);
                 
                 $i++;
               }
               get_template_part('template-parts/content', 'total-transactions', ['total' => [
-                [ 'span' => 3, 'text' => __('Общий итог:')],
+                [ 'span' => 4, 'text' => __('Общий итог:')],
                 [ 'span' => 0, 'text' => get_formatted_number($totalSumm)],
-                [ 'span' => 2, 'text' => ''],
+                [ 'span' => 0, 'text' => ''],
               ]]);
             } else {
             echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';

@@ -1,6 +1,7 @@
 <? 
 add_action( 'wp_ajax_get_report', 'get_report_callback' );
 function get_report_callback() {
+  global $type;
   $type = $_POST['variant'];
   $period = explode(' - ', $_POST['date-range']);
   $periodStart = explode('/',$period[0]);
@@ -53,7 +54,49 @@ function get_report_callback() {
     $date_query['inclusive'] = true;
   }
 
-  if (empty($meta_query)) wp_die();
+  global $wpdb, $groupID;
+  $groupID = null;
+  
+  if (current_user_can('project_manager')) {
+    $groupID = $_POST['group'];
+
+    if (!$groupID) {
+      $groupID = get_user_meta(get_current_user_id(), 'pm_group', true)[0];
+    }
+
+    if (!$groupID || !in_array($groupID, get_user_meta(get_current_user_id(), 'pm_group', true))) {
+      error_log('Ошибка - менеджер проекта не состоит в группе: ' . $groupID);
+      wp_die();
+    }
+
+    $groupUsers = getUsersByGroup($groupID);
+
+    $meta_query['relation'] = 'AND';
+    $meta_query[] = [
+      'key' => 'settings_investor',
+      'value' => $groupUsers,
+      'compare' => 'IN'
+    ];
+
+  } else if (current_user_can('manager') || current_user_can('administrator')) {
+    $groupID = $_POST['group'];
+
+    if ($groupID) {
+      $groupUsers = getUsersByGroup($groupID);
+
+      $meta_query['relation'] = 'AND';
+      $meta_query[] = [
+        'key' => 'settings_investor',
+        'value' => $groupUsers,
+        'compare' => 'IN'
+      ];
+    }
+  }
+
+  if (empty($meta_query)) {
+    error_log('Ошибка - пустой запрос meta_query');
+    wp_die();
+  }
 
   global $wp_query;
   
@@ -74,8 +117,6 @@ function get_report_callback() {
   ?>
   
   <?
-
-	wp_die();
 }
 
 ?>

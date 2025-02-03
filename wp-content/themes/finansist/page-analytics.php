@@ -30,7 +30,9 @@ get_template_part( 'content', 'header' );
 				get_template_part( 'template-parts/page', 'block' );
 			} else {
 				get_template_part('template-parts/analytics/content', 'statistics');
-				get_template_part('template-parts/analytics/content', 'reports');
+				if (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator')) {
+					get_template_part('template-parts/analytics/content', 'reports');
+				}
 			} ?>
 
 		</main><!-- #main -->
