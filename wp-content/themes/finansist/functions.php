@@ -216,8 +216,10 @@ function getProfitvalue($year) {
 	foreach ($profitData as $pd) {
 		$dateObject = \DateTime::createFromFormat('Y-m-d', $pd['date']);
 		$month = $dateObject->format('n');
-		
-		if ($dateObject->format('Y') === $year && !in_array($month, $tmpMonths) && ($year >= 2024 && $month >= 10)) {
+
+		if ($year <= 2024 && $month < 10) continue; // По задачи 12.2024 убрать показания меньше октября 24
+
+		if ($dateObject->format('Y') === $year && !in_array($month, $tmpMonths)) {
 			$tmpMonths[] = $month;
 			// $field_date = $pd['date'];
 			$data[$month] = $pd;
