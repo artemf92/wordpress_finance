@@ -14,8 +14,8 @@ function show_statistics( $atts ){
   $group_name = $group_db[0];
   $n = 0;
 
-  global $totalMoney, $totalContributed, $totalOverdep;
-  $totalMoney = $totalContributed = $totalOverdep = 0;
+  global $totalMoney, $totalContributed, $totalOverdep, $totalCapitalNotInvested, $totalPortfolio;
+  $totalMoney = $totalContributed = $totalOverdep = $totalCapitalNotInvested = $totalPortfolio = 0;
   ?>
   <div class="align-items-center d-flex justify-content-between">
     <h4>Группа <?= $group_name ?></h4>

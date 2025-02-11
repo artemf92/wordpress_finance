@@ -42,6 +42,45 @@
       global $wpdb;
       $filterGroups = [];
 
+      if (current_user_can('manager') || current_user_can('administrator')) {
+        $filterGroups = $wpdb->get_results("SELECT id, group_name FROM `wp_promag_groups`", 'ARRAY_A');
+      } else if (current_user_can('project_manager')) {
+        $tmpFilterGroups = get_user_meta(get_current_user_id(), 'pm_group', true);
+        foreach($tmpFilterGroups as $groupID) {
+          $group_name = $wpdb->get_var("SELECT group_name FROM `wp_promag_groups` WHERE id = {$groupID}");
+          $filterGroups[] = [
+            'id' => $groupID,
+            'group_name' => $group_name
+          ];
+        }
+      }
+
+      if (!empty($filterGroups) && count($filterGroups) > 1) {
+      ?>
+        <div class="col-md-4 col-lg-3">
+          <div class="mb-3">
+            <label for="variant" class="form-label">
+              <? echo __('Группа:') ?>
+            </label>
+            <select name="group" class="form-select form-control" aria-label="<?= __('Выберите вариант') ?>" required>
+              <option disabled><?= __('Выберите группу') ?></option>
+              <? foreach($filterGroups as $key => $group) { ?>
+              <option value="<?=$group['id']?>" <?=isset($_GET['group']) && $_GET['group'] == $group['id'] ? 'selected':''?>><?= $group['group_name'] ?></option>
+              <? } ?>
+              <? if (current_user_can('manager') || current_user_can('administrator')) { ?>
+                <optgroup label="<?= __('Все группы') ?>">
+                  <option value="all" <?=isset($_GET['group']) && $_GET['group'] == 'all' ? 'selected':''?>><?= __('Все группы') ?></option>
+                </optgroup>
+              <? } ?>
+            </select>
+          </div>
+        </div>
+      <? } ?>
+      
+      <?
+      global $wpdb;
+      $filterGroups = [];
+
       if (current_user_can('project_manager')) {
         $tmpFilterGroups = get_user_meta(get_current_user_id(), 'pm_group', true);
         foreach($tmpFilterGroups as $groupID) {

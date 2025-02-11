@@ -57,7 +57,20 @@ function get_report_callback() {
   global $wpdb, $groupID;
   $groupID = null;
   
-  if (current_user_can('project_manager')) {
+  if (current_user_can('manager') || current_user_can('administrator')) {
+    $groupID = $_POST['group'];
+
+    if ($groupID) {
+      $groupUsers = getUsersByGroup($groupID);
+
+      $meta_query['relation'] = 'AND';
+      $meta_query[] = [
+        'key' => 'settings_investor',
+        'value' => $groupUsers,
+        'compare' => 'IN'
+      ];
+    }
+  } else if (current_user_can('project_manager')) {
     $groupID = $_POST['group'];
 
     if (!$groupID) {
@@ -78,19 +91,6 @@ function get_report_callback() {
       'compare' => 'IN'
     ];
 
-  } else if (current_user_can('manager') || current_user_can('administrator')) {
-    $groupID = $_POST['group'];
-
-    if ($groupID) {
-      $groupUsers = getUsersByGroup($groupID);
-
-      $meta_query['relation'] = 'AND';
-      $meta_query[] = [
-        'key' => 'settings_investor',
-        'value' => $groupUsers,
-        'compare' => 'IN'
-      ];
-    }
   }
 
   if (empty($meta_query)) {

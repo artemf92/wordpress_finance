@@ -1,5 +1,5 @@
 <? 
-global $group_name, $totalMoney, $totalContributed, $totalOverdep, $totalRefund, $capitalNotIvested, $portfolio;
+global $group_name, $totalMoney, $totalContributed, $totalOverdep, $totalRefund, $capitalNotIvested, $portfolio, $totalCapitalNotInvested, $totalPortfolio;
 $user = $args['user'];
 $date = $args['date'];
 
