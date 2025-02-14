@@ -11,6 +11,7 @@ $reportTitle = $variants[$type];
 if ($groupID !== "all") {
   $reportTitle .= " - группа " .getGroupName($groupID);
 }
+
 ?>
 <div class="s-export">
   <form class="form_export_transactions">
@@ -20,28 +21,45 @@ if ($groupID !== "all") {
       <table class="table tablesaw tablesaw-swipe" data-type="report_<?=$_POST['variant']?>" data-tablesaw-mode="swipe"
         data-tablesaw-hide-empty>
         <? 
-          global $totalSumm;
+          global $totalSumm, $arInvestors;
           $totalSumm = 0;
           $wp_query = new WP_Query( $query );
+          $arInvestors = [];
           ?>
-        <? if ($wp_query->found_posts) { ?>
-        <? get_template_part('template-parts/content', 'header-transactions', ['view' => 'num,name,investor,group,amount,date']) ?>
-        <tbody>
-          <? while ( have_posts() ) {
-                the_post();
-                
-                get_template_part('template-parts/content', 'transactions', ['num' => $i, 'view' => 'num,name,investor,group,amount,date']);
-                
-                $i++;
-              }
-              get_template_part('template-parts/content', 'total-transactions', ['total' => [
-                [ 'span' => 4, 'text' => __('Общий итог:')],
-                [ 'span' => 0, 'text' => get_formatted_number($totalSumm)],
-                [ 'span' => 1, 'text' => ''],
-              ]]);
-            } else {
-            echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
-            } ?>
+        <? if ($wp_query->found_posts) {
+          while ( have_posts() ) {
+            the_post();
+            
+            $settings = get_field('settings');
+            $investorID = get_post_meta(get_the_ID(), 'settings_investor', true);
+            $sum = $settings['sum'];
+            if (!$arInvestors[$investorID]) {
+              $arInvestors[$investorID] = 0;
+              $arInvestors[$investorID] = [
+                'transaction_type' => '12',
+                'investor_id' => $investorID
+              ];
+            }
+            $arInvestors[$investorID]['sum'] += $sum;
+          }?>
+          <tbody>
+          <? 
+          foreach($arInvestors as $investorID => $data) {
+            get_template_part('template-parts/analytics/content', 'transactions', [
+              'num' => $i, 
+              'view' => 'num,name,investor,group,amount',
+              'data' => $data
+            ]);
+            $totalSumm += $data['sum'];
+            $i++;
+          }
+          get_template_part('template-parts/content', 'total-transactions', ['total' => [
+            [ 'span' => 4, 'text' => __('Общий итог:')],
+            [ 'span' => 0, 'text' => get_formatted_number($totalSumm)],
+          ]]);
+        } else {
+        echo '<h4 class="text-center">'.esc_html('Транзакций не найдено').'</h4>';
+        } ?>
         </tbody>
       </table>
       <? 
@@ -60,7 +78,7 @@ if ($groupID !== "all") {
           wp_reset_query();
         ?>
       <?// require_once get_stylesheet_directory() . '/template-parts/export/transactions/view.php' ?>
-      <? require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
+      <?// require_once get_stylesheet_directory() . '/template-parts/export/transactions/export_actions.php' ?>
     </div>
   </form>
 </div>
