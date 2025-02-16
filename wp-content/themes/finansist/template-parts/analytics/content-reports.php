@@ -30,7 +30,7 @@
             <? echo __('Вариант отчета:') ?>
           </label>
           <select name="variant" class="form-select form-control" aria-label="<?= __('Выберите вариант') ?>" required>
-            <option selected disabled><?= __('Выберите вариант') ?></option>
+            <option disabled><?= __('Выберите вариант') ?></option>
             <? foreach($variants as $key => $variant) { ?>
             <option value="<?=$key?>" <?=isset($_GET['variant']) && $_GET['variant'] == $key ? 'selected':''?>><?= $variant ?></option>
             <? } ?>
