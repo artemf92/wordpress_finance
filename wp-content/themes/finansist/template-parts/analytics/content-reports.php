@@ -63,7 +63,7 @@
               <? echo __('Группа:') ?>
             </label>
             <select name="group" class="form-select form-control" aria-label="<?= __('Выберите вариант') ?>" required>
-              <option selected disabled><?= __('Выберите группу') ?></option>
+              <option disabled><?= __('Выберите группу') ?></option>
               <? foreach($filterGroups as $key => $group) { ?>
               <option value="<?=$group['id']?>" <?=isset($_GET['group']) && $_GET['group'] == $group['id'] ? 'selected':''?>><?= $group['group_name'] ?></option>
               <? } ?>

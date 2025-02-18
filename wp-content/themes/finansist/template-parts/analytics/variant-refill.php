@@ -33,7 +33,7 @@ if ($groupID !== "all") {
             $settings = get_field('settings');
             $investorID = get_post_meta(get_the_ID(), 'settings_investor', true);
             $sum = $settings['sum'];
-            if (!$arInvestors[$investorID]) {
+            if (!isset($arInvestors[$investorID])) {
               $arInvestors[$investorID] = 0;
               $arInvestors[$investorID] = [
                 'transaction_type' => '12',

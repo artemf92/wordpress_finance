@@ -60,7 +60,7 @@ function get_report_callback() {
   if (current_user_can('manager') || current_user_can('administrator')) {
     $groupID = $_POST['group'];
 
-    if ($groupID) {
+    if ($groupID && $groupID !== 'all') {
       $groupUsers = getUsersByGroup($groupID);
 
       $meta_query['relation'] = 'AND';
