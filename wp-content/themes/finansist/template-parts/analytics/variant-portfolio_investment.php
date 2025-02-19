@@ -29,9 +29,8 @@ if ($groupID !== "all") {
           while ( have_posts() ) {
             the_post();
 
-            $settings = get_field('settings');
             $investorID = get_post_meta(get_the_ID(), 'settings_investor', true);
-            $sum = $settings['sum'];
+            $sum = get_post_meta(get_the_ID(), 'settings_sum', true);
             if (!isset($arInvestors[$investorID])) {
               $arInvestors[$investorID] = [
                 'investor_id' => $investorID,
