@@ -42,7 +42,9 @@
       global $wpdb;
       $filterGroups = [];
 
-      if (current_user_can('project_manager')) {
+      if (current_user_can('manager') || current_user_can('administrator')) {
+        $filterGroups = $wpdb->get_results("SELECT id, group_name FROM `wp_promag_groups`", 'ARRAY_A');
+      } else if (current_user_can('project_manager')) {
         $tmpFilterGroups = get_user_meta(get_current_user_id(), 'pm_group', true);
         foreach($tmpFilterGroups as $groupID) {
           $group_name = $wpdb->get_var("SELECT group_name FROM `wp_promag_groups` WHERE id = {$groupID}");
@@ -51,8 +53,6 @@
             'group_name' => $group_name
           ];
         }
-      } else if (current_user_can('manager') || current_user_can('administrator')) {
-        $filterGroups = $wpdb->get_results("SELECT id, group_name FROM `wp_promag_groups`", 'ARRAY_A');
       }
 
       if (!empty($filterGroups) && count($filterGroups) > 1) {

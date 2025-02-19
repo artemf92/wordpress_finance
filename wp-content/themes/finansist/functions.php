@@ -743,13 +743,14 @@ function update_projects_manager_role() {
   }
 
   $tmpArray = array_values(array_unique($tmpArray));
+	sort($tmpArray);
 
   $users = get_users(['fields' => ['ID']]);
   foreach ($users as $user_id) {
       $user = new WP_User($user_id);
       
       if (in_array('project_manager', $user->roles)) {
-          $user->remove_role('project_manager');
+        $user->remove_role('project_manager');
       }
   }
 
