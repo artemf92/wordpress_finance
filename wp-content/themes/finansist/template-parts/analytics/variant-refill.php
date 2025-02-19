@@ -30,14 +30,13 @@ if ($groupID !== "all") {
           while ( have_posts() ) {
             the_post();
             
-            $settings = get_field('settings');
             $investorID = get_post_meta(get_the_ID(), 'settings_investor', true);
-            $sum = $settings['sum'];
+            $sum = get_post_meta(get_the_ID(), 'settings_sum', true);
             if (!isset($arInvestors[$investorID])) {
-              $arInvestors[$investorID] = 0;
               $arInvestors[$investorID] = [
-                'transaction_type' => '12',
-                'investor_id' => $investorID
+                'investor_id' => $investorID,
+                'sum' => 0,
+                'transaction_type' => '12'
               ];
             }
             $arInvestors[$investorID]['sum'] += $sum;
