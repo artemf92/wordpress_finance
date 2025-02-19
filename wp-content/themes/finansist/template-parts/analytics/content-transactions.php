@@ -16,7 +16,7 @@ foreach($acf_transactions as $field) {
 }
 $sum = get_formatted_number($data['sum']);
 
-$groupName = getUserGroups($investor->ID)[0]['name'];
+$groupName = isset(getUserGroups($investor->ID)[0]) ? getUserGroups($investor->ID)[0]['name'] : '';
 
 echo '<tr data-transaction-id="'.$post->ID.'">';
 if (in_array('num', $view)) {
