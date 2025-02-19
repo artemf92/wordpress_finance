@@ -23,6 +23,7 @@ if ($groupID !== "all") {
           global $totalSumm;
           $totalSumm = 0;
           $wp_query = new WP_Query( $query );
+          $arInvestors = [];
           ?>
         <? if ($wp_query->found_posts) {
           while ( have_posts() ) {
@@ -31,11 +32,11 @@ if ($groupID !== "all") {
             $settings = get_field('settings');
             $investorID = get_post_meta(get_the_ID(), 'settings_investor', true);
             $sum = $settings['sum'];
-            if (!$arInvestors[$investorID]) {
-              $arInvestors[$investorID] = 0;
+            if (!isset($arInvestors[$investorID])) {
               $arInvestors[$investorID] = [
-                'transaction_type' => '1/7',
-                'investor_id' => $investorID
+                'investor_id' => $investorID,
+                'sum' => 0,
+                'transaction_type' => '1/7'
               ];
             }
             $arInvestors[$investorID]['sum'] += $sum;
