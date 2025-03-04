@@ -166,6 +166,12 @@ jQuery(document).ready(function($) {
     parent.toggleClass('is-active');
   });
 
+  $(document).on('click', function(event) {
+    if (!$(event.target).closest('.filter-input').length) {
+        $('.filter-input').removeClass('is-active');
+    }
+  });
+
   $(document).on('click', '.reports .pagination a', function(e) {
     e.preventDefault()
 
