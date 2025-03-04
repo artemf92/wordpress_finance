@@ -8,7 +8,7 @@ $variants = [
 
 $reportTitle = $variants[$type];
 
-if ($groupID) {
+if ($groupID && $groupID) {
   $reportTitle .= " - группа " .getGroupName($groupID);
 }
 
