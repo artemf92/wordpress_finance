@@ -56,8 +56,14 @@ function get_report_callback() {
 
   global $wpdb, $groupID;
   $groupID = null;
-  
-  if (current_user_can('manager') || current_user_can('administrator')) {
+
+  if ($_POST['group'] == 'null' || current_user_can('contributor')) {
+    $meta_query['relation'] = 'AND';
+    $meta_query[] = [
+      'key' => 'settings_investor',
+      'value' => get_current_user_id(),
+    ];
+  } else if (current_user_can('manager') || current_user_can('administrator')) {
     $groupID = $_POST['group'];
 
     if ($groupID && $groupID !== 'all') {
@@ -90,7 +96,6 @@ function get_report_callback() {
       'value' => $groupUsers,
       'compare' => 'IN'
     ];
-
   }
 
   if (empty($meta_query)) {
@@ -110,7 +115,7 @@ function get_report_callback() {
     'meta_query' => $meta_query,
     'date_query' => $date_query,
   ];
-  // debug($query);
+  // debug($query); 
 
   require_once get_stylesheet_directory() . '/template-parts/analytics/variant-' . $type . '.php';
 

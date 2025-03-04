@@ -26,14 +26,13 @@ get_template_part( 'content', 'header' );
 
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
-			<? if (current_user_can('contributor') && !current_user_can('project_manager') && !current_user_can('administrator') ) {
-				get_template_part( 'template-parts/page', 'block' );
-			} else {
-				get_template_part('template-parts/analytics/content', 'statistics');
-				if (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator')) {
-					get_template_part('template-parts/analytics/content', 'reports');
-				}
-			} ?>
+			<?
+			// get_template_part( 'template-parts/page', 'block' );
+
+			get_template_part('template-parts/analytics/content', 'statistics');
+			
+			get_template_part('template-parts/analytics/content', 'reports');
+			?>
 
 		</main><!-- #main -->
 	</div><!-- #primary -->

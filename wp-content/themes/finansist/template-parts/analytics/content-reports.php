@@ -55,7 +55,7 @@
         }
       }
 
-      if (!empty($filterGroups) && count($filterGroups) > 1) {
+      if (!empty($filterGroups)) {
       ?>
         <div class="col-md-4 col-lg-3">
           <div class="mb-3">
@@ -67,11 +67,12 @@
               <? foreach($filterGroups as $key => $group) { ?>
               <option value="<?=$group['id']?>" <?=isset($_GET['group']) && $_GET['group'] == $group['id'] ? 'selected':''?>><?= $group['group_name'] ?></option>
               <? } ?>
-              <? if (current_user_can('manager') || current_user_can('administrator')) { ?>
-                <optgroup label="<?= __('Все группы') ?>">
-                  <option value="all" <?=isset($_GET['group']) && $_GET['group'] == 'all' ? 'selected':''?>><?= __('Все группы') ?></option>
-                </optgroup>
-              <? } ?>
+              <optgroup label="<?= __('___') ?>">
+                <? if (current_user_can('manager') || current_user_can('administrator')) { ?>
+                <option value="all" <?=isset($_GET['group']) && $_GET['group'] == 'all' ? 'selected':''?>><?= __('Все группы') ?></option>
+                <? } ?>
+                <option value="null" <?=isset($_GET['group']) && $_GET['group'] == 'null' ? 'selected':''?>><?= __('Без группы') ?></option>
+              </optgroup>
             </select>
           </div>
         </div>
