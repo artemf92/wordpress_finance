@@ -1,5 +1,8 @@
 <? 
 require_once('wp-load.php');
+
+if (!current_user_can('administrator')) die();
+
 function my_saved_post( $post_id, $xml_node, $is_update ) {
   $import_id = wp_all_import_get_import_id(); 
       
@@ -502,3 +505,54 @@ function updateEmptiesInvestorsInTransactions() {
 // debug(json_decode($resp));
 
 // debug(getTransactionsByType(4, '2024-10-01', '2024-10-31' . ' 23:59:59'));
+
+
+function update_project_manager_roles_handly() {
+
+  global $wpdb;
+  
+  $tmpArray = [];
+  $result = $wpdb->get_results("
+      SELECT p1.* 
+      FROM `wp_postmeta` p1
+      WHERE p1.meta_key = 'managers_group_managers' 
+        AND p1.meta_value != ''
+        AND EXISTS (
+            SELECT 1 
+            FROM `wp_postmeta` p2 
+            WHERE p2.post_id = p1.post_id 
+              AND p2.meta_key = 'status' 
+              AND p2.meta_value = '1'
+        );
+  ");
+  
+  foreach ($result as $res) {
+      $tmpArray = array_merge($tmpArray, unserialize($res->meta_value));
+  }
+  
+  $tmpArray = array_values(array_unique($tmpArray));
+  
+  $users = get_users(['fields' => ['ID']]);
+  foreach ($users as $user_id) {
+    $user = new WP_User($user_id);
+    
+    if (in_array('project_manager', $user->roles)) {
+      $user->remove_role('project_manager');
+    }
+  }
+  
+  foreach ($tmpArray as $user_id) {
+    $user = new WP_User($user_id);
+    
+    if ($user->exists()) {
+      $user->add_role('project_manager');
+      echo "Role 'project_manager' assigned to user ID {$user_id}.\n";
+    } else {
+      echo "User with ID {$user_id} does not exist.\n";
+    }
+  }
+}
+
+// update_project_manager_roles_handly();
+
+users_daily_data();

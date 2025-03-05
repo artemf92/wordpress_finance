@@ -44,6 +44,9 @@ require __DIR__ . '/inc/auth/auth.php';
 require __DIR__ . '/inc/profile/profile.php';
 require __DIR__ . '/inc/profile/checkout.php';
 
+require __DIR__ . '/inc/analytics/statistics.php';
+require __DIR__ . '/inc/analytics/reports.php';
+
 
 require __DIR__ . '/inc/active_projects/active_projects.php';
 require __DIR__ . '/inc/archive_projects/archive_projects.php';
@@ -631,4 +634,133 @@ function custom_redirect_uid_to_user() {
         wp_redirect(home_url('/user/' . $uid . '/'));
         exit;
     }
+}
+
+function megamenu_add_theme_default_1738231293($themes) {
+	$themes["default_1738231293"] = array(
+			'title' => 'Default',
+			'container_background_from' => 'rgb(248, 248, 248)',
+			'container_background_to' => 'rgb(248, 248, 248)',
+			'menu_item_background_from' => 'rgba(0, 0, 0, 0)',
+			'menu_item_background_to' => 'rgba(0, 0, 0, 0)',
+			'menu_item_background_hover_from' => 'rgba(0, 0, 0, 0)',
+			'menu_item_background_hover_to' => 'rgba(0, 0, 0, 0)',
+			'menu_item_link_height' => '50px',
+			'menu_item_link_color' => 'rgb(85, 85, 85)',
+			'menu_item_link_color_hover' => 'rgb(21, 21, 21)',
+			'panel_font_size' => '14px',
+			'panel_font_color' => '#666',
+			'panel_font_family' => 'inherit',
+			'panel_second_level_font_color' => '#555',
+			'panel_second_level_font_color_hover' => '#555',
+			'panel_second_level_text_transform' => 'uppercase',
+			'panel_second_level_font' => 'inherit',
+			'panel_second_level_font_size' => '16px',
+			'panel_second_level_font_weight' => 'bold',
+			'panel_second_level_font_weight_hover' => 'bold',
+			'panel_second_level_text_decoration' => 'none',
+			'panel_second_level_text_decoration_hover' => 'none',
+			'panel_third_level_font_color' => '#666',
+			'panel_third_level_font_color_hover' => '#666',
+			'panel_third_level_font' => 'inherit',
+			'panel_third_level_font_size' => '14px',
+			'flyout_link_size' => '14px',
+			'flyout_link_color' => '#666',
+			'flyout_link_color_hover' => '#666',
+			'flyout_link_family' => 'inherit',
+			'toggle_background_from' => 'rgb(248, 248, 248)',
+			'toggle_background_to' => 'rgb(248, 248, 248)',
+			'mobile_menu_overlay' => 'on',
+			'mobile_menu_force_width' => 'on',
+			'mobile_background_from' => '#222',
+			'mobile_background_to' => '#222',
+			'mobile_menu_item_link_font_size' => '14px',
+			'mobile_menu_item_link_color' => '#ffffff',
+			'mobile_menu_item_link_text_align' => 'left',
+			'mobile_menu_item_link_color_hover' => '#ffffff',
+			'mobile_menu_item_background_hover_from' => '#333',
+			'mobile_menu_item_background_hover_to' => '#333',
+			'custom_css' => '/** Push menu onto new line **/ 
+#{$wrap} { 
+	clear: both; 
+}
+#mega-menu-wrap-primary .mega-menu-toggle .mega-toggle-block-2 .mega-toggle-animated-inner, #mega-menu-wrap-primary .mega-menu-toggle .mega-toggle-block-2 .mega-toggle-animated-inner::before, #mega-menu-wrap-primary .mega-menu-toggle .mega-toggle-block-2 .mega-toggle-animated-inner::after {
+background-color: #151515;
+}
+#mega-menu-wrap-primary #mega-menu-primary > li.mega-menu-item.mega-current-menu-item > a.mega-menu-link {
+background: #d5d5d5;
+}
+@media (max-width: 768px) {
+#mega-menu-wrap-primary #mega-menu-primary > li.mega-menu-item.mega-current-menu-item > a.mega-menu-link {
+	background: #d5d5d5;
+	color: #151515;
+}
+}',
+			'sticky_menu_item_link_height' => '40px',
+			'tabbed_link_background_from' => '#f1f1f1',
+			'tabbed_link_background_to' => '#f1f1f1',
+			'tabbed_link_color' => '#666',
+			'tabbed_link_family' => 'inherit',
+			'tabbed_link_size' => '14px',
+			'tabbed_link_weight' => 'normal',
+			'tabbed_link_padding_top' => '0px',
+			'tabbed_link_padding_right' => '10px',
+			'tabbed_link_padding_bottom' => '0px',
+			'tabbed_link_padding_left' => '10px',
+			'tabbed_link_height' => '35px',
+			'tabbed_link_text_decoration' => 'none',
+			'tabbed_link_text_transform' => 'none',
+			'tabbed_link_background_hover_from' => '#dddddd',
+			'tabbed_link_background_hover_to' => '#dddddd',
+			'tabbed_link_weight_hover' => 'normal',
+			'tabbed_link_text_decoration_hover' => 'none',
+			'tabbed_link_color_hover' => '#666',
+	);
+	return $themes;
+}
+add_filter("megamenu_themes", "megamenu_add_theme_default_1738231293");
+
+function update_projects_manager_role() {
+	global $wpdb;
+
+  $tmpArray = [];
+  $result = $wpdb->get_results("
+      SELECT p1.* 
+      FROM `wp_postmeta` p1
+      WHERE p1.meta_key = 'managers_group_managers' 
+        AND p1.meta_value != ''
+        AND EXISTS (
+            SELECT 1 
+            FROM `wp_postmeta` p2 
+            WHERE p2.post_id = p1.post_id 
+              AND p2.meta_key = 'status' 
+              AND p2.meta_value = '1'
+        );
+  ");
+
+  foreach ($result as $res) {
+      $tmpArray = array_merge($tmpArray, unserialize($res->meta_value));
+  }
+
+  $tmpArray = array_values(array_unique($tmpArray));
+	sort($tmpArray);
+
+  $users = get_users(['fields' => ['ID']]);
+  foreach ($users as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if (in_array('project_manager', $user->roles)) {
+        $user->remove_role('project_manager');
+      }
+  }
+
+  foreach ($tmpArray as $user_id) {
+      $user = new WP_User($user_id);
+      
+      if ($user->exists()) {
+          $user->add_role('project_manager');
+      } else {
+          error_log("User with ID {$user_id} does not exist.\n");
+      }
+  }
 }

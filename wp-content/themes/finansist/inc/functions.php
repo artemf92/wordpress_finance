@@ -6,8 +6,8 @@ function debug($obj) {
 }
 
 function get_formatted_number($num, $after = ' ₽') {
-  if (!is_numeric(abs($num))) return;
-  return number_format($num, 2, '.', ' ') . (abs($num) > 0 ? ' '.$after:'');
+  if ((int)$num && !is_numeric(abs((int)$num))) return;
+  return number_format((int)$num, 2, '.', ' ') . (abs((int)$num) > 0 ? ' '.$after:'');
 }
 
 function get_post_full_time($post = null) {
@@ -188,6 +188,8 @@ function getUserGroups($user_id = null) {
   $groups = get_user_meta($user_id, 'pm_group', true);
   $arGroups = [];
   
+  if (!is_array($groups)) return $arGroups;
+
   foreach($groups as $group) {
     global $wpdb;
 
@@ -239,4 +241,31 @@ function getLastPortfolioUpdate($userID) {
   }
 
   return null;
+}
+
+function getUsersByGroup($group_id) {
+	global $wpdb;
+
+  $query = $wpdb->prepare(
+    "SELECT DISTINCT user_id 
+     FROM $wpdb->usermeta 
+     WHERE meta_key = %s 
+     AND meta_value LIKE %s",
+    'pm_group',
+    '%"' . intval($group_id) . '"%'
+  );
+
+  $tmpArr = $wpdb->get_col($query);
+  if ( !empty($tmpArr) ) {
+      $tmpArr = array_map('intval', $tmpArr); // Преобразуем результат в целые числа
+  }
+
+  return $tmpArr;
+
+}
+
+function getGroupName($group_id) {
+  global $wpdb;
+
+  return $wpdb->get_var("SELECT group_name FROM `wp_promag_groups` WHERE id = {$group_id}");
 }

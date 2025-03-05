@@ -1,4 +1,3 @@
-
 <? 
 // Проверка изменения кастомного поля при обновлении записи типа 'projects'
 function check_project_field_change($post_id) {
@@ -89,5 +88,33 @@ function check_project_field_change($post_id) {
   }
 }
 
+function update_project_managers() {
+
+}
+
 // Добавляем хук на событие сохранения поста
 add_action('acf/save_post', 'check_project_field_change', 5);
+
+function update_project_manager_roles($value, $post_id) {
+  if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+    return $value;
+  }
+  
+  $post = get_post($post_id);
+  
+  if (str_contains($post_id, 'user_') || ($post && $post->post_type !== 'projects')) {
+    return $value;
+  }
+  
+  $current_status = get_post_meta($post_id, 'status', true);
+  
+  if ($current_status != '1') {
+    return $value;
+  }
+
+  update_projects_manager_role();
+
+  return $value;
+}
+
+add_action('acf/update_value/name=status', 'update_project_manager_roles', 20, 2);

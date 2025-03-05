@@ -39,7 +39,7 @@ if (!is_user_logged_in()) {
 		$custom_header_location = isset ( $xsbf_theme_options['custom_header_location'] ) ? $xsbf_theme_options['custom_header_location'] : 'content-header';
 		if ( $custom_header_location == 'header' ) :
 		?>
-			<div id="site-branding" class="site-branding">
+			<div id="site-branding" class="hidden-xs site-branding">
 			
 			<?php
 			// Get custom header image and determine its size
@@ -89,12 +89,12 @@ if (!is_user_logged_in()) {
 		global $xsbf_theme_options;
 		$navbar = '<div class="navbar ' . $xsbf_theme_options['navbar_classes'] . '">'
 			.'<div class="container">'
-        	.'<div class="navbar-header">'
-          	.'<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">'
-            .'<span class="icon-bar"></span>'
-            .'<span class="icon-bar"></span>'
-            .'<span class="icon-bar"></span>'
-          	.'</button>';
+        	.'<div class="navbar-header">';
+          	// .'<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">'
+            // .'<span class="icon-bar"></span>'
+            // .'<span class="icon-bar"></span>'
+            // .'<span class="icon-bar"></span>'
+          	// .'</button>';
 
 		// Site title (Bootstrap "brand") in navbar. Hidden by default. Customizer will
 		// display it if user turns off the main site title and tagline.
@@ -107,7 +107,7 @@ if (!is_user_logged_in()) {
         $navbar .= '</div><!-- navbar-header -->';
 
 		// Display the desktop navbar
-		$navbar .= '<div class="navbar-collapse collapse">';
+		$navbar .= '<div class="navbar-collapse">';
 		$navbar .= wp_nav_menu( 
 			array(  'theme_location' => 'primary',
 			//'container_class' => 'navbar-collapse collapse', //<nav> or <div> class

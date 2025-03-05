@@ -1,29 +1,22 @@
 <?php
-global $totalSumm;
-
-update_field('settings', ['project' => get_post_meta($post->ID, 'settings_project', true)], $post->ID);
-
+$data = $args['data'];
 $view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
-$settings = get_field('settings');
-$project = $settings['project'];
-$investorID = get_post_meta($post->ID, 'settings_investor', true);
+$investorID = $data['investor_id'];
 $investor = get_user_by('ID', $investorID);
+$acf_transactions = acf_get_fields(50)[0]['sub_fields'];
+$transaction_type = explode('/', $data['transaction_type']);
+foreach($acf_transactions as $field) {
+  if ($field['name'] !== 'transaction_type') continue;
 
-// $arInvestors = get_field('investory')['investors'];
-// $data = array_filter($arInvestors, function($_investor) {
-//   $user = wp_get_current_user();
-//   return $_investor['investor'] == $user->ID;
-// });
-// $data = array_pop($data);
+  if (count($transaction_type)) {
+    foreach($transaction_type as $type) {
+      $transaction_name[] = $field['choices'][$type];
+    }
+  }
+}
+$sum = get_formatted_number($data['sum']);
 
-$sum = get_formatted_number($settings['sum']);
-// $invested = get_formatted_number($data['invest']);
-// $invested_over = get_formatted_number($data['invest_over']);
-// $profit = get_formatted_number($settings['profit'], '%');
-$time = get_post_full_time();
-$showLink = !current_user_can('contributor');
-$totalSumm += $settings['sum'];
-$groupName = getUserGroups($investor->ID)[0]['name'];
+$groupName = isset(getUserGroups($investor->ID)[0]) ? getUserGroups($investor->ID)[0]['name'] : '';
 
 echo '<tr data-transaction-id="'.$post->ID.'">';
 if (in_array('num', $view)) {
@@ -31,7 +24,7 @@ if (in_array('num', $view)) {
 }
 if (in_array('name', $view)) {
   // echo '  <td class="td-transaction"><a href="/transactions/'.$post->ID.'/">'.get_the_title().'</a></td>';
-  echo '  <td class="td-transaction">'.($showLink ? '<a href="/transactions/'.$post->ID.'/">':'').preg_replace('/\(по проекту .*?»\)|\(проект .*?»\)/u', '', get_the_title()).($showLink ? '</a>':'').'</td>';
+  echo '  <td class="td-transaction">'.implode('/', $transaction_name).'</td>';
 }
 if (in_array('project', $view)) {
   if ($project) {

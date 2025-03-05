@@ -57,7 +57,7 @@ function show_active_projects( $atts ){
     $i = 30 * $paged - 29;
   ?>
   <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
-    <? get_template_part('template-parts/content', 'header-projects', 'active'); ?>
+    <? get_template_part('template-parts/content', 'header-projects', ['view' => 'num,name,status,amount,investments,profit,date']); ?>
     <tbody>
       <? 
         while ( have_posts() ) {

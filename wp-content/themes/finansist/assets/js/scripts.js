@@ -166,6 +166,26 @@ jQuery(document).ready(function($) {
     parent.toggleClass('is-active');
   });
 
+  $(document).on('click', function(event) {
+    if (!$(event.target).closest('.filter-input').length) {
+        $('.filter-input').removeClass('is-active');
+    }
+  });
+
+  $(document).on('click', '.reports .pagination a', function(e) {
+    e.preventDefault()
+
+    let page = Number($(this).text());
+
+    const ajaxContainer = $(this).closest('.ajax-report');
+    const form = ajaxContainer.prev();
+    const pageEl = form.find('input[name^=page]')
+
+    pageEl.val(page);
+
+    form.trigger('submit')
+  })
+
   function showTab(tab) {
     $('[data-bs-toggle="tab"]').removeClass('active')
     $('.tab-pane').removeClass('active')

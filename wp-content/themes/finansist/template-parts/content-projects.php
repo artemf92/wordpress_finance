@@ -1,5 +1,6 @@
 <?php
 
+$view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,status,profit,date');
 $sum = get_post_meta($post->ID, 'settings_project_sum', true);
 $status = get_field('status');
 //$arInvestors = get_post_meta($post->ID, 'investory_investors', true);

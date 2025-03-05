@@ -1,25 +1,29 @@
-<? if ($args != 'archive' ) { ?>
+<? 
+$view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,status,amount,investments,profit,date');
 
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col"><?= esc_html('Название проекта')?></th>
-      <th scope="col"><?= esc_html('Статус проекта')?></th>
-      <th scope="col"><?= esc_html('Сумма проекта')?></th>
-      <th scope="col"><?= esc_html('Инвестировано / сверх')?></th>
-      <th scope="col"><?= esc_html('Доходность')?></th>
-      <th scope="col"><?= esc_html('Время создания')?></th>
-    </tr>
+?>
+<thead>
+  <tr>
+    <? if (in_array('num', $view)) { ?>
+    <th scope="col">#</th>
+    <? } ?>
+    <? if (in_array('name', $view)) { ?>
+    <th scope="col"><?= esc_html('Название проекта')?></th>
+    <? } ?>
+    <? if (in_array('status', $view)) { ?>
+    <th scope="col"><?= esc_html('Статус проекта')?></th>
+    <? } ?>
+    <? if (in_array('amount', $view)) { ?>
+    <th scope="col"><?= esc_html('Сумма проекта')?></th>
+    <? } ?>
+    <? if (in_array('ivestments', $view)) { ?>
+    <th scope="col"><?= esc_html('Инвестировано / сверх')?></th>
+    <? } ?>
+    <? if (in_array('profit', $view)) { ?>
+    <th scope="col"><?= esc_html('Доходность')?></th>
+    <? } ?>
+    <? if (in_array('date', $view)) { ?>
+    <th scope="col"><?= esc_html('Время создания')?></th>
+    <? } ?>
+  </tr>
   </thead>
-
-<? } else { ?>
-  <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col"><?= esc_html('Название проекта')?></th>
-        <th scope="col"><?= esc_html('Статус проекта')?></th>
-        <th scope="col"><?= esc_html('Доходность')?></th>
-        <th scope="col"><?= esc_html('Время создания')?></th>
-      </tr>
-    </thead>
-<? } ?>

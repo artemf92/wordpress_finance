@@ -40,7 +40,7 @@ $i = 30 * $paged - 29;
 	</form>
 </div>
 <table class="table tablesaw tablesaw-swipe" data-tablesaw-mode="swipe" data-tablesaw-hide-empty>
-	<? get_template_part('template-parts/content', 'header-projects', 'archive') ?>
+	<? get_template_part('template-parts/content', 'header-projects', ['view' => 'num,name,status,profit,date']) ?>
 	<tbody>
 		<? 
 			while ( have_posts() ) {

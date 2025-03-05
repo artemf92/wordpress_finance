@@ -47,9 +47,12 @@ function project_stop_callback() {
     }
   }
 
+  error_log('project_stop_callback - project ID ' . $project_id);
+  
   // перевести статус в завершенный
   update_field('status', 5, $project_id);
   $status = get_field('status', $project_id);
+  error_log('new status ' . var_export($status, true));
   
   echo '<h3>Завершение проекта</h3>';
   echo '<p>Проект завершен!</p>';
