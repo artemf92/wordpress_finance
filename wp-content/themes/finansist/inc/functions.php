@@ -7,7 +7,7 @@ function debug($obj) {
 
 function get_formatted_number($num, $after = ' ₽') {
   if ((int)$num && !is_numeric(abs((int)$num))) return;
-  return number_format((int)$num, 2, '.', ' ') . (abs((int)$num) > 0 ? ' '.$after:'');
+  return number_format((float)$num, 2, '.', ' ') . (abs((int)$num) > 0 ? ' '.$after:'');
 }
 
 function get_post_full_time($post = null) {
