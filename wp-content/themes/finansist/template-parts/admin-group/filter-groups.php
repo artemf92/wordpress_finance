@@ -21,7 +21,7 @@ $arGroups = $wpdb->get_results("SELECT * FROM `wp_promag_groups`;");
       </div>
     </div>
     <? } ?>
-    <? if (current_user_can('accountant') || current_user_can('administrator')) { ?>
+    <? if (current_user_can('accountant') || current_user_can('manager') || current_user_can('administrator')) { ?>
     <div class="col-md-2">
       <div class="mb-3">
         <label for="investor" class="form-label">
