@@ -6,6 +6,7 @@ $arGroups = $wpdb->get_results("SELECT * FROM `wp_promag_groups`;");
 ?>
 <form class="form-filter">
   <div class="row">
+    <? if (current_user_can('manager') || current_user_can('administrator')) { ?>
     <div class="col-md-4">
       <div class="mb-3">
         <label for="investor" class="form-label">
@@ -19,6 +20,8 @@ $arGroups = $wpdb->get_results("SELECT * FROM `wp_promag_groups`;");
         </select>
       </div>
     </div>
+    <? } ?>
+    <? if (current_user_can('accountant') || current_user_can('administrator')) { ?>
     <div class="col-md-2">
       <div class="mb-3">
         <label for="investor" class="form-label">
@@ -28,6 +31,7 @@ $arGroups = $wpdb->get_results("SELECT * FROM `wp_promag_groups`;");
         <input type="date" class="form-input form-control" min="2025-01-29" name="date" value="<?=isset($_GET['date']) ? $_GET['date']:""?>">
       </div>
     </div>
+    <? } ?>
     <div class="col-md-3">
       <div class="d-flex">
         <button type="submit" class="btn btn-info btn-md d-block m-a-2">
