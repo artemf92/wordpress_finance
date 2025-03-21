@@ -76,7 +76,7 @@ function get_report_callback() {
         'compare' => 'IN'
       ];
     }
-  } else if (current_user_can('project_manager')) {
+  } else if (current_user_can('project_manager') || current_user_can('accountant')) {
     $groupID = $_POST['group'];
 
     if (!$groupID) {
