@@ -40,7 +40,7 @@ if (in_array('project', $view)) {
     echo '  <td class="td-project"></td>';
   }
 }
-if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) {
+if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('accountant') || current_user_can('administrator') )) {
   echo '  <td class="td-investor"><a href="/user/'.$investorID.'/">'.userDisplayName($investor).'</a></td>';
 }
 if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') ) && $groupName !== '') {
