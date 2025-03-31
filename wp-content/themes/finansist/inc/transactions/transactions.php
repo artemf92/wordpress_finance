@@ -107,6 +107,8 @@ function show_transactions( $atts ){
               <td><? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_project.php' ?></td>
               <? if (!current_user_can('contributor')) { ?>
               <td><? require_once get_stylesheet_directory() . '/template-parts/export/transactions/filter_by_user.php' ?></td>
+              <? } else { ?>
+              <td></td>
               <? } ?>
               <td></td>
               <td>
