@@ -431,6 +431,23 @@ h1.page-title {
   margin: 0;
   /* color: #151515; */
 }
+.tribe-events-back, 
+#tribe-events-footer {
+  display: none;
+}
+#tribe-events-pg-template, .tribe-events-pg-template,
+.tribe-common .tribe-common-l-container {
+  max-width: 1470px;
+}
+iframe[data-tec-events-ece-iframe] {
+  max-width: 800px !important;
+  /* margin: auto; */
+  /* display: block; */
+}
+dt.tribe-events-event-categories-label,
+dd.tribe-events-event-categories {
+  display: none;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
