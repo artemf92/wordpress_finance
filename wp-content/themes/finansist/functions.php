@@ -80,6 +80,7 @@ function wph_noadmin() {
 		is_admin() && 
 		!current_user_can('administrator') &&
 		!current_user_can('manager') &&
+		!current_user_can('calendar_edit') &&
 		!wp_doing_ajax() &&
 		!current_user_can('edit_post') &&
 		(!isset($_REQUEST['post']) || !isProjectManager($_REQUEST['post'], getUserID())) 
