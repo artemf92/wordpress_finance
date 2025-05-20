@@ -765,3 +765,23 @@ function update_projects_manager_role() {
       }
   }
 }
+
+function restrict_admin_menu_for_custom_role($args, $post_type) {
+    $role = 'calendar_edit';
+    if (current_user_can($role) && !current_user_can('administrator')) {
+        if ($post_type !== 'tribe_events') {
+            $args['show_in_menu'] = false;
+            $args['show_in_admin_bar'] = false;
+        }
+    }
+    return $args;
+}
+add_filter('register_post_type_args', 'restrict_admin_menu_for_custom_role', 10, 2);
+
+function remove_site_settings_menu_for_custom_role() {
+    $role = 'calendar_edit';
+    if (current_user_can($role) && !current_user_can('administrator')) {
+        remove_menu_page('site-settings');
+    }
+}
+add_action('admin_menu', 'remove_site_settings_menu_for_custom_role', 999);
