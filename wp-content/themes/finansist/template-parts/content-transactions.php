@@ -3,7 +3,7 @@ global $totalSumm;
 
 update_field('settings', ['project' => get_post_meta($post->ID, 'settings_project', true)], $post->ID);
 
-$view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
+$view = isset($args['view']) ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
 $settings = get_field('settings');
 $project = $settings['project'];
 $investorID = get_post_meta($post->ID, 'settings_investor', true);

@@ -1,5 +1,5 @@
 <? 
-$view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
+$view = isset($args['view']) ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
 ?>
 <thead>
     <tr>
