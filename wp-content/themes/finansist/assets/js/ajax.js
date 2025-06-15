@@ -21,6 +21,36 @@ jQuery(document).ready(function($) {
     })
   })
 
+  $(document).on('click', '#project_stop_prepare, #project_stop_with_loss', function(e) {
+    e.preventDefault()
+
+    const _this = $(e.target);
+    const url = finajax.url+'?action=' + _this.attr('id') + '&project_id=' + _this.data('project');
+    const type = _this.data('once') || 'ajax';
+    
+    // Закрытие Fancybox, если он открыт
+    if (Fancybox.getInstance()) 
+      Fancybox.getInstance().close();
+
+    setTimeout(() => {
+      Fancybox.show([{
+        src: url,
+        type: type
+      }],
+      {
+        on: {
+          'loaded': function(fancybox) {
+            setTimeout(() => {
+              const status = $(fancybox.container).find('input').val()
+              $('#project_status').html(status)
+            }, 0);
+          }
+        }
+      })
+    }, 300);
+
+  })
+
   $(document).on('click', '#user_edit_profile', function(e) {
     e.preventDefault()
     const _this = $(e.target)

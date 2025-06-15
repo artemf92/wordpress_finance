@@ -16,7 +16,7 @@ $view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,sta
     <? if (in_array('amount', $view)) { ?>
     <th scope="col"><?= esc_html('Сумма проекта')?></th>
     <? } ?>
-    <? if (in_array('ivestments', $view)) { ?>
+    <? if (in_array('investments', $view)) { ?>
     <th scope="col"><?= esc_html('Инвестировано / сверх')?></th>
     <? } ?>
     <? if (in_array('profit', $view)) { ?>

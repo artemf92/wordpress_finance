@@ -437,7 +437,7 @@ h1.page-title {
 }
 #tribe-events-pg-template, .tribe-events-pg-template,
 .tribe-common .tribe-common-l-container {
-  max-width: 1470px;
+  max-width: 800px;
 }
 iframe[data-tec-events-ece-iframe] {
   max-width: 800px !important;

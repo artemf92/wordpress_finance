@@ -3,7 +3,7 @@ global $totalSumm;
 
 update_field('settings', ['project' => get_post_meta($post->ID, 'settings_project', true)], $post->ID);
 
-$view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
+$view = isset($args['view']) ? explode(',', $args['view']) : explode(',', 'num,name,project,investor,amount,date,id') ;
 $settings = get_field('settings');
 $project = $settings['project'];
 $investorID = get_post_meta($post->ID, 'settings_investor', true);
@@ -40,7 +40,7 @@ if (in_array('project', $view)) {
     echo '  <td class="td-project"></td>';
   }
 }
-if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) {
+if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('accountant') || current_user_can('administrator') )) {
   echo '  <td class="td-investor"><a href="/user/'.$investorID.'/">'.userDisplayName($investor).'</a></td>';
 }
 if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') ) && $groupName !== '') {

@@ -23,23 +23,23 @@ function check_project_field_change($post_id) {
       $eventCreated = $hasChange = false;
       foreach($investors as $investor) {
         $investorID = $investor['field_65e391643e646'];
-        $invest = $investor['field_65e391993e647'];
-        $invest_over = $investor['field_65e391c33e648'];
+        $invest = (float) $investor['field_65e391993e647'];
+        $invest_over = (float) $investor['field_65e391c33e648'];
 
-        if ($old_value[$n]['invest'] != $invest) {
+        if ((float) $old_value[$n]['invest'] != $invest) {
           $hasChange = true;
           $arrChanges[] = [
             'investor' => $investorID,
-            'sum' => $invest - $old_value[$n]['invest'],
+            'sum' => $invest - (float) $old_value[$n]['invest'],
             'event' => 7 // 7 : Изменение вложений администратором
           ];
         }
 
-        if ($old_value[$n]['invest_over'] != $invest_over) {
+        if ((float) $old_value[$n]['invest_over'] !== $invest_over) {
           $hasChange = true;
           $arrChanges[] = [
             'investor' => $investorID,
-            'sum' => $invest_over - $old_value[$n]['invest_over'],
+            'sum' => $invest_over - (float) $old_value[$n]['invest_over'],
             'event' => 8 // 8 : Изменение вложений (сверх) администратором
           ];
         }
@@ -74,11 +74,11 @@ function check_project_field_change($post_id) {
             $sum = abs($ch['sum']);
             if ($ch['event'] == 7) { // Вложение
               update_field('money', $money + $sum, 'user_' . $ch['investor']);
-              if ($contributed > $sum) {
+              if ($contributed >= $sum) {
                 update_field('contributed', $contributed - $sum, 'user_' . $ch['investor']);
               }
             } else if ($ch['event'] == 8) { // Вложение сверх
-              if ($overdep > $sum) {
+              if ($overdep >= $sum) {
                 update_field('overdep', $overdep - $sum, 'user_' . $ch['investor']);
               }
             }
