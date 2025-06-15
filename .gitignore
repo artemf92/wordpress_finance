@@ -50,5 +50,4 @@ wp-config.php
 
 .DS_Store
 transfer_db.sh
-**/*.sql
-.vscode/time_log.json
+time_log.json
