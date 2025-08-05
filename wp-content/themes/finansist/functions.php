@@ -313,6 +313,101 @@ function getProfitvalue($year) {
 	return $rows;
 }
 
+function getProfitvalueByMonth($userID, $year, $month) {
+	global $wpdb;
+
+	$capitalOnHand = $portfolio = $capitalInvested = $monthly_totals_percent = $medianPerYear = $rows = [];
+	$profit_per_month = 0;
+	$debug = isset($_GET['debug']);
+
+	$profitData = getProfitUserInfo($userID);
+	$tmpMonths = [];
+
+	foreach ($profitData as $pd) {
+		$dateObject = \DateTime::createFromFormat('Y-m-d', $pd['date']);
+		$dataMonth = $dateObject->format('n');
+
+		if ($year <= 2024 && $dataMonth < 10) continue; // По задачи 12.2024 убрать показания меньше октября 24
+
+		if ($dateObject->format('Y') === $year && $dataMonth == $month && !in_array($dataMonth, $tmpMonths)) {
+			$tmpMonths[] = $dataMonth;
+			$data[$dataMonth] = $pd;
+			$field_money = $pd['user_money'];
+			$field_contributed = $pd['user_contributed'];
+			$field_refund = $pd['user_refund'];
+			$field_overdep = $pd['user_overdep'];
+			
+			$portfolio[$dataMonth] = $field_money + $field_contributed + $field_refund + $field_overdep;
+			$capitalInvested[$dataMonth] = $field_contributed;
+			$capitalOnHand[$dataMonth] = $field_money + $field_refund;
+		}
+	}
+
+	unset($tmpMonths);
+
+	// Получаем транзакции за конкретный месяц
+	$start_date = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-01';
+	$strStart_date = strtotime($start_date);
+	$end_date = date('Y-m-t', $strStart_date) . ' 23:59:59';
+
+	$profitTransactions = getTransactionsByType(4, $start_date, $end_date, $userID); // Получаем все транзакции по доходу
+	$profitOverTransactions = getTransactionsByType(14, $start_date, $end_date, $userID); // Получаем все транзакции по доходу (сверх)
+
+	// Суммируем значения транзакций за месяц
+	$monthly_totals_profit = 0;
+	foreach ($profitTransactions as $transaction) {
+		$monthly_totals_profit += $transaction['value'];
+	}
+	
+	foreach ($profitOverTransactions as $transaction) {
+		$monthly_totals_profit += $transaction['value'];
+	}
+
+	$profit_per_month = $monthly_totals_profit;
+
+	// Рассчитываем процент доходности
+	$monthly_totals_percent = 0;
+	if (isset($portfolio[$month]) && $portfolio[$month]) {
+		$monthly_totals_percent = $monthly_totals_profit * 100 / $portfolio[$month];
+	}
+
+	// Формируем результат
+	$result = [
+		'year' => $year,
+		'month' => $month,
+		'month_name' => getMonth($month),
+		'portfolio' => isset($portfolio[$month]) ? $portfolio[$month] : 0,
+		'portfolio_formatted' => isset($portfolio[$month]) ? get_formatted_number($portfolio[$month]) : '0',
+		'capital_in' => isset($capitalInvested[$month]) ? $capitalInvested[$month] : 0,
+		'capital_in_formatted' => isset($capitalInvested[$month]) ? get_formatted_number($capitalInvested[$month]) : '0',
+		'capital_has' => isset($capitalOnHand[$month]) ? $capitalOnHand[$month] : 0,
+		'capital_has_formatted' => isset($capitalOnHand[$month]) ? get_formatted_number($capitalOnHand[$month]) : '0',
+		'total_profit' => $monthly_totals_profit,
+		'total_profit_formatted' => get_formatted_number($monthly_totals_profit),
+		'percent' => round($monthly_totals_percent, 2),
+		'profit_per_month' => $profit_per_month
+	];
+
+	if ($debug) {
+		$result['debug'] = [
+			'portfolio' => '
+				Сумма на руках - ' . (isset($data[$month]['user_money']) ? get_formatted_number($data[$month]['user_money']) : '0') . '</br>
+				Вложено из портфеля - ' . (isset($data[$month]['user_contributed']) ? get_formatted_number($data[$month]['user_contributed']) : '0') . '</br>
+				Возврат инвестиций (портфель) - ' . (isset($data[$month]['user_refund']) ? get_formatted_number($data[$month]['user_refund']) : '0') . '</br>
+				Вложено сверх - ' . (isset($data[$month]['user_overdep']) ? get_formatted_number($data[$month]['user_overdep']) : '0'),
+			'capital_has' => '
+				Сумма на руках - ' . (isset($data[$month]['user_money']) ? get_formatted_number($data[$month]['user_money']) : '0') . '</br>
+				Возврат инвестиций (портфель) - ' . (isset($data[$month]['user_refund']) ? get_formatted_number($data[$month]['user_refund']) : '0'),
+			'capital_in' => 'Вложено из портфеля - ' . (isset($data[$month]['user_contributed']) ? get_formatted_number($data[$month]['user_contributed']) : '0'),
+			'total' => '
+				Сумма транзакций "Доход по проекту" - ' . get_formatted_number(array_sum(array_column($profitTransactions, 'value'))) . '</br>
+				Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number(array_sum(array_column($profitOverTransactions, 'value')))
+		];
+	}
+
+	return $result;
+}
+
 function transactionsForCurrentUser($year, $type, $prevPeriod = false) {
 
 	$monthly_transactions = $periods = [];
@@ -364,10 +459,10 @@ function transactionsForCurrentUser($year, $type, $prevPeriod = false) {
 	return $monthly_transactions;
 }
 
-function getTransactionsByType($type, $start, $end) {
+function getTransactionsByType($type, $start, $end, $userID = null) {
 	global $wpdb;
 
-	$user = getUserID();
+	$user = $userID ?: getUserID();
 
 	$query = "
 			SELECT p.ID, pm_sum.meta_value AS value, p.post_date AS date

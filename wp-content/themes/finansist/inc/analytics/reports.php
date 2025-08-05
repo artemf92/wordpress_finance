@@ -9,7 +9,17 @@ function get_report_callback() {
   $post_per_page = getPostsPerPage();
   $paged = $_POST['page-report'] ?: 1;
   $pprVariants = [30, 60, 90, 120];
+  
+  if ($type == 'group_profit' && (current_user_can('accountant') || current_user_can('administrator'))) {
+    global $groupID, $month, $year;
+    $groupID = $_POST['group'];
+    $month = $periodStart[0];
+    $year = $periodStart[1];
 
+    get_group_profit_report($_POST, $year, $month);
+    wp_die();
+  }
+  
   $meta_query = $date_query = [];
 
   if ($type == 'refill') {
@@ -122,6 +132,12 @@ function get_report_callback() {
   ?>
   
   <?
+}
+
+function get_group_profit_report($post, $periodStart, $periodEnd) {
+  $type = 'group-profit';
+
+  require_once get_stylesheet_directory() . '/template-parts/analytics/variant-' . $type . '.php';
 }
 
 ?>
