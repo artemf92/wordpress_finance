@@ -16,6 +16,11 @@ function get_report_callback() {
     $month = $periodStart[0];
     $year = $periodStart[1];
 
+    if (!$groupID) {
+      $userGroups = getUserGroups();
+      $groupID = array_column($userGroups, 'id')[0];
+    }
+
     get_group_profit_report($_POST, $year, $month);
     wp_die();
   }

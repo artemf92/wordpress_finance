@@ -35,8 +35,8 @@ if ($groupID && $groupID !== "all") {
               $summaryData['total_profit'] += $profitData['total_profit'];
               get_template_part('template-parts/content', 'profit-group', ['data' => $profitData, 'class' => $key, 'key' => $key + 1]);
             }
-            $summaryData['percent'] = round($summaryData['total_profit'] * 100 / $summaryData['portfolio'], 2);
-            get_template_part('template-parts/content', 'profit-group-total', ['data' => $summaryData]);
+            // $summaryData['percent'] = round($summaryData['total_profit'] * 100 / $summaryData['portfolio'], 2);
+            // get_template_part('template-parts/content', 'profit-group-total', ['data' => $summaryData]);
           ?>
         </tbody>
     </div>

@@ -25,6 +25,9 @@ wp-config.php
 
 # Example plugin
 /wp-content/plugins
+/wp-content/backups-dup-lite
+/wp-content/backups-dup-pro
+/wp-content/updraft
 
 # Uploads
 /wp-content/uploads/
