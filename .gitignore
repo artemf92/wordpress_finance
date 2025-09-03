@@ -55,3 +55,4 @@ wp-config.php
 transfer_db.sh
 **/*.sql
 .vscode/time_log.json
+finansist-nextjs/
