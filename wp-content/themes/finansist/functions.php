@@ -58,6 +58,8 @@ require __DIR__ . '/inc/admin-group/admin-group.php';
 require __DIR__ . '/inc/admin-group/active_projects.php';
 require __DIR__ . '/inc/admin-group/users.php';
 
+require __DIR__ . '/inc/financial-freedom-functions.php';
+
 // Export
 require __DIR__ . '/inc/export/transactions.php';
 
