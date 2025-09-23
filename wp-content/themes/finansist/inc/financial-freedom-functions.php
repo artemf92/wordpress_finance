@@ -45,7 +45,7 @@ function getCurrentUserCapital($userID) {
     
     // Получаем последние данные пользователя
     $result = $wpdb->get_row($wpdb->prepare("
-        SELECT user_contributed, user_overdep 
+        SELECT user_money, user_contributed, user_overdep, user_refund
         FROM af_profit_data 
         WHERE user_id = %d 
         ORDER BY date DESC 
@@ -53,7 +53,7 @@ function getCurrentUserCapital($userID) {
     ", $userID));
     
     if ($result) {
-        return floatval($result->user_contributed) + floatval($result->user_overdep);
+        return floatval($result->user_money) + floatval($result->user_contributed) + floatval($result->user_overdep) + floatval($result->user_refund);
     }
     
     return 0;
@@ -144,7 +144,7 @@ function calculateGoalProgress($goal, $financial_data) {
     }
     
     $needed = $goal - $current_capital;
-    $months = ceil($needed / $avg_monthly_contribution);
+    $months = floor($needed / $avg_monthly_contribution);
     
     // Рассчитываем дату достижения
     $target_date = date('Y-m-d', strtotime("+{$months} months"));
@@ -181,39 +181,62 @@ function getFinancialFreedomMonthYear($date_string) {
 function getFinancialFreedomMonthlyData($userID, $page = 1, $per_page = 12) {
     global $wpdb;
     
-    $offset = ($page - 1) * $per_page;
-    
-    // Получаем данные пользователя по месяцам
-    $results = $wpdb->get_results($wpdb->prepare("
+    // Получаем последние данные пользователя для расчета прогноза
+    $latest_data = $wpdb->get_row($wpdb->prepare("
         SELECT 
             date,
+            user_money,
             user_contributed,
-            user_overdep
+            user_overdep,
+            user_profit,
+            user_refund
         FROM af_profit_data 
         WHERE user_id = %d 
         ORDER BY date DESC 
-        LIMIT %d OFFSET %d
-    ", $userID, $per_page, $offset));
+        LIMIT 1
+    ", $userID));
+    
+    if (!$latest_data) {
+        return [];
+    }
+    
+    // Получаем среднее пополнение за последние 6 месяцев для прогноза
+    $avg_contribution = getAverageMonthlyContribution($userID);
+    
+    // Начинаем с текущего месяца
+    $current_date = new DateTime();
+    $current_date->modify('first day of this month');
+    
+    // Добавляем offset месяцев для пагинации
+    $offset_months = ($page - 1) * $per_page;
+    $current_date->modify("+{$offset_months} months");
     
     $monthly_data = [];
+    // Используем полную формулу капитала как в getCurrentUserCapital
+    $current_capital = floatval($latest_data->user_money) + floatval($latest_data->user_contributed) + floatval($latest_data->user_overdep) + floatval($latest_data->user_refund);
     
-    foreach ($results as $result) {
-        $date = new DateTime($result->date);
-        $month_year = getFinancialFreedomMonthYear($result->date);
+    // Добавляем капитал за все предыдущие месяцы (за предыдущие страницы)
+    $previous_months = ($page - 1) * $per_page;
+    $current_capital += $previous_months * $avg_contribution;
+    
+    // Генерируем данные для будущих месяцев
+    for ($i = 0; $i < $per_page; $i++) {
+        $month_date = clone $current_date;
+        $month_date->modify("+{$i} months");
         
-        // Получаем пополнение за этот месяц
-        $month_start = $date->format('Y-m-01');
-        $month_end = $date->format('Y-m-t');
+        $month_year = $month_date->format('F Y');
         
-        $monthly_contribution = getMonthlyContribution($userID, $month_start, $month_end);
+        // Для будущих месяцев используем прогноз
+        $monthly_contribution = $avg_contribution;
         
-        $capital = floatval($result->user_contributed) + floatval($result->user_overdep);
+        // Увеличиваем капитал только на среднее пополнение
+        $current_capital += $monthly_contribution;
         
         $monthly_data[] = [
             'month_year' => $month_year,
-            'capital' => $capital,
+            'capital' => $current_capital,
             'contribution' => $monthly_contribution,
-            'goals_status' => getGoalsStatusForMonth($capital)
+            'goals_status' => getGoalsStatusForMonth($current_capital)
         ];
     }
     
@@ -283,7 +306,7 @@ function financial_freedom_ajax_handler() {
     $html = '';
     foreach ($monthly_data as $data) {
         $html .= '<tr>';
-        $html .= '<td>' . esc_html($data['month_year']) . '</td>';
+        $html .= '<td>' . esc_html(getFinancialFreedomMonthYear($data['month_year'])) . '</td>';
         $html .= '<td>' . get_formatted_number($data['capital']) . '</td>';
         $html .= '<td>' . get_formatted_number($data['contribution']) . '</td>';
         
@@ -302,16 +325,11 @@ function financial_freedom_ajax_handler() {
 }
 
 /**
- * Получает общее количество записей для пользователя
+ * Получает общее количество будущих месяцев для прогноза
  */
 function getFinancialFreedomTotalCount($userID) {
-    global $wpdb;
-    
-    return $wpdb->get_var($wpdb->prepare("
-        SELECT COUNT(*) 
-        FROM af_profit_data 
-        WHERE user_id = %d
-    ", $userID));
+    // Возвращаем количество месяцев для прогноза (например, 5 лет = 60 месяцев)
+    return 60;
 }
 
 // Регистрируем AJAX обработчик
