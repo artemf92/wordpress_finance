@@ -24,4 +24,4 @@ jobs:
 
       - name: Deploy to Main
         run: |
-          ssh -i "$HOME/.ssh/id_rsa" ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} "sudo su && cd ${{ secrets.SITE_LOCATION }} && git pull"
+          ssh -i "$HOME/.ssh/id_rsa" ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} "cd ${{ secrets.SITE_LOCATION }} && sudo git pull"
