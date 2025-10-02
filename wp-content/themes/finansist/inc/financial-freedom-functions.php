@@ -94,7 +94,8 @@ function getAverageMonthlyContribution($userID) {
     }
     
     $total_contribution = 0;
-    $months_count = count($transactions);
+    // $months_count = count($transactions);
+    $months_count = 6;
     
     foreach ($transactions as $transaction) {
         $total_contribution += floatval($transaction->total);
@@ -307,8 +308,8 @@ function financial_freedom_ajax_handler() {
     foreach ($monthly_data as $data) {
         $html .= '<tr>';
         $html .= '<td>' . esc_html(getFinancialFreedomMonthYear($data['month_year'])) . '</td>';
-        $html .= '<td>' . get_formatted_number($data['capital']) . '</td>';
-        $html .= '<td>' . get_formatted_number($data['contribution']) . '</td>';
+        $html .= '<td>' . get_formatted_number($data['capital'], ' ₽', 0) . '</td>';
+        $html .= '<td>' . get_formatted_number($data['contribution'], ' ₽', 0) . '</td>';
         
         foreach ($data['goals_status'] as $status) {
             $html .= '<td>' . $status . '</td>';

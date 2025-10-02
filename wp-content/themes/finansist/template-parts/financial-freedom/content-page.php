@@ -16,19 +16,19 @@ $goals = [1000000, 5000000, 10000000, 20000000, 35000000, 60000000]; // Цели
             <div class="col-md-4">
                 <div class="status-card">
                     <h4>Текущий капитал</h4>
-                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['current_capital']); ?></div>
+                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['current_capital'], ' ₽', 0); ?></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="status-card">
                     <h4>Среднее пополнение (6 мес.)</h4>
-                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['avg_monthly_contribution']); ?></div>
+                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['avg_monthly_contribution'], ' ₽', 0); ?></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="status-card">
                     <h4>Следующая цель</h4>
-                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['next_goal']); ?></div>
+                    <div class="amount"><?php echo get_formatted_number($financial_freedom_data['next_goal'], ' ₽', 0); ?></div>
                 </div>
             </div>
         </div>
@@ -55,9 +55,9 @@ $goals = [1000000, 5000000, 10000000, 20000000, 35000000, 60000000]; // Цели
                         $goal_data = calculateGoalProgress($goal, $financial_freedom_data);
                         ?>
                         <tr class="<?php echo $goal_data['achieved'] ? 'goal-achieved' : ''; ?>">
-                            <td><?php echo get_formatted_number($goal); ?></td>
-                            <td><?php echo get_formatted_number($financial_freedom_data['current_capital']); ?></td>
-                            <td><?php echo get_formatted_number($goal_data['needed']); ?></td>
+                            <td><?php echo get_formatted_number($goal, ' ₽', 0); ?></td>
+                            <td><?php echo get_formatted_number($financial_freedom_data['current_capital'], ' ₽', 0); ?></td>
+                            <td><?php echo get_formatted_number($goal_data['needed'], ' ₽', 0); ?></td>
                             <td><?php echo $goal_data['months']; ?></td>
                             <td><?php echo $goal_data['date']; ?></td>
                             <td>
@@ -85,7 +85,7 @@ $goals = [1000000, 5000000, 10000000, 20000000, 35000000, 60000000]; // Цели
                         <th>Капитал (портфель + сверх)</th>
                         <th>Пополнение за месяц</th>
                         <?php foreach ($goals as $goal): ?>
-                            <th><?php echo get_formatted_number($goal, ''); ?></th>
+                            <th><?php echo get_formatted_number($goal, ' ₽', 0); ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>

@@ -5,9 +5,9 @@ function debug($obj) {
   echo '</pre>';
 }
 
-function get_formatted_number($num, $after = ' ₽') {
+function get_formatted_number($num, $after = ' ₽', $precision = 2) {
   if ((int)$num && !is_numeric(abs((int)$num))) return;
-  return number_format((float)$num, 2, '.', ' ') . (abs((int)$num) > 0 ? ' '.$after:'');
+  return number_format((float)$num, $precision, '.', ' ') . (abs((int)$num) > 0 ? ' '.$after:'');
 }
 
 function get_post_full_time($post = null) {
