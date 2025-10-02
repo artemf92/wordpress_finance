@@ -94,8 +94,19 @@ function getAverageMonthlyContribution($userID) {
     }
     
     $total_contribution = 0;
-    // $months_count = count($transactions);
-    $months_count = 6;
+    // Если пользователь зарегистрирован не раньше чем полгода, то берем 6 месяцев, а если раньше, то берем кол-во периодов
+    $user_data = get_userdata( $userID );
+    if ( $user_data ) {
+        $registered_date = strtotime($user_data->user_registered);
+        $months_count = $registered_date - strtotime($six_months_ago);
+        if ($months_count < 0) {
+            $months_count = 6;
+        } else {
+            $months_count = count($transactions);
+        }
+    } else {
+        $months_count = 6;
+    }
     
     foreach ($transactions as $transaction) {
         $total_contribution += floatval($transaction->total);
