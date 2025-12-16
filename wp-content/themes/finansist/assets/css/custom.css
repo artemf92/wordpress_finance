@@ -448,6 +448,27 @@ dt.tribe-events-event-categories-label,
 dd.tribe-events-event-categories {
   display: none;
 }
+.table {
+  max-width: 100%;
+  overflow: auto;
+}
+.table-scroll {
+  overflow: auto;
+}
+.navbar-toggle .icon-bar {
+  transition: all .4s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+.navbar-toggle.collapsed .icon-bar:first-of-type {
+  transform: rotate(45deg) translateY(4px) translateX(4px);
+  transform-origin: center;
+}
+.navbar-toggle.collapsed .icon-bar:nth-of-type(2) {
+  opacity: 0;
+}
+.navbar-toggle.collapsed .icon-bar:last-of-type {
+  transform: rotate(-45deg) translateY(-5px) translateX(4px);
+  transform-origin: center;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
@@ -475,16 +496,34 @@ dd.tribe-events-event-categories {
   header#masthead {
     position: relative;
   }
-  .navbar-default .navbar-toggle {
-    position: absolute;
-    top: 25px;
-    right: 0;
-  }
   .navbar {
     min-height: initial;
   }
   .filter-input__btn[for="transaction_type"]+.filter-input__control {
     width: auto;
+  }
+  .navbar-brand {
+    position: static !important;
+    color: #fff !important;
+  }
+  .navbar-default .navbar-toggle {
+    background-color: #fff;
+  }
+  #export_transactions {
+    width: 55px;
+    height: 55px;
+    bottom: 5%;
+    right: 5%;
+  }
+  #export_transactions span {
+    font-size: 0;
+  }
+  #export_transactions svg {
+    width: 30px;
+    height: 30px;
+  }
+  .navbar-header {
+    background-color: #486a8c;
   }
 }
 @media (min-width: 768px) {

@@ -1,5 +1,13 @@
 jQuery(document).ready(function($) {
-  Tablesaw.init(); 
+  // Tablesaw.init(); 
+
+  const tables = document.querySelectorAll('table.table');
+
+  if (tables.length) {
+    tables.forEach(table => {
+      table.parentElement.classList.add('table-scroll');
+    })
+  }
 
   $('[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
       var target = $(e.target).data("bs-target");
@@ -16,9 +24,27 @@ jQuery(document).ready(function($) {
     showTab(hash)
   }
 
-  $(document).on('click', '[data-toggle=collapse]', function() {
-    const target = $(this).data('target')
-    $(target).collapse('toggle')
+  $(document).on('click', '[data-toggle="collapse"]', function() {
+    const $button = $(this)
+    const target = $button.data('target')
+    const $target = $(target)
+    
+    $target.collapse('toggle')
+    
+    // Переключаем класс collapsed для правильной анимации иконки
+    $button.toggleClass('collapsed')
+    $button.attr('aria-expanded', function(i, attr) {
+      return attr === 'true' ? 'false' : 'true'
+    })
+  })
+  
+  // Обработка событий collapse для синхронизации состояния кнопки
+  $('.navbar-collapse').on('show.bs.collapse', function() {
+    $('.navbar-toggle').removeClass('collapsed').attr('aria-expanded', 'true')
+  })
+  
+  $('.navbar-collapse').on('hide.bs.collapse', function() {
+    $('.navbar-toggle').addClass('collapsed').attr('aria-expanded', 'false')
   })
 
   $(document).on('submit', 'form.form', (e) => {
@@ -298,11 +324,11 @@ function formSortHandler(_this) {
 }
 
 function tablesawRefresh(table) {
-  if (table.data('tablesaw')) {
-    table.data('tablesaw').destroy();
-  }
+  // if (table.data('tablesaw')) {
+  //   table.data('tablesaw').destroy();
+  // }
 
-  table.tablesaw({
-    mode: 'swipe'
-  });
+  // table.tablesaw({
+  //   mode: 'swipe'
+  // });
 }
