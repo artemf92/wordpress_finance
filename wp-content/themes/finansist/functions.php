@@ -245,6 +245,7 @@ function getProfitvalue($year) {
 
 	$profitTransactions = transactionsForCurrentUser($year, 4, true); // Получаем все транзакции по доходу
 	$profitOverTransactions = transactionsForCurrentUser($year, 14, true); // Получаем все транзакции по доходу (сверх)
+	$profitLossTransactions = transactionsForCurrentUser($year, 13, true); // Получаем все транзакции по убытку
 
 	// Перебор транзакций и суммирование значений по месяцам.
 	foreach ($profitTransactions as $month => $transaction_data) {
@@ -260,6 +261,14 @@ function getProfitvalue($year) {
 			$debug_monthly_totals_profit_over[$month] = array_sum(array_column($transaction_data, 'value'));
 		}
 		$profit_per_year += $monthly_totals_profit[$month];
+	}
+
+	foreach ($profitLossTransactions as $month => $transaction_data) {
+		$monthly_totals_profit[$month] -= array_sum(array_column($transaction_data, 'value'));
+		if ($debug) {
+			$debug_monthly_totals_loss[$month] = array_sum(array_column($transaction_data, 'value'));
+		}
+		$profit_per_year -= $monthly_totals_profit[$month];
 	}
 
 	for ($i = 1; $i <= 12; $i++) {
@@ -300,7 +309,8 @@ function getProfitvalue($year) {
 					'capital_in' => 'Вложено из портфеля - ' . get_formatted_number($data[$m]['user_contributed']),
 					'total' => '
 						Сумма транзакций "Доход по проекту" - ' . get_formatted_number($debug_monthly_totals_profit[$m]) . '</br>
-						Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number($debug_monthly_totals_profit_over[$m])
+						Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number($debug_monthly_totals_profit_over[$m]) . '</br>
+						Сумма транзакций "Убыток по проекту" - ' . get_formatted_number($debug_monthly_totals_loss[$m])
 				];
 			}
 		}
@@ -354,6 +364,7 @@ function getProfitvalueByMonth($userID, $year, $month) {
 
 	$profitTransactions = getTransactionsByType(4, $start_date, $end_date, $userID); // Получаем все транзакции по доходу
 	$profitOverTransactions = getTransactionsByType(14, $start_date, $end_date, $userID); // Получаем все транзакции по доходу (сверх)
+	$profitLossTransactions = getTransactionsByType(13, $start_date, $end_date, $userID); // Получаем все транзакции по убытку
 
 	// Суммируем значения транзакций за месяц
 	$monthly_totals_profit = 0;
@@ -363,6 +374,12 @@ function getProfitvalueByMonth($userID, $year, $month) {
 	
 	foreach ($profitOverTransactions as $transaction) {
 		$monthly_totals_profit += $transaction['value'];
+	}
+
+	$monthly_totals_loss = 0;
+	foreach ($profitLossTransactions as $transaction) {
+		$monthly_totals_profit -= $transaction['value'];
+		$monthly_totals_loss -= $transaction['value'];
 	}
 
 	$profit_per_month = $monthly_totals_profit;
@@ -403,7 +420,8 @@ function getProfitvalueByMonth($userID, $year, $month) {
 			'capital_in' => 'Вложено из портфеля - ' . (isset($data[$month]['user_contributed']) ? get_formatted_number($data[$month]['user_contributed']) : '0'),
 			'total' => '
 				Сумма транзакций "Доход по проекту" - ' . get_formatted_number(array_sum(array_column($profitTransactions, 'value'))) . '</br>
-				Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number(array_sum(array_column($profitOverTransactions, 'value')))
+				Сумма транзакций "Доход по проекту (сверх)" - ' . get_formatted_number(array_sum(array_column($profitOverTransactions, 'value'))) . '</br>
+				Сумма транзакций "Убыток по проекту" - ' . get_formatted_number(array_sum(array_column($profitLossTransactions, 'value')))
 		];
 	}
 
