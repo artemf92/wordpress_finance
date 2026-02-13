@@ -48,7 +48,7 @@ if (empty($settings) && get_post_meta($post->ID,'settings_project_sum', true)) {
         <div class="field__label m-b-1">
           <? echo esc_html('Сумма проекта') ?>
         </div>
-        <div class="bg-gray field__item p-a-1">
+        <div class="bg-gray field__item p-a-1" id="project_sum">
           <? echo get_formatted_number($settings['sum']) ?>
         </div>
       </div>

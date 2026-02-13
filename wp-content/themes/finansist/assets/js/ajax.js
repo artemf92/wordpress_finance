@@ -3,10 +3,15 @@ jQuery(document).ready(function($) {
   $(document).on('click', '#project_start, #project_stop, #project_restart', function(e) {
     e.preventDefault()
     const _this = $(e.target)
+    const action = _this.attr('id')
+
+    if (Fancybox.getInstance()) 
+      Fancybox.getInstance().close();
+
     Fancybox.show([{
       // defaultType: this.dataset.once
-      src: finajax.url+'?action=' + _this.attr('id') + '&project_id=' + _this.data('project'),
-      type: _this.data('once')
+      src: finajax.url+'?action=' + action + '&project_id=' + _this.data('project'),
+      type: _this.data('once') || 'ajax'
     }],
     {
       on: {
@@ -15,13 +20,46 @@ jQuery(document).ready(function($) {
             const status = $(fancybox.container).find('input').val()
             $('#project_status').html(status)
           }, 0);
-          _this.remove()
+          if (action == 'project_stop' || action == 'project_stop_with_loss') {
+            $('.form-actions').html('')
+          }
+            _this.remove()
         }
       }
     })
   })
 
-  $(document).on('click', '#project_stop_prepare, #project_stop_with_loss', function(e) {
+  $(document).on('click', '#project_stop_partial', function(e) {
+    e.preventDefault()
+    const _this = $(e.target)
+    const action = _this.attr('id')
+    const form = $(_this).closest('form')
+    const data = form.serialize()
+
+    if (Fancybox.getInstance()) 
+      Fancybox.getInstance().close();
+
+    Fancybox.show([{
+      // defaultType: this.dataset.once
+      src: finajax.url+'?action=' + action + '&project_id=' + _this.data('project') + '&' + data,
+      type: _this.data('once') || 'ajax'
+    }],
+    {
+      on: {
+        'loaded': function(fancybox) {
+          setTimeout(() => {
+            const status = $(fancybox.container).find('input').val()
+            const projectSum = $(fancybox.container).find('input[name="project_sum"]').val()
+            $('#project_status').html(status)
+            $('#project_sum').html(projectSum)
+
+          }, 0);
+        }
+      }
+    })
+  })
+
+  $(document).on('click', '#project_stop_prepare, #project_stop_with_loss, #project_stop_partial_prepare', function(e) {
     e.preventDefault()
 
     const _this = $(e.target);
@@ -36,17 +74,7 @@ jQuery(document).ready(function($) {
       Fancybox.show([{
         src: url,
         type: type
-      }],
-      {
-        on: {
-          'loaded': function(fancybox) {
-            setTimeout(() => {
-              const status = $(fancybox.container).find('input').val()
-              $('#project_status').html(status)
-            }, 0);
-          }
-        }
-      })
+      }])
     }, 300);
 
   })
