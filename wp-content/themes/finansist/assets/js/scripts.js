@@ -101,6 +101,19 @@ jQuery(document).ready(function($) {
 
     form.find('input.form-control').val(0)
   })
+  $(document).on('change', '#input_auto_loss', function(e) {
+    const form = $(this).closest('form')
+
+    if (e.target.checked) {
+      form.find('.investors_loss').hide()
+    } else  if (!e.target.checked){
+      form.find('.investors_loss').show()
+    }
+
+    form.find('.form__amount').toggle()
+
+    form.find('input.form-control').val(0)
+  })
 
   $(document).on('change', '.project_profit_prepare input[name="transaction_type"]', function(e) {
     const type = $('input[name="transaction_type"]:checked').val()
@@ -145,6 +158,16 @@ jQuery(document).ready(function($) {
     fancy.close()
 
     projectProfitHandler(data.toString())
+  })
+  $(document).on('submit', 'form.project_loss_prepare', function(e) {
+    e.preventDefault()
+
+    const fancy = Fancybox.getInstance()
+    const data = $(this).serialize()
+
+    fancy.close()
+
+    projectLossHandler(data.toString())
   })
 
   $(document).on('submit', 'form.user-checkout-form', function(e) {

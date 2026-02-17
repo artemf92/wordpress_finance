@@ -67,8 +67,9 @@ function deleteTransactionHandler($postID) {
   // 10 : Выдача денег (в портфель) - возврат инвестиий (refund) и портфель изменяем на заданную сумму
   // 11 : Выдача денег (сверх) - возврат инвестиий (сверх) (refund_over)
   // 12 : Изменение портфеля - портфель изменяем на заданную сумму
-  // 13 : Убыток по проекту - ???
+  // 13 : Убыток по проекту - портфель (money) и вложения (contributed) изменяем на заданную сумму, 
   // 14 : Доход по проекту (сверх) - доход (profit) изменяем на заданную сумму
+  // 15 : Убыток по проекту (сверх) - вложения сверх (overdep) и Возврат инвестиций (сверх) (refund_over) изменяем на заданную сумму
 
   switch($transactionType) {
     case '1':
@@ -157,6 +158,33 @@ function deleteTransactionHandler($postID) {
     case '12':
       update_field('money', $money - $sum, 'user_'.$investorID);
       break;
+    case '13':
+      // update_field('money', $money - $sum, 'user_'.$investorID);
+      update_field('contributed', $contributed + $sum, 'user_'.$investorID);
+
+      $projectInvestors = get_field('investory_investors', $projectID);
+      foreach($projectInvestors as $key => $inv) {
+        if ($inv['investor'] != $investorID) continue;
+        $tmpSum = get_post_meta($projectID, 'investory_investors_'.$key.'_invest', true);
+        update_post_meta($projectID, 'investory_investors_'.$key.'_invest', $tmpSum + $sum);
+      }
+
+      $projectSum = get_field('settings_project_sum', $projectID);
+      update_field('settings_project', ['sum' => $projectSum + $sum], $projectID);
+      break;
+    case '15':
+      update_field('overdep', $overdep + $sum, 'user_'.$investorID);
+
+      $projectInvestors = get_field('investory_investors', $projectID);
+      foreach($projectInvestors as $key => $inv) {
+        if ($inv['investor'] != $investorID) continue;
+        $tmpSum = get_post_meta($projectID, 'investory_investors_'.$key.'_invest_over', true);
+        update_post_meta($projectID, 'investory_investors_'.$key.'_invest_over', $tmpSum + $sum);
+      }
+
+      $projectSum = get_field('settings_project_sum', $projectID);
+      update_field('settings_project', ['sum' => $projectSum + $sum], $projectID);
+      break;
   }
 }
 
@@ -191,7 +219,7 @@ function restoreTransactionHandler($postID) {
       update_field('contributed', $contributed + $sum, 'user_'.$investorID);
       break;
     case '2':
-      update_field('money', $money - $sum, 'user_'.$investorID);
+      // update_field('money', $money - $sum, 'user_'.$investorID);
       update_field('overdep', $overdep + $sum, 'user_'.$investorID);
       break;
     case '3':
@@ -249,6 +277,33 @@ function restoreTransactionHandler($postID) {
       break;
     case '12':
       update_field('money', $money + $sum, 'user_'.$investorID);
+      break;
+    case '13':
+      // update_field('money', $money - $sum, 'user_'.$investorID);
+      update_field('contributed', $contributed + $sum, 'user_'.$investorID);
+
+      $projectInvestors = get_field('investory_investors', $projectID);
+      foreach($projectInvestors as $key => $inv) {
+        if ($inv['investor'] != $investorID) continue;
+        $tmpSum = get_post_meta($projectID, 'investory_investors_'.$key.'_invest', true);
+        update_post_meta($projectID, 'investory_investors_'.$key.'_invest', $tmpSum - $sum);
+      }
+
+      $projectSum = get_field('settings_project_sum', $projectID);
+      update_field('settings_project', ['sum' => $projectSum - $sum], $projectID);
+      break;
+    case '15':
+      update_field('overdep', $overdep + $sum, 'user_'.$investorID);
+
+      $projectInvestors = get_field('investory_investors', $projectID);
+      foreach($projectInvestors as $key => $inv) {
+        if ($inv['investor'] != $investorID) continue;
+        $tmpSum = get_post_meta($projectID, 'investory_investors_'.$key.'_invest_over', true);
+        update_post_meta($projectID, 'investory_investors_'.$key.'_invest_over', $tmpSum - $sum);
+      }
+
+      $projectSum = get_field('settings_project_sum', $projectID);
+      update_field('settings_project', ['sum' => $projectSum - $sum], $projectID);
       break;
   }
 }

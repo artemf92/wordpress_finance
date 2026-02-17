@@ -34,6 +34,7 @@ require __DIR__ . '/inc/post_types/projects/start.php';
 require __DIR__ . '/inc/post_types/projects/stop.php';
 require __DIR__ . '/inc/post_types/projects/profit.php';
 require __DIR__ . '/inc/post_types/projects/restart.php';
+require __DIR__ . '/inc/post_types/projects/loss.php';
 
 require __DIR__ . '/inc/post_types/events/events.php';
 
@@ -164,6 +165,7 @@ function show_deleted_modal() {
 								{
 									src: `
 									<div class="align-center d-flex flex-column">
+										<p><?php echo $message; ?></p>
 									</div>`,
 									type: "html",
 								},

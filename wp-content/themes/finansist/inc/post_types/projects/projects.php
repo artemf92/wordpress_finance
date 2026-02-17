@@ -2,6 +2,7 @@
 // Проверка изменения кастомного поля при обновлении записи типа 'projects'
 function check_project_field_change($post_id) {
   $post = get_post($post_id);
+  error_log('check_project_field_change ' . var_export($post_id, true));
   
   if ($post && $post->post_type == 'projects') {
       $old_value = get_field('investory_investors', $post_id);

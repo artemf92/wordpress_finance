@@ -340,6 +340,24 @@ function projectProfitHandler(data) {
     }
   })
 }
+
+function projectLossHandler(data) {
+  Fancybox.show([{
+    src: finajax.url+'?action=project_stop_partial&' + data,
+    type: 'ajax'
+  }],
+  {
+    on: {
+      'loaded': function(fancybox) {
+        setTimeout(() => {
+          // const status = $(fancybox.container).find('input').val()
+          // $('#project_status').html(status)
+        }, 0);
+      }
+    }
+  })
+}
+
 function checkoutPartiallyHandler(data) {
   Fancybox.show([{
     src: finajax.url+'?action=checkout_partial_calc&' + data,
