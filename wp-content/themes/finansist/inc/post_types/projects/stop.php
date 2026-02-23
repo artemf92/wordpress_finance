@@ -101,10 +101,10 @@ function project_stop_callback_with_loss() {
   $investors = get_field('investory_investors', $project_id);
   foreach($investors as $key => $investor) {
     $userID = $investor['investor'];
-    $invest = $investor['invest'];
-    $invest_over = $investor['invest_over'];
-    $contributed = get_field('contributed', 'user_' . $userID);
-    $overdep = get_field('overdep', 'user_' . $userID);
+    $invest = floatval($investor['invest']);
+    $invest_over = floatval($investor['invest_over']);
+    $contributed = floatval(get_field('contributed', 'user_' . $userID));
+    $overdep = floatval(get_field('overdep', 'user_' . $userID));
 
     if ($invest > 0) {
       create_transaction($project_id, $userID, $event_id, $invest, 13); // Убыток по проекту

@@ -32,23 +32,18 @@ function project_restart_callback() {
   }
 
   $event_id = $event->ID;
-  $sum = get_field('settings_sum', $event_id);
-
 
   wp_trash_post($event_id);
-
-  // Установливаем сумму проекта
-  update_field('settings_project', ['sum' => $sum], $project_id); // 
   
   // Проводим транзакции "Возврат инвестиций в проект" для всех инвесторов в соотв. с их вложенями
   foreach($investors as $key => $investor) {
     $userID = $investor['investor'];
-    $invest = $investor['invest'];
-    $invest_over = $investor['invest_over'];
-    $contributed = get_field('contributed', 'user_' . $userID);
-    $overdep = get_field('overdep', 'user_' . $userID);
-    $refund = get_field('refund', 'user_' . $userID);
-    $refund_over = get_field('refund_over', 'user_' . $userID);
+    $invest = floatval($investor['invest']);
+    $invest_over = floatval($investor['invest_over']);
+    $contributed = floatval(get_field('contributed', 'user_' . $userID));
+    $overdep = floatval(get_field('overdep', 'user_' . $userID));
+    $refund = floatval(get_field('refund', 'user_' . $userID));
+    $refund_over = floatval(get_field('refund_over', 'user_' . $userID));
 
     $transactions = get_posts([
       'post_type' => 'transactions',
@@ -63,6 +58,11 @@ function project_restart_callback() {
           'value' => [3,6],
           'compare' => 'IN',
         ],
+        [
+          'key' => 'settings_event',
+          'value' => $event_id,
+          'compare' => '=',
+        ],
       ]
     ]);
     foreach($transactions as $tr) {
@@ -70,13 +70,11 @@ function project_restart_callback() {
     }
 
     if ($invest > 0) {
-      // create_transaction($project_id, $userID, $event_id, $invest, 3); // Возврат инвестиций по проекту
       update_field('contributed', $contributed - $invest , 'user_' . $userID);
       update_field('refund', $refund + $invest , 'user_' . $userID);
     }
 
     if ($invest_over > 0) {
-      // create_transaction($project_id, $userID, $event_id, $invest_over, 6); // Возврат инвестиций по проекту (сверх)
       update_field('overdep', $overdep - $invest_over , 'user_' . $userID);
       update_field('refund_over', $refund_over + $invest_over , 'user_' . $userID);
     }
