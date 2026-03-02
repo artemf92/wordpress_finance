@@ -189,11 +189,11 @@ input.form-control.input-date {
   margin: 0 0 20px;
 }
 select[multiple], select[size] {
-  max-height: 78px;
+  min-height: min(220px, 30vh);
   overflow-y: scroll;
 }
 select[multiple]::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
 }
 select[multiple]::-webkit-scrollbar-thumb {
   background-color: #e2e2e2;
