@@ -119,3 +119,45 @@ function update_project_manager_roles($value, $post_id) {
 }
 
 add_action('acf/update_value/name=status', 'update_project_manager_roles', 20, 2);
+
+// Запрет редактирования полей инвестирования и параметров проекта для роли project_manager
+function restrict_pm_readonly_fields($field) {
+  $user = wp_get_current_user();
+  if (in_array('project_manager', (array) $user->roles)) {
+    $field['readonly'] = 1;
+  }
+  return $field;
+}
+// Инвестирование / Инвестирование сверх
+add_filter('acf/prepare_field/key=field_65e391993e647', 'restrict_pm_readonly_fields');
+add_filter('acf/prepare_field/key=field_65e391c33e648', 'restrict_pm_readonly_fields');
+// Сумма проекта / Доходность
+add_filter('acf/prepare_field/key=field_65e390623e641', 'restrict_pm_readonly_fields');
+add_filter('acf/prepare_field/key=field_65e390b43e642', 'restrict_pm_readonly_fields');
+
+// Восстановление оригинальных значений при сохранении project_manager-ом
+function prevent_pm_fields_change($post_id) {
+  $post = get_post($post_id);
+  if (!$post || $post->post_type !== 'projects') return;
+
+  $user = wp_get_current_user();
+  if (!in_array('project_manager', (array) $user->roles)) return;
+
+  // Восстановление invest / invest_over
+  $old_investors = get_field('investory_investors', $post_id);
+  if (!empty($old_investors) && isset($_POST['acf']['field_65e391123e644']['field_65e391333e645'])) {
+    foreach ($old_investors as $n => $old_investor) {
+      if (isset($_POST['acf']['field_65e391123e644']['field_65e391333e645'][$n])) {
+        $_POST['acf']['field_65e391123e644']['field_65e391333e645'][$n]['field_65e391993e647'] = $old_investor['invest'];
+        $_POST['acf']['field_65e391123e644']['field_65e391333e645'][$n]['field_65e391c33e648'] = $old_investor['invest_over'];
+      }
+    }
+  }
+
+  // Восстановление суммы проекта и доходности
+  if (isset($_POST['acf']['field_65e390383e640'])) {
+    $_POST['acf']['field_65e390383e640']['field_65e390623e641'] = get_post_meta($post_id, 'settings_project_sum', true);
+    $_POST['acf']['field_65e390383e640']['field_65e390b43e642'] = get_post_meta($post_id, 'settings_project_profit', true);
+  }
+}
+add_action('acf/save_post', 'prevent_pm_fields_change', 1);
