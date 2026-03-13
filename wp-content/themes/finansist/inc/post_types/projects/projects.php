@@ -120,12 +120,15 @@ function update_project_manager_roles($value, $post_id) {
 
 add_action('acf/update_value/name=status', 'update_project_manager_roles', 20, 2);
 
-// Запрет редактирования полей инвестирования и параметров проекта для роли project_manager
+// Запрет редактирования полей инвестирования и параметров проекта для менеджеров конкретного проекта
 function restrict_pm_readonly_fields($field) {
-  $user = wp_get_current_user();
-  if (in_array('project_manager', (array) $user->roles)) {
+  $user     = wp_get_current_user();
+  $post_id  = isset($_REQUEST['post']) ? intval($_REQUEST['post']) : get_the_ID();
+
+  if ($post_id && isProjectManager($post_id, $user->ID)) {
     $field['readonly'] = 1;
   }
+
   return $field;
 }
 // Инвестирование / Инвестирование сверх
@@ -135,13 +138,13 @@ add_filter('acf/prepare_field/key=field_65e391c33e648', 'restrict_pm_readonly_fi
 add_filter('acf/prepare_field/key=field_65e390623e641', 'restrict_pm_readonly_fields');
 add_filter('acf/prepare_field/key=field_65e390b43e642', 'restrict_pm_readonly_fields');
 
-// Восстановление оригинальных значений при сохранении project_manager-ом
+// Восстановление оригинальных значений при сохранении менеджером конкретного проекта
 function prevent_pm_fields_change($post_id) {
   $post = get_post($post_id);
   if (!$post || $post->post_type !== 'projects') return;
 
   $user = wp_get_current_user();
-  if (!in_array('project_manager', (array) $user->roles)) return;
+  if (!isProjectManager($post_id, $user->ID)) return;
 
   // Восстановление invest / invest_over
   $old_investors = get_field('investory_investors', $post_id);
