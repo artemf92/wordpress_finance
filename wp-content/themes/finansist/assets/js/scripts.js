@@ -1,5 +1,17 @@
 jQuery(document).ready(function($) {
-  // Tablesaw.init(); 
+  // Tablesaw.init();
+
+  document.addEventListener('wheel', function(e) {
+    const input = e.target.closest('input[type="number"]')
+    if (!input) return
+
+    e.preventDefault()
+
+    const scrollable = input.closest('.fancybox__slide') || getScrollableParent(input)
+    if (scrollable) {
+      scrollable.scrollTop += e.deltaY
+    }
+  }, { passive: false, capture: true })
 
   const tables = document.querySelectorAll('table.table');
 
@@ -354,4 +366,24 @@ function tablesawRefresh(table) {
   // table.tablesaw({
   //   mode: 'swipe'
   // });
+}
+
+function getScrollableParent(el) {
+  let parent = el.parentElement
+
+  while (parent) {
+    const { overflowY } = window.getComputedStyle(parent)
+
+    if (
+      parent.scrollHeight > parent.clientHeight &&
+      overflowY !== 'visible' &&
+      overflowY !== 'hidden'
+    ) {
+      return parent
+    }
+
+    parent = parent.parentElement
+  }
+
+  return null
 }

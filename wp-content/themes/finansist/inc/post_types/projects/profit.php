@@ -98,12 +98,21 @@ function project_profit_callback() {
   $auto = isset($_REQUEST['auto']);
   if ($auto) {
     $users = $tmpUsers;
+  } else if ($type == 4) {
+    $users = array_filter($tmpUsers, function($value) {
+      return floatval($value) != 0;
+    });
   } else {
     $users = array_filter($tmpUsers, function($value) {
-        return $value !== '0';
+      if (!is_array($value)) {
+        return false;
+      }
+      $portfel = isset($value['portfel']) ? floatval($value['portfel']) : 0;
+      $over = isset($value['over']) ? floatval($value['over']) : 0;
+      return $portfel != 0 || $over != 0;
     });
   }
-  $sums = $_REQUEST['summa'];
+  $sums = floatval($_REQUEST['summa'] ?? 0);
   // $percentage = get_field('settings_project_profit', $project_id);
   $html = '';
   $arr = [];
@@ -138,21 +147,24 @@ function project_profit_callback() {
         ];
       }  
     } else if ($type == 3) { // Возврат
-      foreach(array_keys($users) as $id) { 
+      $refund_rows = [];
+      foreach(array_keys($users) as $id) {
         $userId = get_post_meta($project_id, 'investory_investors_'.$id.'_investor', true);
-        $invest = $investments[$id]['contributed'];
-        $invest_over = $investments[$id]['contributed_over'];
+        $invest = floatval($investments[$id]['contributed']);
+        $invest_over = floatval($investments[$id]['contributed_over']);
         $sum1 = $sum2 = 0;
+        $user = get_userdata($userId);
+        $userName = $user ? trim($user->user_firstname . ' ' . $user->user_lastname) : '';
 
         if ($invest > 0) {
           $sum1 = round(($invest * $sums) / $tmp_project_sum, 2);
         }
-        if ($sum1 > $investments[$id]['contributed']) {
+        if ($sum1 > $invest) {
           echo sprintf(
-            'Возврат для пользователя %s (%d) превышает долг(%d).',
-            get_userdata($userId)->user_firstname . ' ' . get_userdata($userId)->user_lastname,
-            round($sum1, 2), 
-            round($investments[$id]['contributed'], 2)
+            'Возврат для пользователя %s (%.2f) превышает долг(%.2f).',
+            $userName,
+            round($sum1, 2),
+            round($invest, 2)
           );
           wp_die();
         }
@@ -160,12 +172,12 @@ function project_profit_callback() {
         if ($invest_over > 0) {
           $sum2 = round(($invest_over * $sums) / $tmp_project_sum, 2);
         }
-        if ($sum2 > $investments[$id]['contributed_over']) {
+        if ($sum2 > $invest_over) {
           echo sprintf(
-            'Возврат (сверх) для пользователя %s (%d) превышает долг(%d).',
-            get_userdata($userId)->user_firstname . ' ' . get_userdata($userId)->user_lastname,
-            round($sum2, 2), 
-            round($investments[$id]['contributed_over'], 2)
+            'Возврат (сверх) для пользователя %s (%.2f) превышает долг(%.2f).',
+            $userName,
+            round($sum2, 2),
+            round($invest_over, 2)
           );
           wp_die();
         }
@@ -174,13 +186,21 @@ function project_profit_callback() {
           'contributed' => $sum1,
           'contributed_over' => $sum2,
         ];
+        $refund_rows[] = [
+          'key' => $id,
+          'sum1' => $sum1,
+          'sum2' => $sum2,
+          'contributed' => $invest,
+          'contributed_over' => $invest_over,
+        ];
+      }
 
-        $project_sum = $project_sum - $sum1 - $sum2;
-
+      foreach ($refund_rows as $row) {
+        $project_sum = $project_sum - $row['sum1'] - $row['sum2'];
         update_field('settings_project_sum', $project_sum, $project_id);
-        update_field('investory_investors_'.$id.'_invest', $investments[$id]['contributed'] - $sum1, $project_id);
-        update_field('investory_investors_'.$id.'_invest_over', $investments[$id]['contributed_over'] - $sum2, $project_id);
-      }  
+        update_field('investory_investors_'.$row['key'].'_invest', $row['contributed'] - $row['sum1'], $project_id);
+        update_field('investory_investors_'.$row['key'].'_invest_over', $row['contributed_over'] - $row['sum2'], $project_id);
+      }
     }
   } else {
     if ($type == 4) {
@@ -195,44 +215,58 @@ function project_profit_callback() {
         ];
       }
     } else if ($type == 3) {
+      $sums = 0;
+      $refund_rows = [];
       foreach($users as $key => $event_sum) {
         $userId = get_post_meta($project_id, 'investory_investors_'.$key.'_investor', true);
-        $invest = $investments[$key]['contributed'];
-        $invest_over = $investments[$key]['contributed_over'];
-        $sum1 = $sum2 = 0;
-  
-        $sum1 = isset($_REQUEST['refund']['user'][$key]['portfel']) ? $_REQUEST['refund']['user'][$key]['portfel'] : 0;
-        if ($sum1 > $investments[$key]['contributed']) {
+        $contributed = floatval($investments[$key]['contributed']);
+        $contributed_over = floatval($investments[$key]['contributed_over']);
+        $sum1 = isset($event_sum['portfel']) ? floatval($event_sum['portfel']) : 0;
+        $sum2 = isset($event_sum['over']) ? floatval($event_sum['over']) : 0;
+        $user = get_userdata($userId);
+        $userName = $user ? trim($user->user_firstname . ' ' . $user->user_lastname) : '';
+
+        if ($sum1 < 0 || $sum2 < 0) {
+          wp_die(__('Сумма возврата не может быть отрицательной.'));
+        }
+        if ($sum1 > $contributed) {
           echo sprintf(
-            'Возврат для пользователя %s (%d) превышает долг(%d).',
-            get_userdata($userId)->user_firstname . ' ' . get_userdata($userId)->user_lastname,
-            round($sum1, 2), 
-            round($investments[$key]['contributed'], 2)
+            'Возврат для пользователя %s (%.2f) превышает долг(%.2f).',
+            $userName,
+            round($sum1, 2),
+            round($contributed, 2)
           );
           wp_die();
         }
-        $sum2 = isset($_REQUEST['refund']['user'][$key]['over']) ? $_REQUEST['refund']['user'][$key]['over'] : 0;
-        if ($sum1 > $investments[$key]['contributed']) {
+        if ($sum2 > $contributed_over) {
           echo sprintf(
-            'Возврат для пользователя %s (%d) превышает долг(%d).',
-            get_userdata($userId)->user_firstname . ' ' . get_userdata($userId)->user_lastname,
-            round($sum1, 2), 
-            round($investments[$key]['contributed'], 2)
+            'Возврат (сверх) для пользователя %s (%.2f) превышает долг(%.2f).',
+            $userName,
+            round($sum2, 2),
+            round($contributed_over, 2)
           );
           wp_die();
         }
-  
-        $sums += (isset($event_sum['portfel']) ? $event_sum['portfel']:0) + (isset($event_sum['over'])?$event_sum['over']:0);
+
+        $sums += $sum1 + $sum2;
         $arr[$userId] = [
           'contributed' => $sum1,
           'contributed_over' => $sum2,
         ];
+        $refund_rows[] = [
+          'key' => $key,
+          'sum1' => $sum1,
+          'sum2' => $sum2,
+          'contributed' => $contributed,
+          'contributed_over' => $contributed_over,
+        ];
+      }
 
-        $project_sum = $project_sum - $sum1 - $sum2;
-        
+      foreach ($refund_rows as $row) {
+        $project_sum = $project_sum - $row['sum1'] - $row['sum2'];
         update_field('settings_project_sum', $project_sum, $project_id);
-        update_field('investory_investors_'.$key.'_invest', $investments[$key]['contributed'] - $sum1, $project_id);
-        update_field('investory_investors_'.$key.'_invest_over', $investments[$key]['contributed_over'] - $sum2, $project_id);
+        update_field('investory_investors_'.$row['key'].'_invest', $row['contributed'] - $row['sum1'], $project_id);
+        update_field('investory_investors_'.$row['key'].'_invest_over', $row['contributed_over'] - $row['sum2'], $project_id);
       }
     }
 

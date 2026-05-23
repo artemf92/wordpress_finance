@@ -469,6 +469,14 @@ dd.tribe-events-event-categories {
   transform: rotate(-45deg) translateY(-5px) translateX(4px);
   transform-origin: center;
 }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 @media (min-width: 1600px) {
   .container {
     width: 1470px;
