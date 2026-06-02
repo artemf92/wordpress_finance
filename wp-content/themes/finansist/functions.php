@@ -525,7 +525,7 @@ function getProfitUserInfo($userID) {
 	$result = $wpdb->get_results ( 
 		"
 			SELECT * 
-			FROM  af_profit_data
+			FROM  af_users_data
 			WHERE user_id = $userID
 			ORDER BY ID ASC
 		" );
