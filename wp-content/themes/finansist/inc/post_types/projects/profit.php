@@ -5,7 +5,7 @@ add_action( 'wp_ajax_project_profit', 'project_profit_prepare' );
 function project_profit_prepare() {
   $project_id = $_REQUEST['project_id'];
 
-  if (!current_user_can('administrator') && !current_user_can('manager') && !isProjectManager($project_id, wp_get_current_user()->ID) ) return;
+  if (!current_user_can('administrator') && !current_user_can('manager') && !current_user_can('helper_manager') && !isProjectManager($project_id, wp_get_current_user()->ID) ) return;
 
   $html = '';
   $html .= '<h3>'.__('Форма начисления дохода для проекта').'</h3>';
@@ -91,7 +91,7 @@ add_action( 'wp_ajax_project_profit_final', 'project_profit_callback' );
 function project_profit_callback() {
   $project_id = $_REQUEST['project_id'];
   
-  if (!current_user_can('administrator') && !current_user_can('manager')  && !isProjectManager($project_id, wp_get_current_user()->ID)) return;
+  if (!current_user_can('administrator') && !current_user_can('manager') && !current_user_can('helper_manager') && !isProjectManager($project_id, wp_get_current_user()->ID)) return;
 
   $type = $_REQUEST['transaction_type'];
   $tmpUsers = $type == 4 ? $_REQUEST['profit']['user']:$_REQUEST['refund']['user'];

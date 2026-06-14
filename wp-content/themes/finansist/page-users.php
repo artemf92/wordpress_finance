@@ -15,7 +15,7 @@
 get_header(); 
 ?>
 
-<?php if (current_user_can('administrator') || current_user_can('manager')) { 
+<?php if (current_user_can('administrator') || current_user_can('manager') || current_user_can('helper_manager')) { 
 	get_template_part( 'content', 'header' ); 
 } ?>
 
@@ -27,7 +27,7 @@ get_header();
 	<div id="primary" class="content-area col-md-12">
 		<main id="main" class="site-main" role="main">
 
-			<? if (!current_user_can('administrator') && !current_user_can('manager')) {
+			<? if (!current_user_can('administrator') && !current_user_can('manager') && !current_user_can('helper_manager')) {
 				get_template_part( 'template-parts/page', 'block' );
 			} else {
 					echo do_shortcode('[list_users]');

@@ -20,7 +20,7 @@
 
 			<? get_template_part('template-parts/projects/tab', 'info') ?>
 			<? get_template_part('template-parts/projects/tab', 'history') ?>
-			<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant') || isProjectManager(get_the_ID(), getUserID())) {
+			<? if (current_user_can('administrator') || current_user_can('mananger') || current_user_can('accountant') || isProjectManager(get_the_ID(), getUserID()) || current_user_can('helper_manager')) {
 				get_template_part('template-parts/projects/tab', 'investors');
 				get_template_part('template-parts/projects/tab', 'transactions');
 			} ?>

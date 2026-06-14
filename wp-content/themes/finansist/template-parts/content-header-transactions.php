@@ -12,10 +12,10 @@ $view = isset($args['view']) ? explode(',', $args['view']) : explode(',', 'num,n
       <? if (in_array('project', $view)) { ?>
       <th scope="col" class="th-project"><?= esc_html('Проект')?></th>
       <? } ?>
-      <? if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('accountant') || current_user_can('administrator') )) { ?>
+      <? if (in_array('investor', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('accountant') || current_user_can('administrator') || current_user_can('helper_manager') )) { ?>
         <th scope="col" class="td-investor"><?= esc_html('Инвестор')?></th>
       <? } ?>
-      <? if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') )) { ?>
+      <? if (in_array('group', $view) && (current_user_can('project_manager') || current_user_can('manager') || current_user_can('administrator') || current_user_can('helper_manager') )) { ?>
         <th scope="col" class="td-group"><?= esc_html('Группа')?></th>
       <? } ?>
       <? if (in_array('amount', $view)) { ?>

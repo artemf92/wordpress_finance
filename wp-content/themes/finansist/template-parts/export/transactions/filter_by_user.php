@@ -3,7 +3,7 @@ global $isPageTransactions, $isPageProject, $isPageUser;
 $selectedUsers = [];
 $users = getUsersForExport();
 
-if ($isPageProject && current_user_can('manager')) {
+if (($isPageProject && (current_user_can('manager')) || ( $isPageProject && current_user_can('helper_manager')))) {
   $investors = array_column(get_field('investory', $atts['project_id'])['investors'], 'investor');
   $users = array_filter($users, function($inv2) use ($investors) {
     return in_array($inv2->ID, $investors);

@@ -365,7 +365,7 @@ function show_event_transactions($atts) {
 function getUsersForExport() {
   $users = [];
 
-  if (current_user_can('manager') || current_user_can('administrator')) {
+  if (current_user_can('manager') || current_user_can('administrator') || current_user_can('helper_manager')) {
     $users = get_users();
   } else if (current_user_can('accountant')) {
     global $wpdb;

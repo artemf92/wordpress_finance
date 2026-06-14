@@ -83,6 +83,7 @@ function wph_noadmin() {
 		is_admin() && 
 		!current_user_can('administrator') &&
 		!current_user_can('manager') &&
+		!current_user_can('helper_manager') &&
 		!current_user_can('calendar_edit') &&
 		!wp_doing_ajax() &&
 		!current_user_can('edit_post') &&
@@ -123,7 +124,7 @@ function custom_ajax_data(){
 add_action('wp_head', function() {
 	if (
 			(is_page('all_groups') || is_page('all_projects')) 
-			&& !current_user_can('administrator') && !current_user_can('manager') && !current_user_can('accountant')
+			&& !current_user_can('administrator') && !current_user_can('manager') && !current_user_can('accountant') && !current_user_can('helper_manager')
 		) {
 			wp_redirect('/auth/');
 	}
@@ -549,7 +550,7 @@ function getUserID() {
 }
 
 function hasAccess() {
-	if (current_user_can('administrator') || current_user_can('manager')) return true;
+	if (current_user_can('administrator') || current_user_can('manager') || current_user_can('helper_manager')) return true;
 	
 	global $wpdb;
 	$obj_id = get_queried_object_id();
