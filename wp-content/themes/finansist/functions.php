@@ -903,3 +903,105 @@ function remove_site_settings_menu_for_custom_role() {
     }
 }
 add_action('admin_menu', 'remove_site_settings_menu_for_custom_role', 999);
+
+function is_helper_manager_without_admin_access() {
+	$user = wp_get_current_user();
+	if (!$user || !$user->exists()) {
+		return false;
+	}
+
+	$roles = (array) $user->roles;
+
+	return in_array('helper_manager', $roles, true)
+		&& !in_array('administrator', $roles, true)
+		&& !in_array('manager', $roles, true);
+}
+
+function restrict_admin_menu_for_helper_manager($args, $post_type) {
+	if (is_helper_manager_without_admin_access() && $post_type === 'transactions' || $post_type === 'events') {
+		$args['show_in_menu'] = false;
+		$args['show_in_admin_bar'] = false;
+	}
+	return $args;
+}
+add_filter('register_post_type_args', 'restrict_admin_menu_for_helper_manager', 10, 2);
+
+function remove_transactions_menu_for_helper_manager() {
+	if (is_helper_manager_without_admin_access()) {
+		remove_menu_page('edit.php?post_type=transactions');
+	}
+}
+add_action('admin_menu', 'remove_transactions_menu_for_helper_manager', 999);
+
+function restrict_helper_manager_transactions_caps($capabilities, $cap, $user_id, $args) {
+	static $is_checking = false;
+	if ($is_checking) {
+		return $capabilities;
+	}
+
+	$user = get_userdata($user_id);
+	if (!$user) {
+		return $capabilities;
+	}
+
+	$roles = (array) $user->roles;
+	if (!in_array('helper_manager', $roles, true)) {
+		return $capabilities;
+	}
+	if (array_intersect(['administrator', 'manager'], $roles)) {
+		return $capabilities;
+	}
+
+	$transaction_caps = [
+		'edit_post',
+		'read_post',
+		'delete_post',
+		'publish_post',
+		'edit_others_posts',
+		'delete_others_posts',
+		'read_private_posts',
+	];
+
+	if (!in_array($cap, $transaction_caps, true)) {
+		return $capabilities;
+	}
+
+	$post_id = $args[0] ?? 0;
+	if (!$post_id) {
+		return $capabilities;
+	}
+
+	$is_checking = true;
+	$post_type = get_post_type($post_id);
+	$is_checking = false;
+
+	if ($post_type === 'transactions' || $post_type === 'events') {
+		return ['do_not_allow'];
+	}
+
+	return $capabilities;
+}
+add_filter('map_meta_cap', 'restrict_helper_manager_transactions_caps', 10, 4);
+
+function block_helper_manager_transactions_admin_pages() {
+	if (!is_helper_manager_without_admin_access()) {
+		return;
+	}
+
+	$blocked = false;
+
+	if (isset($_GET['post_type']) && $_GET['post_type'] === 'transactions' || $_GET['post_type'] === 'events') {
+		$blocked = true;
+	}
+
+	if (isset($_GET['post']) && get_post_type((int) $_GET['post']) === 'transactions' || get_post_type((int) $_GET['post']) === 'events') {
+		$blocked = true;
+	}
+
+	if ($blocked) {
+		wp_die('У вас нет прав для просмотра или редактирования транзакций или событий.', 'Доступ запрещён', ['response' => 403]);
+	}
+}
+add_action('load-edit.php', 'block_helper_manager_transactions_admin_pages');
+add_action('load-post.php', 'block_helper_manager_transactions_admin_pages');
+add_action('load-post-new.php', 'block_helper_manager_transactions_admin_pages');
