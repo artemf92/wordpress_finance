@@ -1,5 +1,5 @@
 <? 
-require $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
+require dirname(__DIR__, 5) . '/wp-load.php';
 
 update_projects_manager_role();
 ?>
