@@ -58,9 +58,11 @@ function project_stop_callback_partial() {
 
   $loss_project = floatval($_REQUEST['loss_project']);
   $auto = isset($_REQUEST['auto']);
-  $tmpUsers = $_REQUEST['loss']['user'];
-  $tmpUsersOver = $_REQUEST['loss_over']['user'];
-  
+  $tmpUsers = isset($_REQUEST['loss']['user']) && is_array($_REQUEST['loss']['user']) ? $_REQUEST['loss']['user'] : [];
+  $tmpUsersOver = isset($_REQUEST['loss_over']['user']) && is_array($_REQUEST['loss_over']['user']) ? $_REQUEST['loss_over']['user'] : [];
+  $users = [];
+  $usersOver = [];
+
   if ($auto) {
     $tmpInvestors = get_field('investory_investors', $project_id);
     foreach($tmpInvestors as $key => $investor) {
