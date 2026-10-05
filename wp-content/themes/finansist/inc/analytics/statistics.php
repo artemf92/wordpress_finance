@@ -1,5 +1,4 @@
-
-<? 
+<?php
 add_shortcode( 'statistics', 'show_statistics' );
 
 function show_statistics( $atts ){

@@ -65,8 +65,8 @@ require __DIR__ . '/inc/financial-freedom-functions.php';
 require __DIR__ . '/inc/export/transactions.php';
 
 if ($_SERVER['REQUEST_URI'] === '/') {
-	wp_safe_redirect(home_url('/user/'));
-	exit;
+	header('Location: http://'.$_SERVER['HTTP_HOST'].'/user/');
+	exit();
 }
 
 function check_private($postID) {

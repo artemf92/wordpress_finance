@@ -1,5 +1,4 @@
-
-<? 
+<?php
 add_shortcode( 'list_users', 'show_all_users' );
 
 function show_all_users( $atts ){

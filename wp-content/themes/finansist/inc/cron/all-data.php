@@ -1,5 +1,6 @@
 <? 
-require $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
+// require $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
+require dirname(__DIR__, 5) . '/wp-load.php';
 
 function users_daily_data()
 {

@@ -325,18 +325,19 @@ jQuery(document).ready(function($) {
 })
 
 function projectProfitHandler(data) {
-  Fancybox.show([{
-    src: finajax.url+'?action=project_profit_final&' + data,
-    type: 'ajax'
-  }],
-  {
-    on: {
-      'loaded': function(fancybox) {
-        setTimeout(() => {
-          // const status = $(fancybox.container).find('input').val()
-          // $('#project_status').html(status)
-        }, 0);
-      }
+  jQuery.ajax({
+    url: finajax.url+'?action=project_profit_final',
+    method: 'POST',
+    data: data,
+    dataType: 'html',
+    success: function(response) {
+      Fancybox.show([{
+        src: response,
+        type: 'html'
+      }])
+    },
+    error: function(xhr) {
+      Fancybox.show(['<h4 class="p-5">Error Loading AJAX : '+xhr.statusText+'</h4>'])
     }
   })
 }
