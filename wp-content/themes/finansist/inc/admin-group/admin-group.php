@@ -1,5 +1,4 @@
-
-<? 
+<?php
 add_shortcode( 'admin-group', 'show_admin_group' );
 
 function show_admin_group( $atts ){

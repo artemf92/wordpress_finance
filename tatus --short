@@ -1,0 +1,149 @@
+[1mdiff --git a/wp-content/themes/finansist/assets/js/ajax.js b/wp-content/themes/finansist/assets/js/ajax.js[m
+[1mindex 1c08d3c..ae7fa30 100644[m
+[1m--- a/wp-content/themes/finansist/assets/js/ajax.js[m
+[1m+++ b/wp-content/themes/finansist/assets/js/ajax.js[m
+[36m@@ -325,18 +325,19 @@[m [mjQuery(document).ready(function($) {[m
+ })[m
+ [m
+ function projectProfitHandler(data) {[m
+[31m-  Fancybox.show([{[m
+[31m-    src: finajax.url+'?action=project_profit_final&' + data,[m
+[31m-    type: 'ajax'[m
+[31m-  }],[m
+[31m-  {[m
+[31m-    on: {[m
+[31m-      'loaded': function(fancybox) {[m
+[31m-        setTimeout(() => {[m
+[31m-          // const status = $(fancybox.container).find('input').val()[m
+[31m-          // $('#project_status').html(status)[m
+[31m-        }, 0);[m
+[31m-      }[m
+[32m+[m[32m  jQuery.ajax({[m
+[32m+[m[32m    url: finajax.url+'?action=project_profit_final',[m
+[32m+[m[32m    method: 'POST',[m
+[32m+[m[32m    data: data,[m
+[32m+[m[32m    dataType: 'html',[m
+[32m+[m[32m    success: function(response) {[m
+[32m+[m[32m      Fancybox.show([{[m
+[32m+[m[32m        src: response,[m
+[32m+[m[32m        type: 'html'[m
+[32m+[m[32m      }])[m
+[32m+[m[32m    },[m
+[32m+[m[32m    error: function(xhr) {[m
+[32m+[m[32m      Fancybox.show(['<h4 class="p-5">Error Loading AJAX : '+xhr.statusText+'</h4>'])[m
+     }[m
+   })[m
+ }[m
+[1mdiff --git a/wp-content/themes/finansist/functions.php b/wp-content/themes/finansist/functions.php[m
+[1mindex 2a9fb6e..c70d960 100644[m
+[1m--- a/wp-content/themes/finansist/functions.php[m
+[1m+++ b/wp-content/themes/finansist/functions.php[m
+[36m@@ -65,8 +65,8 @@[m [mrequire __DIR__ . '/inc/financial-freedom-functions.php';[m
+ require __DIR__ . '/inc/export/transactions.php';[m
+ [m
+ if ($_SERVER['REQUEST_URI'] === '/') {[m
+[31m-	header('Location: http://'.$_SERVER['HTTP_HOST'].'/user/');[m
+[31m-	exit();[m
+[32m+[m	[32mwp_safe_redirect(home_url('/user/'));[m
+[32m+[m	[32mexit;[m
+ }[m
+ [m
+ function check_private($postID) {[m
+[36m@@ -1004,4 +1004,4 @@[m [mfunction block_helper_manager_transactions_admin_pages() {[m
+ }[m
+ add_action('load-edit.php', 'block_helper_manager_transactions_admin_pages');[m
+ add_action('load-post.php', 'block_helper_manager_transactions_admin_pages');[m
+[31m-add_action('load-post-new.php', 'block_helper_manager_transactions_admin_pages');[m
+\ No newline at end of file[m
+[32m+[m[32madd_action('load-post-new.php', 'block_helper_manager_transactions_admin_pages');[m
+[1mdiff --git a/wp-content/themes/finansist/inc/ACF/functions.php b/wp-content/themes/finansist/inc/ACF/functions.php[m
+[1mindex c225c39..4b48676 100644[m
+[1m--- a/wp-content/themes/finansist/inc/ACF/functions.php[m
+[1m+++ b/wp-content/themes/finansist/inc/ACF/functions.php[m
+[36m@@ -1,5 +1,4 @@[m
+[31m-[m
+[31m-<? [m
+[32m+[m[32m<?php[m
+ if( function_exists('acf_add_options_page') ) {[m
+   acf_add_options_page(array([m
+       'page_title'    => 'Глобальные настройки',[m
+[36m@@ -58,4 +57,4 @@[m [mif (function_exists('acf_add_local_field_group')) {[m
+           'parent' => 'group_settings',[m
+       ));[m
+   }[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/wp-content/themes/finansist/inc/admin-group/admin-group.php b/wp-content/themes/finansist/inc/admin-group/admin-group.php[m
+[1mindex 411d016..f1a5606 100644[m
+[1m--- a/wp-content/themes/finansist/inc/admin-group/admin-group.php[m
+[1m+++ b/wp-content/themes/finansist/inc/admin-group/admin-group.php[m
+[36m@@ -1,5 +1,4 @@[m
+[31m-[m
+[31m-<? [m
+[32m+[m[32m<?php[m
+ add_shortcode( 'admin-group', 'show_admin_group' );[m
+ [m
+ function show_admin_group( $atts ){[m
+[36m@@ -34,4 +33,4 @@[m [mfunction show_admin_group( $atts ){[m
+   unset($totalMoney);[m
+   unset($totalContributed);[m
+   unset($totalOverdep);[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/wp-content/themes/finansist/inc/admin-group/users.php b/wp-content/themes/finansist/inc/admin-group/users.php[m
+[1mindex f6e3695..aa8d27a 100644[m
+[1m--- a/wp-content/themes/finansist/inc/admin-group/users.php[m
+[1m+++ b/wp-content/themes/finansist/inc/admin-group/users.php[m
+[36m@@ -1,5 +1,4 @@[m
+[31m-[m
+[31m-<? [m
+[32m+[m[32m<?php[m
+ add_shortcode( 'list_users', 'show_all_users' );[m
+ [m
+ function show_all_users( $atts ){[m
+[36m@@ -67,4 +66,4 @@[m [mfunction show_all_users( $atts ){[m
+     ?>[m
+   </table>[m
+   <?[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/wp-content/themes/finansist/inc/analytics/statistics.php b/wp-content/themes/finansist/inc/analytics/statistics.php[m
+[1mindex bebffec..89f2b9a 100644[m
+[1m--- a/wp-content/themes/finansist/inc/analytics/statistics.php[m
+[1m+++ b/wp-content/themes/finansist/inc/analytics/statistics.php[m
+[36m@@ -1,5 +1,4 @@[m
+[31m-[m
+[31m-<? [m
+[32m+[m[32m<?php[m
+ add_shortcode( 'statistics', 'show_statistics' );[m
+ [m
+ function show_statistics( $atts ){[m
+[36m@@ -37,4 +36,4 @@[m [mfunction show_statistics( $atts ){[m
+   unset($totalContributed);[m
+   unset($totalOverdep);[m
+ [m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/wp-content/themes/finansist/inc/cron/all-data.php b/wp-content/themes/finansist/inc/cron/all-data.php[m
+[1mindex 4a01158..c944a5e 100644[m
+[1m--- a/wp-content/themes/finansist/inc/cron/all-data.php[m
+[1m+++ b/wp-content/themes/finansist/inc/cron/all-data.php[m
+[36m@@ -1,5 +1,6 @@[m
+ <? [m
+[31m-require $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';[m
+[32m+[m[32m// require $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';[m
+[32m+[m[32mrequire dirname(__DIR__, 5) . '/wp-load.php';[m
+ [m
+ function users_daily_data()[m
+ {[m
+[36m@@ -33,4 +34,4 @@[m [mfunction users_daily_data()[m
+ [m
+ users_daily_data();[m
+ update_projects_manager_role();[m
+[31m-?>[m
+\ No newline at end of file[m
+[32m+[m[32m?>[m
