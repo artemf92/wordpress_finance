@@ -330,6 +330,16 @@ function show_event_transactions($atts) {
         ],
     ];
 
+    // Бухгалтер видит транзакции только пользователей своей группы
+    if (current_user_can('accountant') && !current_user_can('administrator') && !current_user_can('manager') && !current_user_can('helper_manager')) {
+        $usersInGroup = array_values(getAdminGroupUsers());
+        $query_args['meta_query'][] = [
+            'key' => 'settings_investor',
+            'value' => $usersInGroup ?: [0],
+            'compare' => 'IN',
+        ];
+    }
+
     $transactions_query = new WP_Query($query_args);
 
     ob_start(); // Начало буферизации вывода
