@@ -25,5 +25,8 @@ $view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,sta
     <? if (in_array('date', $view)) { ?>
     <th scope="col"><?= esc_html('Время создания')?></th>
     <? } ?>
+    <? if (in_array('close_date', $view)) { ?>
+    <th scope="col"><?= esc_html('Дата закрытия')?></th>
+    <? } ?>
   </tr>
   </thead>
