@@ -15,7 +15,7 @@ function get_post_full_time($post = null) {
 }
 
 // Дата закрытия проекта (по последнему событию "Закрытие проекта")
-function get_project_close_date($projectID, $format = 'j F Y - G:i') {
+function get_project_close_date($projectID, $format = 'j F Y') {
   $events = get_posts([
     'post_type' => 'events',
     'post_status' => 'publish',
