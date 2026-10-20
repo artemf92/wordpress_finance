@@ -14,6 +14,32 @@ function get_post_full_time($post = null) {
   return get_post_time('j F Y - G:i', false, $post, true);
 }
 
+// Дата закрытия проекта (по последнему событию "Закрытие проекта")
+function get_project_close_date($projectID, $format = 'j F Y') {
+  $events = get_posts([
+    'post_type' => 'events',
+    'post_status' => 'publish',
+    'posts_per_page' => 1,
+    'orderby' => 'date',
+    'order' => 'DESC',
+    'meta_query' => [
+      'relation' => 'AND',
+      [
+        'key' => 'settings_project',
+        'value' => $projectID,
+      ],
+      [
+        'key' => 'settings_transaction_type',
+        'value' => 5,
+      ],
+    ]
+  ]);
+
+  if (empty($events)) return '';
+
+  return get_post_time($format, false, $events[0], true);
+}
+
 // Создание транзакции
 function create_transaction($projectID = false, $user, $eventID = false, $amount, $type) {
   $transaction_entity = getAcfFieldEntity(50);
