@@ -23,7 +23,7 @@ $view = $args['view'] ? explode(',', $args['view']) : explode(',', 'num,name,sta
     <th scope="col"><?= esc_html('Доходность')?></th>
     <? } ?>
     <? if (in_array('date', $view)) { ?>
-    <th scope="col"><?= esc_html('Время создания')?></th>
+    <th scope="col"><?= esc_html(in_array('close_date', $view) ? 'Дата создания' : 'Время создания')?></th>
     <? } ?>
     <? if (in_array('close_date', $view)) { ?>
     <th scope="col"><?= esc_html('Дата закрытия')?></th>
